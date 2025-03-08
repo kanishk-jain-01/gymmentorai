@@ -58,118 +58,116 @@ export async function POST(req: NextRequest) {
     }
     
     const { text } = result.data;
+    let userId = 'dev-user-id';
     
-    // In development, use mock data or process with Ollama
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        // Try to parse with Ollama if configured
-        if (process.env.OLLAMA_URL) {
-          console.log('Using Ollama for workout parsing in development');
-          const parsedWorkout = await parseWorkoutText(text);
-          
-          const workout = {
-            id: uuidv4(),
-            date: parsedWorkout.date.toISOString(),
-            name: parsedWorkout.name || 'New Workout',
-            notes: parsedWorkout.notes || 'Created from user input',
-            duration: parsedWorkout.duration || 45,
-            userId: 'dev-user-id',
-            exercises: parsedWorkout.exercises.map(exercise => ({
-              id: uuidv4(),
+    // In production, check authentication
+    if (process.env.NODE_ENV === 'production') {
+      const session = await getServerSession();
+      if (!session?.user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      
+      // Get user ID from session
+      userId = (session.user as any)?.id as string;
+    }
+    
+    try {
+      // Parse workout text using AI
+      console.log('Parsing workout text with AI');
+      const parsedWorkout = await parseWorkoutText(text);
+      
+      // Create workout in database
+      console.log('Creating workout in database');
+      const workout = await prisma.workout.create({
+        data: {
+          name: parsedWorkout.name,
+          date: parsedWorkout.date,
+          duration: parsedWorkout.duration,
+          notes: parsedWorkout.notes,
+          rawInput: text,
+          userId,
+          exercises: {
+            create: parsedWorkout.exercises.map(exercise => ({
               name: exercise.name,
-              sets: exercise.sets || 3,
-              reps: exercise.reps || 10,
-              weight: exercise.weight || 150,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              weight: exercise.weight,
               duration: exercise.duration,
               distance: exercise.distance,
               notes: exercise.notes,
+            })),
+          },
+        },
+        include: {
+          exercises: true,
+        },
+      });
+      
+      // In development, also add to mock workouts for fallback
+      if (process.env.NODE_ENV !== 'production') {
+        const mockWorkout = {
+          id: workout.id,
+          date: workout.date.toISOString(),
+          name: workout.name || 'New Workout',
+          notes: workout.notes || 'Created from user input',
+          duration: workout.duration || 45,
+          userId: workout.userId,
+          exercises: workout.exercises.map(ex => ({
+            id: ex.id,
+            name: ex.name,
+            sets: ex.sets || 3,
+            reps: ex.reps || 10,
+            weight: ex.weight || 150,
+            workoutId: workout.id,
+            createdAt: ex.createdAt.toISOString(),
+            updatedAt: ex.updatedAt.toISOString(),
+          })),
+          createdAt: workout.createdAt.toISOString(),
+          updatedAt: workout.updatedAt.toISOString(),
+        };
+        
+        mockWorkouts.unshift(mockWorkout);
+      }
+      
+      return NextResponse.json({ workout }, { status: 201 });
+    } catch (error) {
+      console.error('Error processing workout:', error);
+      
+      // In development, fall back to mock data if database operation fails
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Falling back to mock data in development due to error:', error);
+        
+        const mockWorkout = {
+          id: uuidv4(),
+          date: new Date().toISOString(),
+          name: 'New Workout (Mock Fallback)',
+          notes: 'Created from user input (database operation failed)',
+          duration: 45,
+          userId: 'dev-user-id',
+          exercises: [
+            {
+              id: uuidv4(),
+              name: 'Exercise from user input',
+              sets: 3,
+              reps: 10,
+              weight: 150,
               workoutId: uuidv4(),
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-            })),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
-          
-          // Add to mock workouts
-          mockWorkouts.unshift(workout);
-          
-          return NextResponse.json({ workout }, { status: 201 });
-        } else {
-          // Fall back to mock data if Ollama is not configured
-          const mockWorkout = {
-            id: uuidv4(),
-            date: new Date().toISOString(),
-            name: 'New Workout',
-            notes: 'Created from user input',
-            duration: 45,
-            userId: 'dev-user-id',
-            exercises: [
-              {
-                id: uuidv4(),
-                name: 'Exercise from user input',
-                sets: 3,
-                reps: 10,
-                weight: 150,
-                workoutId: uuidv4(),
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              }
-            ],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
-          
-          // Add to mock workouts
-          mockWorkouts.unshift(mockWorkout);
-          
-          return NextResponse.json({ workout: mockWorkout }, { status: 201 });
-        }
-      } catch (error) {
-        console.error('Error in development mode:', error);
-        return NextResponse.json({ error: 'Failed to process workout in development mode' }, { status: 500 });
+            }
+          ],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        
+        // Add to mock workouts
+        mockWorkouts.unshift(mockWorkout);
+        
+        return NextResponse.json({ workout: mockWorkout }, { status: 201 });
       }
+      
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-    
-    // In production, check authentication
-    const session = await getServerSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    // Parse workout text using AI
-    const parsedWorkout = await parseWorkoutText(text);
-    
-    // Get user ID from session
-    const userId = (session?.user as any)?.id as string;
-    
-    // Create workout in database
-    const workout = await prisma.workout.create({
-      data: {
-        name: parsedWorkout.name,
-        date: parsedWorkout.date,
-        duration: parsedWorkout.duration,
-        notes: parsedWorkout.notes,
-        rawInput: text,
-        userId,
-        exercises: {
-          create: parsedWorkout.exercises.map(exercise => ({
-            name: exercise.name,
-            sets: exercise.sets,
-            reps: exercise.reps,
-            weight: exercise.weight,
-            duration: exercise.duration,
-            distance: exercise.distance,
-            notes: exercise.notes,
-          })),
-        },
-      },
-      include: {
-        exercises: true,
-      },
-    });
-    
-    return NextResponse.json({ workout }, { status: 201 });
   } catch (error) {
     console.error('Error processing workout:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -178,34 +176,45 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // In development, return mock data
-    if (process.env.NODE_ENV !== 'production') {
-      return NextResponse.json({ workouts: mockWorkouts });
-    }
+    let userId = 'dev-user-id';
     
     // In production, check authentication
-    const session = await getServerSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (process.env.NODE_ENV === 'production') {
+      const session = await getServerSession();
+      if (!session?.user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      
+      // Get user ID from session
+      userId = (session.user as any).id as string;
     }
     
-    // Get user ID from session
-    const userId = (session.user as any).id as string;
-    
-    // Get workouts for the user
-    const workouts = await prisma.workout.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        exercises: true,
-      },
-      orderBy: {
-        date: 'desc',
-      },
-    });
-    
-    return NextResponse.json({ workouts });
+    try {
+      // Get workouts from database
+      const workouts = await prisma.workout.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          exercises: true,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+      });
+      
+      return NextResponse.json({ workouts });
+    } catch (dbError) {
+      console.error('Error fetching workouts from database:', dbError);
+      
+      // In development, fall back to mock data if database query fails
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Falling back to mock data in development');
+        return NextResponse.json({ workouts: mockWorkouts });
+      }
+      
+      throw dbError; // Re-throw in production
+    }
   } catch (error) {
     console.error('Error fetching workouts:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
