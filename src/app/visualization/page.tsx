@@ -27,7 +27,13 @@ export default function Visualization() {
   }
   
   if (!session) {
-    return null; // Will redirect in the useEffect
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Redirecting to sign in...</p>
+        </div>
+      </Layout>
+    );
   }
   
   return (

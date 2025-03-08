@@ -31,12 +31,33 @@ interface Workout {
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/signin?callbackUrl=/dashboard');
     }
   }, [status, router]);
+  
+  useEffect(() => {
+    if (session) {
+      fetchWorkouts();
+    }
+  }, [session]);
+  
+  const fetchWorkouts = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('/api/workout');
+      setWorkouts(response.data.workouts || []);
+    } catch (error) {
+      console.error('Error fetching workouts:', error);
+      setWorkouts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   if (status === 'loading') {
     return (
@@ -49,31 +70,14 @@ export default function Dashboard() {
   }
   
   if (!session) {
-    return null; // Will redirect in the useEffect
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Redirecting to sign in...</p>
+        </div>
+      </Layout>
+    );
   }
-  
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    fetchWorkouts();
-  }, []);
-  
-  const fetchWorkouts = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/api/workout');
-      setWorkouts(response.data.workouts || []);
-    } catch (error) {
-      console.error('Error fetching workouts:', error);
-      // In development, use mock data if API fails
-      if (process.env.NODE_ENV !== 'production') {
-        setWorkouts([]);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
   
   return (
     <Layout>
