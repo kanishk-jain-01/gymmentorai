@@ -97,6 +97,21 @@ This project follows a structured development workflow using Git branches and Ve
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+### Database Setup
+
+This project uses PostgreSQL for all environments:
+
+1. **Local Development Database**
+   - Install PostgreSQL: `brew install postgresql@15`
+   - Start PostgreSQL: `brew services start postgresql@15`
+   - Create a database: `createdb gymmentor_dev`
+   - The connection string should be: `postgresql://username@localhost:5432/gymmentor_dev`
+
+2. **Environment Setup**
+   - Copy `.env.example` to `.env.local` for local development
+   - Update the `DATABASE_URL` in both `.env` and `.env.local`
+   - Run migrations: `npx prisma migrate dev`
+
 ### Environment Variables
 
 The following environment variables are required:
@@ -115,6 +130,18 @@ This project is deployed on Vercel. Each push to the repository triggers a new d
 - Pushes to `main` deploy to production
 - Pushes to `development` deploy to the development environment
 - Pushes to other branches create preview deployments
+
+### Database Configuration for Vercel
+
+For Vercel deployments, separate databases should be used for different environments:
+
+1. **Preview Environment (development branch)**
+   - Create a separate PostgreSQL database (e.g., on Neon, Supabase, or Railway)
+   - Add the connection string as `DATABASE_URL` in Vercel environment variables for Preview
+
+2. **Production Environment (main branch)**
+   - Create a separate PostgreSQL database for production
+   - Add the connection string as `DATABASE_URL` in Vercel environment variables for Production
 
 ### Setting Up Vercel Deployment
 
