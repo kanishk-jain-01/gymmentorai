@@ -1,16 +1,12 @@
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client with fallback for development/testing
-let openai: OpenAI | null = null;
-try {
-  if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-  }
-} catch (error) {
-  console.warn('OpenAI client initialization failed:', error);
-  // Continue without OpenAI client - will use mock data
+// Initialize the OpenAI client
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
+
+if (!openai) {
+  console.warn('OpenAI API key not found. Using mock data for development.');
 }
 
 export interface ParsedWorkout {

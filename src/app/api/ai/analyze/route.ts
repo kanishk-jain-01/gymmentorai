@@ -3,18 +3,10 @@ import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/prisma';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client with fallback for development/testing
-let openai: OpenAI | null = null;
-try {
-  if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-  }
-} catch (error) {
-  console.warn('OpenAI client initialization failed:', error);
-  // Continue without OpenAI client - will use mock data
-}
+// Initialize the OpenAI client
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 // Mock analysis for development
 const mockAnalysis = `
@@ -35,7 +27,7 @@ Keep up the good work! Your consistency is the key to long-term progress.
 
 export async function GET(req: NextRequest) {
   try {
-    // Get workouts for the user
+    // Check authentication
     const session = await getServerSession();
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -85,25 +77,30 @@ export async function GET(req: NextRequest) {
     if (process.env.NODE_ENV !== 'production' || !openai) {
       analysis = mockAnalysis;
     } else {
-      // Get AI analysis
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a fitness coach analyzing workout data. 
-            Provide insights, trends, and recommendations based on the user's recent workouts.
-            Focus on progress, consistency, exercise balance, and potential areas for improvement.
-            Keep your analysis concise but informative, with actionable advice.`
-          },
-          {
-            role: "user",
-            content: JSON.stringify(workoutData)
-          }
-        ],
-      });
-      
-      analysis = response.choices[0].message.content;
+      try {
+        // Get AI analysis
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: `You are a fitness coach analyzing workout data. 
+              Provide insights, trends, and recommendations based on the user's recent workouts.
+              Focus on progress, consistency, exercise balance, and potential areas for improvement.
+              Keep your analysis concise but informative, with actionable advice.`
+            },
+            {
+              role: "user",
+              content: JSON.stringify(workoutData)
+            }
+          ],
+        });
+        
+        analysis = response.choices[0].message.content;
+      } catch (aiError) {
+        console.error('Error calling OpenAI API:', aiError);
+        analysis = "Sorry, we couldn't generate an analysis at this time. Please try again later.";
+      }
     }
     
     return NextResponse.json({ analysis });

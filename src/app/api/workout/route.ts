@@ -10,7 +10,7 @@ const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
 
-// Mock data for development
+// Single mock workout for development
 const mockWorkouts = [
   {
     id: 'mock-workout-1',
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
             sets: 3,
             reps: 10,
             weight: 150,
-            workoutId: 'mock-workout-id',
+            workoutId: uuidv4(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }
@@ -99,40 +99,45 @@ export async function POST(req: NextRequest) {
     }
     
     // In production, use real data
-    // Parse workout text using AI
-    const parsedWorkout = await parseWorkoutText(text);
-    
-    // Get user ID from session
-    const session = await getServerSession();
-    const userId = (session?.user as any)?.id as string;
-    
-    // Create workout in database
-    const workout = await prisma.workout.create({
-      data: {
-        name: parsedWorkout.name,
-        date: parsedWorkout.date,
-        duration: parsedWorkout.duration,
-        notes: parsedWorkout.notes,
-        rawInput: text,
-        userId,
-        exercises: {
-          create: parsedWorkout.exercises.map(exercise => ({
-            name: exercise.name,
-            sets: exercise.sets,
-            reps: exercise.reps,
-            weight: exercise.weight,
-            duration: exercise.duration,
-            distance: exercise.distance,
-            notes: exercise.notes,
-          })),
+    try {
+      // Parse workout text using AI
+      const parsedWorkout = await parseWorkoutText(text);
+      
+      // Get user ID from session
+      const session = await getServerSession();
+      const userId = (session?.user as any)?.id as string;
+      
+      // Create workout in database
+      const workout = await prisma.workout.create({
+        data: {
+          name: parsedWorkout.name,
+          date: parsedWorkout.date,
+          duration: parsedWorkout.duration,
+          notes: parsedWorkout.notes,
+          rawInput: text,
+          userId,
+          exercises: {
+            create: parsedWorkout.exercises.map(exercise => ({
+              name: exercise.name,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              weight: exercise.weight,
+              duration: exercise.duration,
+              distance: exercise.distance,
+              notes: exercise.notes,
+            })),
+          },
         },
-      },
-      include: {
-        exercises: true,
-      },
-    });
-    
-    return NextResponse.json({ workout }, { status: 201 });
+        include: {
+          exercises: true,
+        },
+      });
+      
+      return NextResponse.json({ workout }, { status: 201 });
+    } catch (error) {
+      console.error('Error processing workout with AI:', error);
+      return NextResponse.json({ error: 'Failed to process workout data' }, { status: 500 });
+    }
   } catch (error) {
     console.error('Error processing workout:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
