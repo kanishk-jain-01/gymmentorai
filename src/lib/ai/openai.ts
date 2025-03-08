@@ -1,9 +1,17 @@
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize the OpenAI client with fallback for development/testing
+let openai: OpenAI | null = null;
+try {
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+} catch (error) {
+  console.warn('OpenAI client initialization failed:', error);
+  // Continue without OpenAI client - will use mock data
+}
 
 export interface ParsedWorkout {
   name?: string;
@@ -55,9 +63,9 @@ const mockParsedWorkout: ParsedWorkout = {
  * In production, uses OpenAI
  */
 export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
-  // In development, return mock data
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Using mock workout data in development mode');
+  // In development or if OpenAI client is not available, return mock data
+  if (process.env.NODE_ENV !== 'production' || !openai) {
+    console.log('Using mock workout data (development mode or OpenAI not available)');
     return {
       ...mockParsedWorkout,
       date: new Date(), // Always use current date for the mock

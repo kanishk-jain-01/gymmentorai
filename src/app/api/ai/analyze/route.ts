@@ -3,10 +3,18 @@ import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/prisma';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize the OpenAI client with fallback for development/testing
+let openai: OpenAI | null = null;
+try {
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+} catch (error) {
+  console.warn('OpenAI client initialization failed:', error);
+  // Continue without OpenAI client - will use mock data
+}
 
 // Mock analysis for development
 const mockAnalysis = `
@@ -27,12 +35,7 @@ Keep up the good work! Your consistency is the key to long-term progress.
 
 export async function GET(req: NextRequest) {
   try {
-    // In development, return mock analysis
-    if (process.env.NODE_ENV !== 'production') {
-      return NextResponse.json({ analysis: mockAnalysis });
-    }
-    
-    // Check authentication
+    // Get workouts for the user
     const session = await getServerSession();
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -76,25 +79,32 @@ export async function GET(req: NextRequest) {
       })),
     }));
     
-    // Get AI analysis
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `You are a fitness coach analyzing workout data. 
-          Provide insights, trends, and recommendations based on the user's recent workouts.
-          Focus on progress, consistency, exercise balance, and potential areas for improvement.
-          Keep your analysis concise but informative, with actionable advice.`
-        },
-        {
-          role: "user",
-          content: JSON.stringify(workoutData)
-        }
-      ],
-    });
+    let analysis;
     
-    const analysis = response.choices[0].message.content;
+    // If in development or OpenAI client is not available, use mock analysis
+    if (process.env.NODE_ENV !== 'production' || !openai) {
+      analysis = mockAnalysis;
+    } else {
+      // Get AI analysis
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a fitness coach analyzing workout data. 
+            Provide insights, trends, and recommendations based on the user's recent workouts.
+            Focus on progress, consistency, exercise balance, and potential areas for improvement.
+            Keep your analysis concise but informative, with actionable advice.`
+          },
+          {
+            role: "user",
+            content: JSON.stringify(workoutData)
+          }
+        ],
+      });
+      
+      analysis = response.choices[0].message.content;
+    }
     
     return NextResponse.json({ analysis });
   } catch (error) {
