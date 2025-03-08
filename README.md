@@ -1,36 +1,79 @@
-# GymMentor - AI-Powered Workout Tracking
+# GymMentor
 
-GymMentor is an AI-powered workout tracking application that allows users to log their workouts using natural language and visualize their progress over time.
+GymMentor is a fitness tracking application that helps users log and analyze their workouts. The app uses AI to provide personalized insights and recommendations based on workout history.
 
 ## Features
 
-- **Natural Language Input**: Describe your workout in plain English, and our AI will understand and organize it
-- **Progress Tracking**: Visualize your workout progress with charts and graphs
-- **AI Analysis**: Get personalized insights and recommendations based on your workout history
-- **Text Message Support** (Coming Soon): Text your workouts directly to GymMentor, just like texting a personal trainer
+- **Workout Logging**: Easily log your workouts with natural language input
+- **Workout Analysis**: Get AI-powered insights about your fitness progress
+- **Workout Visualization**: View charts and graphs of your workout data
+- **User Authentication**: Secure login with Google OAuth
 
 ## Tech Stack
 
-- **Frontend**: Next.js, React, Tailwind CSS
+- **Frontend**: Next.js 15, React 19, TailwindCSS
 - **Backend**: Next.js API Routes
-- **Database**: SQLite (development), PostgreSQL (production)
+- **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
-- **AI**: OpenAI API
-- **Visualization**: Chart.js
+- **AI**: OpenAI API (with fallback to mock data for development)
 
-## Getting Started
+## Development Workflow
+
+This project follows a structured development workflow using Git branches and Vercel deployments.
+
+### Environments
+
+- **Production**: The live application, deployed from the `main` branch
+- **Development**: The staging environment, deployed from the `development` branch
+- **Feature Previews**: Temporary environments for testing new features, deployed from feature branches
+
+### Branch Structure
+
+- `main`: Production-ready code
+- `development`: Integration branch for development work
+- `feature/*`: Feature branches for new development
+
+### Development Process
+
+1. **Create a feature branch** from `development`:
+   ```bash
+   git checkout development
+   git pull
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make changes** and commit them:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   ```
+
+3. **Push changes** and create a pull request:
+   ```bash
+   git push -u origin feature/your-feature-name
+   # Create PR on GitHub from feature/your-feature-name to development
+   ```
+
+4. **Review and test** in the Vercel preview environment
+5. **Merge to development** once approved
+6. **Test in development environment**
+7. **Create PR from development to main** when ready for production
+8. **Merge to main** to deploy to production
+
+## Local Development Setup
 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- OpenAI API key
+- PostgreSQL database (or SQLite for local development)
+- OpenAI API key (optional, mock data is used if not provided)
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/health-mentor-2.git
-   cd health-mentor-2
+   git clone https://github.com/your-username/gymmentorai.git
+   cd gymmentorai
    ```
 
 2. Install dependencies:
@@ -39,10 +82,10 @@ GymMentor is an AI-powered workout tracking application that allows users to log
    ```
 
 3. Set up environment variables:
-   - Copy `.env` to `.env.local`
-   - Update the values in `.env.local` with your own API keys and secrets
+   - Copy `.env.example` to `.env.local`
+   - Fill in the required variables
 
-4. Run database migrations:
+4. Set up the database:
    ```bash
    npx prisma migrate dev
    ```
@@ -54,29 +97,38 @@ GymMentor is an AI-powered workout tracking application that allows users to log
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+### Environment Variables
+
+The following environment variables are required:
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js
+- `NEXTAUTH_URL`: URL of your application (http://localhost:3000 for local development)
+- `GOOGLE_CLIENT_ID`: Google OAuth client ID
+- `GOOGLE_CLIENT_SECRET`: Google OAuth client secret
+- `OPENAI_API_KEY`: OpenAI API key (optional for development)
+
 ## Deployment
 
-The application can be deployed to Vercel:
+This project is deployed on Vercel. Each push to the repository triggers a new deployment:
 
-```bash
-npm run build
-npm run start
-```
+- Pushes to `main` deploy to production
+- Pushes to `development` deploy to the development environment
+- Pushes to other branches create preview deployments
 
-## Future Enhancements
+### Setting Up Vercel Deployment
 
-- Twilio integration for text message workout logging
-- Advanced analytics and goal setting
-- Social features for sharing workouts
-- Mobile app with offline support
-- Subscription model for premium features
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in the Vercel dashboard
+3. Set up branch deployments in project settings
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch from `development`
+3. Make your changes
+4. Create a pull request to the `development` branch
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgements
-
-- OpenAI for providing the AI capabilities
-- Next.js team for the amazing framework
-- Tailwind CSS for the styling utilities
+[MIT License](LICENSE)
