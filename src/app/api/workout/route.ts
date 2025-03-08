@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     
     // Get user ID from session
     const session = await getServerSession();
-    const userId = session?.user?.id as string;
+    const userId = (session?.user as any)?.id as string;
     
     // Create workout in database
     const workout = await prisma.workout.create({
