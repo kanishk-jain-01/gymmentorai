@@ -48,6 +48,15 @@ const mockWorkouts = [
 
 export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const session = await getServerSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    // Get user ID from session
+    const userId = (session.user as any)?.id as string;
+    
     // Parse request body
     const body = await req.json();
     
@@ -58,18 +67,6 @@ export async function POST(req: NextRequest) {
     }
     
     const { text } = result.data;
-    let userId = 'dev-user-id';
-    
-    // In production, check authentication
-    if (process.env.NODE_ENV === 'production') {
-      const session = await getServerSession();
-      if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      // Get user ID from session
-      userId = (session.user as any)?.id as string;
-    }
     
     try {
       // Parse workout text using AI
@@ -77,7 +74,7 @@ export async function POST(req: NextRequest) {
       const parsedWorkout = await parseWorkoutText(text);
       
       // Create workout in database
-      console.log('Creating workout in database');
+      console.log(`Creating workout in database for user: ${userId}`);
       const workout = await prisma.workout.create({
         data: {
           name: parsedWorkout.name,
@@ -103,70 +100,10 @@ export async function POST(req: NextRequest) {
         },
       });
       
-      // In development, also add to mock workouts for fallback
-      if (process.env.NODE_ENV !== 'production') {
-        const mockWorkout = {
-          id: workout.id,
-          date: workout.date.toISOString(),
-          name: workout.name || 'New Workout',
-          notes: workout.notes || 'Created from user input',
-          duration: workout.duration || 45,
-          userId: workout.userId,
-          exercises: workout.exercises.map(ex => ({
-            id: ex.id,
-            name: ex.name,
-            sets: ex.sets || 3,
-            reps: ex.reps || 10,
-            weight: ex.weight || 150,
-            workoutId: workout.id,
-            createdAt: ex.createdAt.toISOString(),
-            updatedAt: ex.updatedAt.toISOString(),
-          })),
-          createdAt: workout.createdAt.toISOString(),
-          updatedAt: workout.updatedAt.toISOString(),
-        };
-        
-        mockWorkouts.unshift(mockWorkout);
-      }
-      
       return NextResponse.json({ workout }, { status: 201 });
     } catch (error) {
       console.error('Error processing workout:', error);
-      
-      // In development, fall back to mock data if database operation fails
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Falling back to mock data in development due to error:', error);
-        
-        const mockWorkout = {
-          id: uuidv4(),
-          date: new Date().toISOString(),
-          name: 'New Workout (Mock Fallback)',
-          notes: 'Created from user input (database operation failed)',
-          duration: 45,
-          userId: 'dev-user-id',
-          exercises: [
-            {
-              id: uuidv4(),
-              name: 'Exercise from user input',
-              sets: 3,
-              reps: 10,
-              weight: 150,
-              workoutId: uuidv4(),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        
-        // Add to mock workouts
-        mockWorkouts.unshift(mockWorkout);
-        
-        return NextResponse.json({ workout: mockWorkout }, { status: 201 });
-      }
-      
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to process workout' }, { status: 500 });
     }
   } catch (error) {
     console.error('Error processing workout:', error);
@@ -176,45 +113,30 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    let userId = 'dev-user-id';
-    
-    // In production, check authentication
-    if (process.env.NODE_ENV === 'production') {
-      const session = await getServerSession();
-      if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      // Get user ID from session
-      userId = (session.user as any).id as string;
+    // Check authentication
+    const session = await getServerSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    try {
-      // Get workouts from database
-      const workouts = await prisma.workout.findMany({
-        where: {
-          userId,
-        },
-        include: {
-          exercises: true,
-        },
-        orderBy: {
-          date: 'desc',
-        },
-      });
-      
-      return NextResponse.json({ workouts });
-    } catch (dbError) {
-      console.error('Error fetching workouts from database:', dbError);
-      
-      // In development, fall back to mock data if database query fails
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Falling back to mock data in development');
-        return NextResponse.json({ workouts: mockWorkouts });
-      }
-      
-      throw dbError; // Re-throw in production
-    }
+    // Get user ID from session
+    const userId = (session.user as any).id as string;
+    
+    // Get workouts from database
+    console.log(`Fetching workouts for user: ${userId}`);
+    const workouts = await prisma.workout.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        exercises: true,
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+    
+    return NextResponse.json({ workouts });
   } catch (error) {
     console.error('Error fetching workouts:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

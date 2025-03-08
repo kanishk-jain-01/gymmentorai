@@ -27,19 +27,14 @@ Keep up the good work! Your consistency is the key to long-term progress.
 
 export async function GET(req: NextRequest) {
   try {
-    // Skip authentication check in development
-    let userId = 'dev-user-id';
-    
-    // In production, check authentication
-    if (process.env.NODE_ENV === 'production') {
-      const session = await getServerSession();
-      if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      // Get user ID from session
-      userId = (session.user as any).id as string;
+    // Check authentication
+    const session = await getServerSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    // Get user ID from session
+    const userId = (session.user as any).id as string;
     
     // Get workouts for the user
     const workouts = await prisma.workout.findMany({

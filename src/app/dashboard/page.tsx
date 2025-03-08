@@ -29,38 +29,35 @@ interface Workout {
 }
 
 export default function Dashboard() {
-  // For development, create a mock session
-  const mockSession = {
-    user: {
-      id: 'dev-user-id',
-      name: 'Development User',
-      email: 'dev@example.com',
-      image: null
-    }
-  };
-  
-  // Use the real session in production, mock in development
-  const { data: realSession, status: realStatus } = useSession();
-  const session = process.env.NODE_ENV === 'production' ? realSession : mockSession;
-  const status = process.env.NODE_ENV === 'production' ? realStatus : 'authenticated';
-  
+  const { data: session, status } = useSession();
   const router = useRouter();
+  
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin?callbackUrl=/dashboard');
+    }
+  }, [status, router]);
+  
+  if (status === 'loading') {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        </div>
+      </Layout>
+    );
+  }
+  
+  if (!session) {
+    return null; // Will redirect in the useEffect
+  }
+  
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Only redirect in production
-    if (process.env.NODE_ENV === 'production' && status === 'unauthenticated') {
-      router.push('/');
-    }
-  }, [status, router]);
-  
-  useEffect(() => {
-    // Fetch workouts when authenticated or in development
-    if (status === 'authenticated') {
-      fetchWorkouts();
-    }
-  }, [status]);
+    fetchWorkouts();
+  }, []);
   
   const fetchWorkouts = async () => {
     try {
@@ -77,16 +74,6 @@ export default function Dashboard() {
       setIsLoading(false);
     }
   };
-  
-  if (status === 'loading' && process.env.NODE_ENV === 'production') {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-        </div>
-      </Layout>
-    );
-  }
   
   return (
     <Layout>
