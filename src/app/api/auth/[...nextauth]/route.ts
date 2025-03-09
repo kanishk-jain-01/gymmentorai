@@ -32,14 +32,26 @@ const handler = NextAuth({
     verifyRequest: "/auth/verify-request",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      // If the user object is available (usually on sign-in), add the id to the token
+      if (user) {
+        token.sub = user.id;
+        console.log('Setting user ID in JWT token:', user.id);
+      }
+      return token;
+    },
     async session({ session, token }) {
-      if (session.user) {
-        // Use type assertion to add id to the user object
+      if (session.user && token.sub) {
+        // Add the user ID to the session
         (session.user as any).id = token.sub;
+        console.log('Setting user ID in session:', token.sub);
+      } else {
+        console.warn('Unable to set user ID in session. Token:', token, 'Session:', session);
       }
       return session;
     },
   },
+  debug: process.env.NODE_ENV !== 'production',
 });
 
 export { handler as GET, handler as POST }; 

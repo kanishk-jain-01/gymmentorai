@@ -18,7 +18,14 @@ export async function POST(req: NextRequest) {
     }
     
     // Get user ID from session
-    const userId = (session.user as any)?.id as string;
+    const userId = (session.user as any)?.id;
+    
+    if (!userId) {
+      console.error('User ID not found in session:', session);
+      return NextResponse.json({ error: 'User ID not found in session' }, { status: 400 });
+    }
+    
+    console.log('User ID from session:', userId);
     
     // Parse request body
     const body = await req.json();
@@ -38,26 +45,32 @@ export async function POST(req: NextRequest) {
       
       // Create workout in database
       console.log(`Creating workout in database for user: ${userId}`);
-      const workout = await prisma.workout.create({
-        data: {
-          name: parsedWorkout.name,
-          date: parsedWorkout.date,
-          duration: parsedWorkout.duration,
-          notes: parsedWorkout.notes,
-          rawInput: text,
-          userId,
-          exercises: {
-            create: parsedWorkout.exercises.map(exercise => ({
-              name: exercise.name,
-              sets: exercise.sets,
-              reps: exercise.reps,
-              weight: exercise.weight,
-              duration: exercise.duration,
-              distance: exercise.distance,
-              notes: exercise.notes,
-            })),
-          },
+      
+      // Debug the data being sent to Prisma
+      const workoutData = {
+        name: parsedWorkout.name,
+        date: parsedWorkout.date,
+        duration: parsedWorkout.duration,
+        notes: parsedWorkout.notes,
+        rawInput: text,
+        userId,
+        exercises: {
+          create: parsedWorkout.exercises.map(exercise => ({
+            name: exercise.name,
+            sets: exercise.sets,
+            reps: exercise.reps,
+            weight: exercise.weight,
+            duration: exercise.duration,
+            distance: exercise.distance,
+            notes: exercise.notes,
+          })),
         },
+      };
+      
+      console.log('Workout data:', JSON.stringify(workoutData, null, 2));
+      
+      const workout = await prisma.workout.create({
+        data: workoutData,
         include: {
           exercises: true,
         },
@@ -66,11 +79,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ workout }, { status: 201 });
     } catch (error) {
       console.error('Error processing workout:', error);
-      return NextResponse.json({ error: 'Failed to process workout' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Failed to process workout',
+        details: error instanceof Error ? error.message : String(error)
+      }, { status: 500 });
     }
   } catch (error) {
     console.error('Error processing workout:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 }
 
@@ -83,7 +102,12 @@ export async function GET(req: NextRequest) {
     }
     
     // Get user ID from session
-    const userId = (session.user as any).id as string;
+    const userId = (session.user as any).id;
+    
+    if (!userId) {
+      console.error('User ID not found in session:', session);
+      return NextResponse.json({ error: 'User ID not found in session' }, { status: 400 });
+    }
     
     // Get workouts from database
     console.log(`Fetching workouts for user: ${userId}`);
@@ -102,6 +126,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ workouts });
   } catch (error) {
     console.error('Error fetching workouts:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 } 
