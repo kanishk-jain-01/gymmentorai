@@ -65,7 +65,7 @@ This project follows a structured development workflow using Git branches and Ve
 ### Prerequisites
 
 - Node.js 18+ and npm
-- PostgreSQL database (or SQLite for local development)
+- PostgreSQL database 
 - OpenAI API key (optional, mock data is used if not provided)
 
 ### Installation
