@@ -12,8 +12,7 @@ interface FormData {
 
 export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   
   const {
     register,
@@ -24,16 +23,16 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    setError(null);
-    setSuccess(null);
+    setFeedback(null);
     
     try {
       await axios.post('/api/workout', { text: data.workoutText });
-      setSuccess('Workout added successfully!');
+      setFeedback({ type: 'success', message: 'Workout added successfully!' });
       reset();
       onWorkoutAdded();
-    } catch (err) {
-      setError('Failed to add workout. Please try again.');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
+      setFeedback({ type: 'error', message: errorMessage });
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -63,15 +62,9 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
             )}
           </div>
           
-          {error && (
-            <div className="mt-2 text-sm text-red-600">
-              {error}
-            </div>
-          )}
-          
-          {success && (
-            <div className="mt-2 text-sm text-green-600">
-              {success}
+          {feedback && (
+            <div className={`mt-2 text-sm ${feedback.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+              {feedback.message}
             </div>
           )}
           

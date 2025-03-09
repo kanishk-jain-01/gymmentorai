@@ -53,6 +53,50 @@ const mockParsedWorkout: ParsedWorkout = {
   ]
 };
 
+// Mock analysis for development
+export const mockAnalysis = `
+Based on your recent workouts, here's an analysis of your fitness journey:
+
+Strengths:
+- Consistent training frequency with regular workouts
+- Good balance between upper and lower body exercises
+- Progressive overload on key lifts like bench press and squats
+
+Areas for improvement:
+- Consider adding more variety to your routine
+- Your workout duration is good, but you might benefit from shorter, more intense sessions
+- Try to increase weight on bench press by 5-10 lbs in the next few weeks
+
+Keep up the good work! Your consistency is the key to long-term progress.
+`;
+
+/**
+ * Check if AI services are available
+ */
+export function isAIAvailable(): boolean {
+  return !!openai && process.env.NODE_ENV === 'production';
+}
+
+/**
+ * Make an OpenAI API call with error handling
+ */
+async function callOpenAI(messages: any[], responseFormat?: { type: string }) {
+  if (!openai) {
+    throw new Error('OpenAI client not initialized');
+  }
+  
+  try {
+    return await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages,
+      response_format: responseFormat
+    });
+  } catch (error) {
+    console.error('OpenAI API call failed:', error);
+    throw error;
+  }
+}
+
 /**
  * Parse a natural language workout description into structured data
  * In development, returns mock data
@@ -71,44 +115,40 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
   }
   
   // Then try OpenAI if available
-  if (openai && process.env.NODE_ENV === 'production') {
+  if (isAIAvailable()) {
     try {
       // Use OpenAI
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
+      const response = await callOpenAI([
+        {
+          role: "system",
+          content: `You are a fitness assistant that extracts workout information from user input.
+          Parse the following workout description and return a JSON object with the following structure:
           {
-            role: "system",
-            content: `You are a fitness assistant that extracts workout information from user input.
-            Parse the following workout description and return a JSON object with the following structure:
-            {
-              "name": "optional workout name",
-              "date": "ISO date string (use today if not specified)",
-              "duration": optional duration in minutes,
-              "notes": "optional notes",
-              "exercises": [
-                {
-                  "name": "exercise name",
-                  "sets": optional number of sets,
-                  "reps": optional number of reps,
-                  "weight": optional weight in lbs or kg,
-                  "duration": optional duration in seconds,
-                  "distance": optional distance in miles or km,
-                  "notes": "optional notes"
-                }
-              ]
-            }
-            
-            Only include fields that are explicitly mentioned or can be reasonably inferred.
-            For exercises, at minimum include the name.`
-          },
-          {
-            role: "user",
-            content: text
+            "name": "optional workout name",
+            "date": "ISO date string (use today if not specified)",
+            "duration": optional duration in minutes,
+            "notes": "optional notes",
+            "exercises": [
+              {
+                "name": "exercise name",
+                "sets": optional number of sets,
+                "reps": optional number of reps,
+                "weight": optional weight in lbs or kg,
+                "duration": optional duration in seconds,
+                "distance": optional distance in miles or km,
+                "notes": "optional notes"
+              }
+            ]
           }
-        ],
-        response_format: { type: "json_object" }
-      });
+          
+          Only include fields that are explicitly mentioned or can be reasonably inferred.
+          For exercises, at minimum include the name.`
+        },
+        {
+          role: "user",
+          content: text
+        }
+      ], { type: "json_object" });
       
       const parsedResponse = JSON.parse(response.choices[0].message.content || '{}');
       
@@ -141,6 +181,42 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     ...mockParsedWorkout,
     date: new Date(), // Always use current date for the mock
   };
+}
+
+/**
+ * Analyze workout data and provide insights
+ */
+export async function analyzeWorkouts(workoutData: any[]): Promise<string> {
+  if (workoutData.length === 0) {
+    return "Not enough workout data to provide analysis. Please log more workouts.";
+  }
+  
+  // If in development or OpenAI client is not available, use mock analysis
+  if (!isAIAvailable()) {
+    return mockAnalysis;
+  }
+  
+  try {
+    // Get AI analysis
+    const response = await callOpenAI([
+      {
+        role: "system",
+        content: `You are a fitness coach analyzing workout data. 
+        Provide insights, trends, and recommendations based on the user's recent workouts.
+        Focus on progress, consistency, exercise balance, and potential areas for improvement.
+        Keep your analysis concise but informative, with actionable advice.`
+      },
+      {
+        role: "user",
+        content: JSON.stringify(workoutData)
+      }
+    ]);
+    
+    return response.choices[0].message.content || "Unable to generate analysis.";
+  } catch (error) {
+    console.error('Error analyzing workouts:', error);
+    return "Sorry, we couldn't generate an analysis at this time. Please try again later.";
+  }
 }
 
 /**

@@ -3,48 +3,11 @@ import { getServerSession } from 'next-auth/next';
 import { parseWorkoutText } from '@/lib/ai/openai';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
-
-// Single mock workout for development
-const mockWorkouts = [
-  {
-    id: 'mock-workout-1',
-    date: new Date().toISOString(),
-    name: 'Morning Workout',
-    notes: 'Felt good today',
-    duration: 60,
-    userId: 'dev-user-id',
-    exercises: [
-      {
-        id: 'mock-exercise-1',
-        name: 'Bench Press',
-        sets: 3,
-        reps: 10,
-        weight: 185,
-        workoutId: 'mock-workout-1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: 'mock-exercise-2',
-        name: 'Squats',
-        sets: 3,
-        reps: 8,
-        weight: 225,
-        workoutId: 'mock-workout-1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }
-];
 
 export async function POST(req: NextRequest) {
   try {
