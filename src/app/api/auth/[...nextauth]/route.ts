@@ -23,7 +23,8 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "database",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: "/auth/signin",
@@ -32,23 +33,15 @@ const handler = NextAuth({
     verifyRequest: "/auth/verify-request",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      // If the user object is available (usually on sign-in), add the id to the token
-      if (user) {
-        token.sub = user.id;
-        console.log('Setting user ID in JWT token:', user.id);
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user && token.sub) {
-        // Add the user ID to the session
-        (session.user as any).id = token.sub;
-        console.log('Setting user ID in session:', token.sub);
+    async session({ session, user }) {
+      // When using database sessions, we need to get the ID from the user parameter
+      if (session.user && user) {
+        (session.user as any).id = user.id;
+        console.log('Setting user ID in session from database user:', user.id);
       } else {
-        console.warn('Unable to set user ID in session. Token:', token, 'Session:', session);
+        console.warn('Unable to set user ID in session. User:', user, 'Session:', session);
       }
-      return session;
+      return session as ExtendedSession;
     },
   },
   debug: process.env.NODE_ENV !== 'production',
