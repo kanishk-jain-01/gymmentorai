@@ -70,6 +70,19 @@ Areas for improvement:
 Keep up the good work! Your consistency is the key to long-term progress.
 `;
 
+// Helper function to ensure numeric values are properly converted
+function ensureNumericType(value: any): number | undefined {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  
+  // Convert string to number
+  const num = Number(value);
+  
+  // Return undefined if not a valid number
+  return isNaN(num) ? undefined : num;
+}
+
 /**
  * Check if AI services are available
  */
@@ -142,7 +155,8 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
           }
           
           Only include fields that are explicitly mentioned or can be reasonably inferred.
-          For exercises, at minimum include the name.`
+          For exercises, at minimum include the name.
+          IMPORTANT: All numeric values (sets, reps, weight, duration, distance) must be numbers, not strings.`
         },
         {
           role: "user",
@@ -152,19 +166,20 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
       
       const parsedResponse = JSON.parse(response.choices[0].message.content || '{}');
       
+      // Ensure numeric values are properly converted
       return {
         name: parsedResponse.name,
         date: parsedResponse.date ? new Date(parsedResponse.date) : new Date(),
-        duration: parsedResponse.duration,
+        duration: ensureNumericType(parsedResponse.duration),
         notes: parsedResponse.notes,
         exercises: Array.isArray(parsedResponse.exercises) 
           ? parsedResponse.exercises.map((ex: any) => ({
               name: ex.name,
-              sets: ex.sets,
-              reps: ex.reps,
-              weight: ex.weight,
-              duration: ex.duration,
-              distance: ex.distance,
+              sets: ensureNumericType(ex.sets),
+              reps: ensureNumericType(ex.reps),
+              weight: ensureNumericType(ex.weight),
+              duration: ensureNumericType(ex.duration),
+              distance: ensureNumericType(ex.distance),
               notes: ex.notes,
             }))
           : [],
@@ -259,6 +274,7 @@ async function parseWithOllama(text: string): Promise<ParsedWorkout> {
         
         User input: ${text}
         
+        IMPORTANT: All numeric values (sets, reps, weight, duration, distance) must be numbers, not strings.
         Respond using JSON format only.`,
         stream: false,
         format: "json" // Use Ollama's JSON format option
@@ -288,20 +304,20 @@ async function parseWithOllama(text: string): Promise<ParsedWorkout> {
       
       console.log('Parsed workout data:', JSON.stringify(parsedData, null, 2).substring(0, 100) + '...');
       
-      // Convert to our ParsedWorkout format
+      // Convert to our ParsedWorkout format with proper numeric type conversion
       return {
         name: parsedData.name,
         date: parsedData.date ? new Date(parsedData.date) : new Date(),
-        duration: parsedData.duration,
+        duration: ensureNumericType(parsedData.duration),
         notes: parsedData.notes,
         exercises: Array.isArray(parsedData.exercises) 
           ? parsedData.exercises.map((ex: any) => ({
               name: ex.name,
-              sets: ex.sets,
-              reps: ex.reps,
-              weight: ex.weight,
-              duration: ex.duration,
-              distance: ex.distance,
+              sets: ensureNumericType(ex.sets),
+              reps: ensureNumericType(ex.reps),
+              weight: ensureNumericType(ex.weight),
+              duration: ensureNumericType(ex.duration),
+              distance: ensureNumericType(ex.distance),
               notes: ex.notes,
             }))
           : [],

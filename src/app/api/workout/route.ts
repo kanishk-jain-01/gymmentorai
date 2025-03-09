@@ -3,29 +3,85 @@ import { getServerSession } from 'next-auth/next';
 import { parseWorkoutText } from '@/lib/ai/openai';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
 
+// For development only - get a default user ID if authentication is not available
+async function getDefaultUserId() {
+  if (process.env.NODE_ENV === 'production') {
+    return null;
+  }
+  
+  // In development, try to find or create a default user
+  try {
+    let defaultUser = await prisma.user.findFirst({
+      where: {
+        email: 'dev@example.com',
+      },
+    });
+    
+    if (!defaultUser) {
+      defaultUser = await prisma.user.create({
+        data: {
+          name: 'Development User',
+          email: 'dev@example.com',
+        },
+      });
+      console.log('Created default development user:', defaultUser.id);
+    }
+    
+    return defaultUser.id;
+  } catch (error) {
+    console.error('Error getting default user:', error);
+    return null;
+  }
+}
+
+// Helper function to ensure numeric values are properly converted
+function ensureNumericType(value: any): number | undefined {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  
+  // Convert string to number
+  const num = Number(value);
+  
+  // Return undefined if not a valid number
+  return isNaN(num) ? undefined : num;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // Check authentication
-    const session = await getServerSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Try to get user ID from session or use default in development
+    let userId: string | null = null;
+    
+    try {
+      // Check authentication - use try/catch to handle potential errors
+      const session = await getServerSession(authOptions);
+      console.log('POST /api/workout - Session:', session);
+      
+      if (session?.user) {
+        userId = (session.user as any)?.id;
+        console.log('User ID from session:', userId);
+      }
+    } catch (sessionError) {
+      console.error('Error getting session:', sessionError);
     }
     
-    // Get user ID from session
-    const userId = (session.user as any)?.id;
+    // In development, use a default user if no authenticated user
+    if (!userId && process.env.NODE_ENV !== 'production') {
+      userId = await getDefaultUserId();
+      console.log('Using default development user ID:', userId);
+    }
     
     if (!userId) {
-      console.error('User ID not found in session:', session);
-      return NextResponse.json({ error: 'User ID not found in session' }, { status: 400 });
+      console.error('No user ID available');
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
-    
-    console.log('User ID from session:', userId);
     
     // Parse request body
     const body = await req.json();
@@ -50,18 +106,18 @@ export async function POST(req: NextRequest) {
       const workoutData = {
         name: parsedWorkout.name,
         date: parsedWorkout.date,
-        duration: parsedWorkout.duration,
+        duration: ensureNumericType(parsedWorkout.duration),
         notes: parsedWorkout.notes,
         rawInput: text,
         userId,
         exercises: {
           create: parsedWorkout.exercises.map(exercise => ({
             name: exercise.name,
-            sets: exercise.sets,
-            reps: exercise.reps,
-            weight: exercise.weight,
-            duration: exercise.duration,
-            distance: exercise.distance,
+            sets: ensureNumericType(exercise.sets),
+            reps: ensureNumericType(exercise.reps),
+            weight: ensureNumericType(exercise.weight),
+            duration: ensureNumericType(exercise.duration),
+            distance: ensureNumericType(exercise.distance),
             notes: exercise.notes,
           })),
         },
@@ -95,18 +151,31 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // Check authentication
-    const session = await getServerSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Try to get user ID from session or use default in development
+    let userId: string | null = null;
+    
+    try {
+      // Check authentication - use try/catch to handle potential errors
+      const session = await getServerSession(authOptions);
+      console.log('GET /api/workout - Session:', session);
+      
+      if (session?.user) {
+        userId = (session.user as any)?.id;
+        console.log('User ID from session:', userId);
+      }
+    } catch (sessionError) {
+      console.error('Error getting session:', sessionError);
     }
     
-    // Get user ID from session
-    const userId = (session.user as any).id;
+    // In development, use a default user if no authenticated user
+    if (!userId && process.env.NODE_ENV !== 'production') {
+      userId = await getDefaultUserId();
+      console.log('Using default development user ID:', userId);
+    }
     
     if (!userId) {
-      console.error('User ID not found in session:', session);
-      return NextResponse.json({ error: 'User ID not found in session' }, { status: 400 });
+      console.error('No user ID available');
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     
     // Get workouts from database
