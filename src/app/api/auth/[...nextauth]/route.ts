@@ -15,6 +15,39 @@ interface ExtendedSession extends Session {
   };
 }
 
+// Debug database connection
+async function debugDatabase() {
+  try {
+    console.log('Testing database connection...');
+    // Try a simple query to check if the database is accessible
+    const userCount = await prisma.user.count();
+    console.log(`Database connection successful. User count: ${userCount}`);
+    
+    // Check if tables exist
+    try {
+      await prisma.$queryRaw`SELECT * FROM "User" LIMIT 1`;
+      console.log('User table exists');
+    } catch (e) {
+      console.error('User table does not exist:', e);
+    }
+    
+    try {
+      await prisma.$queryRaw`SELECT * FROM "Account" LIMIT 1`;
+      console.log('Account table exists');
+    } catch (e) {
+      console.error('Account table does not exist:', e);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return false;
+  }
+}
+
+// Run the debug function
+debugDatabase().catch(console.error);
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
