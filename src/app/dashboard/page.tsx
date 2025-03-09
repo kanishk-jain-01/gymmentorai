@@ -33,23 +33,35 @@ export default function Dashboard() {
   const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingAttempts, setLoadingAttempts] = useState(0);
   
   useEffect(() => {
     console.log('Dashboard - Session status:', status);
     console.log('Dashboard - Session data:', session);
     
-    if (status === 'unauthenticated') {
-      console.log('User is not authenticated, redirecting to sign-in');
+    // Only redirect if we're definitely not authenticated after multiple checks
+    if (status === 'unauthenticated' && loadingAttempts > 3) {
+      console.log('User is not authenticated after multiple attempts, redirecting to sign-in');
       router.push('/auth/signin?callbackUrl=/dashboard');
     }
-  }, [status, router, session]);
+    
+    // If still loading, increment the counter
+    if (status === 'loading') {
+      const timer = setTimeout(() => {
+        setLoadingAttempts(prev => prev + 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [status, router, session, loadingAttempts]);
   
   useEffect(() => {
-    if (session?.user?.id) {
-      console.log('User is authenticated, fetching workouts');
+    // Try to fetch workouts even if we don't have a user ID yet
+    // The API will handle the authentication check
+    if (status === 'authenticated' || (loadingAttempts > 2 && status === 'loading')) {
+      console.log('Attempting to fetch workouts, status:', status);
       fetchWorkouts();
     }
-  }, [session]);
+  }, [session, status, loadingAttempts]);
   
   const fetchWorkouts = async () => {
     try {
@@ -66,17 +78,18 @@ export default function Dashboard() {
     }
   };
   
-  if (status === 'loading') {
+  if (status === 'loading' && loadingAttempts <= 3) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          <p className="ml-3 text-gray-600">Loading session... (Attempt {loadingAttempts + 1}/4)</p>
         </div>
       </Layout>
     );
   }
   
-  if (status === 'unauthenticated') {
+  if (status === 'unauthenticated' && loadingAttempts > 3) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
@@ -97,8 +110,10 @@ export default function Dashboard() {
           {/* Debug info */}
           {process.env.NODE_ENV !== 'production' && (
             <div className="mt-2 p-2 border rounded bg-gray-50 text-xs">
+              <p>Status: {status}</p>
               <p>User: {session?.user?.name || 'Unknown'}</p>
               <p>User ID: {session?.user?.id || 'Not available'}</p>
+              <p>Loading attempts: {loadingAttempts}</p>
             </div>
           )}
         </div>
