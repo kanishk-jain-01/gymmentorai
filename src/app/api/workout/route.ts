@@ -31,12 +31,10 @@ async function getDefaultUserId() {
           email: 'dev@example.com',
         },
       });
-      console.log('Created default development user:', defaultUser.id);
     }
     
     return defaultUser.id;
   } catch (error) {
-    console.error('Error getting default user:', error);
     return null;
   }
 }
@@ -62,24 +60,20 @@ export async function POST(req: NextRequest) {
     try {
       // Check authentication - use try/catch to handle potential errors
       const session = await getServerSession(authOptions);
-      console.log('POST /api/workout - Session:', session);
       
       if (session?.user) {
         userId = (session.user as any)?.id;
-        console.log('User ID from session:', userId);
       }
     } catch (sessionError) {
-      console.error('Error getting session:', sessionError);
+      // Handle session error silently
     }
     
     // In development, use a default user if no authenticated user
     if (!userId && process.env.NODE_ENV !== 'production') {
       userId = await getDefaultUserId();
-      console.log('Using default development user ID:', userId);
     }
     
     if (!userId) {
-      console.error('No user ID available');
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     
@@ -96,13 +90,9 @@ export async function POST(req: NextRequest) {
     
     try {
       // Parse workout text using AI
-      console.log('Parsing workout text with AI');
       const parsedWorkout = await parseWorkoutText(text);
       
       // Create workout in database
-      console.log(`Creating workout in database for user: ${userId}`);
-      
-      // Debug the data being sent to Prisma
       const workoutData = {
         name: parsedWorkout.name,
         date: parsedWorkout.date,
@@ -123,8 +113,6 @@ export async function POST(req: NextRequest) {
         },
       };
       
-      console.log('Workout data:', JSON.stringify(workoutData, null, 2));
-      
       const workout = await prisma.workout.create({
         data: workoutData,
         include: {
@@ -134,14 +122,12 @@ export async function POST(req: NextRequest) {
       
       return NextResponse.json({ workout }, { status: 201 });
     } catch (error) {
-      console.error('Error processing workout:', error);
       return NextResponse.json({ 
         error: 'Failed to process workout',
         details: error instanceof Error ? error.message : String(error)
       }, { status: 500 });
     }
   } catch (error) {
-    console.error('Error processing workout:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : String(error)
@@ -157,29 +143,24 @@ export async function GET(req: NextRequest) {
     try {
       // Check authentication - use try/catch to handle potential errors
       const session = await getServerSession(authOptions);
-      console.log('GET /api/workout - Session:', session);
       
       if (session?.user) {
         userId = (session.user as any)?.id;
-        console.log('User ID from session:', userId);
       }
     } catch (sessionError) {
-      console.error('Error getting session:', sessionError);
+      // Handle session error silently
     }
     
     // In development, use a default user if no authenticated user
     if (!userId && process.env.NODE_ENV !== 'production') {
       userId = await getDefaultUserId();
-      console.log('Using default development user ID:', userId);
     }
     
     if (!userId) {
-      console.error('No user ID available');
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     
     // Get workouts from database
-    console.log(`Fetching workouts for user: ${userId}`);
     const workouts = await prisma.workout.findMany({
       where: {
         userId,
@@ -194,7 +175,6 @@ export async function GET(req: NextRequest) {
     
     return NextResponse.json({ workouts });
   } catch (error) {
-    console.error('Error fetching workouts:', error);
     return NextResponse.json({ 
       error: 'Internal server error',
       details: error instanceof Error ? error.message : String(error)
