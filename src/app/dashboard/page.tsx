@@ -35,13 +35,18 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    console.log('Dashboard - Session status:', status);
+    console.log('Dashboard - Session data:', session);
+    
     if (status === 'unauthenticated') {
+      console.log('User is not authenticated, redirecting to sign-in');
       router.push('/auth/signin?callbackUrl=/dashboard');
     }
-  }, [status, router]);
+  }, [status, router, session]);
   
   useEffect(() => {
-    if (session) {
+    if (session?.user?.id) {
+      console.log('User is authenticated, fetching workouts');
       fetchWorkouts();
     }
   }, [session]);
@@ -49,7 +54,9 @@ export default function Dashboard() {
   const fetchWorkouts = async () => {
     try {
       setIsLoading(true);
+      console.log('Fetching workouts...');
       const response = await axios.get('/api/workout');
+      console.log('Workouts response:', response.data);
       setWorkouts(response.data.workouts || []);
     } catch (error) {
       console.error('Error fetching workouts:', error);
@@ -69,7 +76,7 @@ export default function Dashboard() {
     );
   }
   
-  if (!session) {
+  if (status === 'unauthenticated') {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
@@ -87,6 +94,13 @@ export default function Dashboard() {
           <p className="mt-1 text-sm text-gray-500">
             Log your workouts and track your progress
           </p>
+          {/* Debug info */}
+          {process.env.NODE_ENV !== 'production' && (
+            <div className="mt-2 p-2 border rounded bg-gray-50 text-xs">
+              <p>User: {session?.user?.name || 'Unknown'}</p>
+              <p>User ID: {session?.user?.id || 'Not available'}</p>
+            </div>
+          )}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
