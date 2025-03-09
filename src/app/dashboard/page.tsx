@@ -87,13 +87,6 @@ export default function Dashboard() {
           <p className="mt-1 text-sm text-gray-500">
             Log your workouts and track your progress
           </p>
-          {/* Debug info - only in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-2 p-2 border rounded bg-gray-50 text-xs">
-              <p>Status: {status}</p>
-              <p>User: {session?.user?.name || 'Unknown'}</p>
-            </div>
-          )}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
