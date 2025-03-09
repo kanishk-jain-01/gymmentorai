@@ -18,7 +18,6 @@ export default function SignIn() {
       const errorMsg = urlParams.get('error');
       
       if (redirectUrl) {
-        console.log('Setting callback URL to:', redirectUrl);
         setCallbackUrl(redirectUrl);
       }
       
@@ -32,63 +31,23 @@ export default function SignIn() {
     setIsRedirecting(true);
     setError(null);
     
-    // Log to both console and localStorage to preserve across redirects
-    const logMessage = `Signing in with Google, callback URL: ${callbackUrl}`;
-    console.log(logMessage);
-    localStorage.setItem('auth_debug_log', JSON.stringify({
-      timestamp: new Date().toISOString(),
-      message: logMessage
-    }));
-    
     try {
       const result = await signIn('google', { 
         callbackUrl,
-        redirect: false // Change to false to handle redirects manually
+        redirect: true // Change to true to let NextAuth handle redirects
       });
       
-      // Store result in localStorage to preserve across redirects
-      localStorage.setItem('auth_result', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        result
-      }));
-      
-      console.log('Sign-in result:', result);
-      
-      if (result?.ok && result?.url) {
-        console.log('Manually redirecting to:', result.url);
-        router.push(result.url);
-      } else if (!result?.ok) {
-        const errorMessage = result?.error || 'Sign-in failed';
-        console.error('Sign-in failed:', errorMessage);
-        setError(errorMessage);
+      // This code will only run if redirect is set to false
+      if (result?.error) {
+        setError(result.error);
         setIsRedirecting(false);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error during sign-in';
-      console.error('Error during sign-in:', errorMessage);
-      localStorage.setItem('auth_error', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        error: errorMessage
-      }));
       setError(errorMessage);
       setIsRedirecting(false);
     }
   };
-
-  // Load debug logs on component mount
-  useEffect(() => {
-    try {
-      const debugLog = localStorage.getItem('auth_debug_log');
-      const authResult = localStorage.getItem('auth_result');
-      const authError = localStorage.getItem('auth_error');
-      
-      if (debugLog) console.log('Previous auth log:', JSON.parse(debugLog));
-      if (authResult) console.log('Previous auth result:', JSON.parse(authResult));
-      if (authError) console.log('Previous auth error:', JSON.parse(authError));
-    } catch (e) {
-      console.error('Error loading debug logs:', e);
-    }
-  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -133,26 +92,6 @@ export default function SignIn() {
             </span>
             {isRedirecting ? 'Redirecting...' : 'Sign in with Google'}
           </button>
-          
-          {/* Debug info */}
-          {process.env.NODE_ENV !== 'production' && (
-            <div className="mt-4 p-2 border rounded bg-gray-50 text-xs">
-              <p>Callback URL: {callbackUrl}</p>
-              <p>Status: {isRedirecting ? 'Redirecting' : 'Ready'}</p>
-              <p>Error: {error || 'None'}</p>
-              <button 
-                onClick={() => {
-                  localStorage.removeItem('auth_debug_log');
-                  localStorage.removeItem('auth_result');
-                  localStorage.removeItem('auth_error');
-                  alert('Debug logs cleared');
-                }}
-                className="mt-2 text-xs text-indigo-600 hover:text-indigo-800"
-              >
-                Clear Debug Logs
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>

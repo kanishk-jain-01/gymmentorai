@@ -1,7 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Only allow this endpoint in development or with a valid API key
+  const { searchParams } = new URL(req.url);
+  const apiKey = searchParams.get('key');
+  
+  if (process.env.NODE_ENV === 'production' && apiKey !== process.env.DB_STATUS_API_KEY) {
+    return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
+  }
+  
   try {
     // Check database connection
     const tables: string[] = [];
@@ -10,28 +18,28 @@ export async function GET() {
       await prisma.$queryRaw`SELECT * FROM "User" LIMIT 1`;
       tables.push('User');
     } catch (e) {
-      console.error('User table check error:', e);
+      // Silently handle error
     }
     
     try {
       await prisma.$queryRaw`SELECT * FROM "Account" LIMIT 1`;
       tables.push('Account');
     } catch (e) {
-      console.error('Account table check error:', e);
+      // Silently handle error
     }
     
     try {
       await prisma.$queryRaw`SELECT * FROM "Session" LIMIT 1`;
       tables.push('Session');
     } catch (e) {
-      console.error('Session table check error:', e);
+      // Silently handle error
     }
     
     try {
       await prisma.$queryRaw`SELECT * FROM "Workout" LIMIT 1`;
       tables.push('Workout');
     } catch (e) {
-      console.error('Workout table check error:', e);
+      // Silently handle error
     }
     
     // Get database URL (redacted for security)
@@ -42,17 +50,15 @@ export async function GET() {
       status: 'ok',
       message: 'Database connection successful',
       tables: tables,
-      databaseUrl: redactedDbUrl,
+      databaseUrl: process.env.NODE_ENV === 'production' ? '[REDACTED]' : redactedDbUrl,
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
-    console.error('Database status check error:', error);
-    
     return NextResponse.json({
       status: 'error',
       message: 'Database connection failed',
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Database error' : error.message,
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString()
     }, { status: 500 });
