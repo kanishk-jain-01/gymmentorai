@@ -29,7 +29,7 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
-    error: "/auth/error",
+    error: "/auth/signin", // Redirect to sign-in page with error
     verifyRequest: "/auth/verify-request",
   },
   callbacks: {
@@ -43,8 +43,55 @@ const handler = NextAuth({
       }
       return session as ExtendedSession;
     },
+    async signIn({ user, account, profile }) {
+      // Log the sign-in attempt
+      console.log('Sign-in attempt:', { 
+        userId: user?.id, 
+        email: user?.email,
+        provider: account?.provider
+      });
+      
+      // Always allow sign-in
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // Log the redirect
+      console.log('Redirect callback:', { url, baseUrl });
+      
+      // If the URL starts with the base URL, allow it
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      
+      // If the URL is a relative URL, prepend the base URL
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      
+      // Otherwise, return to the base URL
+      return baseUrl;
+    }
+  },
+  events: {
+    async signIn(message) {
+      console.log('User signed in:', message);
+    },
+    async signOut(message) {
+      console.log('User signed out:', message);
+    }
   },
   debug: process.env.NODE_ENV !== 'production',
+  logger: {
+    error(code, metadata) {
+      console.error('NextAuth error:', { code, metadata });
+    },
+    warn(code) {
+      console.warn('NextAuth warning:', code);
+    },
+    debug(code, metadata) {
+      console.log('NextAuth debug:', { code, metadata });
+    }
+  }
 });
 
 export { handler as GET, handler as POST }; 
