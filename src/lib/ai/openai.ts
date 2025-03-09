@@ -89,7 +89,7 @@ async function callOpenAI(messages: any[], responseFormat?: { type: string }) {
     return await openai.chat.completions.create({
       model: "gpt-4o",
       messages,
-      response_format: responseFormat
+      response_format: responseFormat as any
     });
   } catch (error) {
     console.error('OpenAI API call failed:', error);
