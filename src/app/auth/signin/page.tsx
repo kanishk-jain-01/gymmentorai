@@ -1,13 +1,16 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SignIn() {
+  const [callbackUrl, setCallbackUrl] = useState('/dashboard');
+  
   useEffect(() => {
     // Check if we're being redirected from somewhere
     const urlParams = new URLSearchParams(window.location.search);
-    const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
+    const redirectUrl = urlParams.get('callbackUrl') || '/dashboard';
+    setCallbackUrl(redirectUrl);
   }, []);
 
   return (
@@ -23,7 +26,7 @@ export default function SignIn() {
         </div>
         <div className="mt-8 space-y-6">
           <button
-            onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+            onClick={() => signIn('google', { callbackUrl })}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
