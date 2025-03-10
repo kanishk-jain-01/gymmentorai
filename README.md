@@ -15,7 +15,7 @@ GymMentor is a fitness tracking application that helps users log and analyze the
 - **Backend**: Next.js API Routes
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
-- **AI**: OpenAI API or Ollama (local LLM option)
+- **AI**: Flexible LLM integration supporting OpenAI, Anthropic Claude, Google Gemini, or custom API endpoints
 
 ## Development Workflow
 
@@ -66,7 +66,7 @@ This project follows a structured development workflow using Git branches and Ve
 
 - Node.js 18+ and npm
 - PostgreSQL database 
-- OpenAI API key or Ollama setup for AI features
+- LLM API key (OpenAI, Anthropic, Google AI, or custom provider)
 
 ### Installation
 
@@ -121,7 +121,7 @@ The following environment variables are required:
 - `NEXTAUTH_URL`: URL of your application (http://localhost:3000 for local development)
 - `GOOGLE_CLIENT_ID`: Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET`: Google OAuth client secret
-- `OPENAI_API_KEY`: OpenAI API key or Ollama setup for AI features
+- LLM API configuration (see .env.example for options)
 
 ## Deployment
 

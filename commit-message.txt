@@ -1,0 +1,13 @@
+refactor: implement flexible LLM integration with multiple provider support
+
+- Replace OpenAI-specific implementation with a flexible LLM service
+- Add support for multiple LLM providers (OpenAI, Anthropic Claude, Google Gemini)
+- Create a custom API option for other LLM providers
+- Remove Ollama integration in favor of API-based providers
+- Update environment variables to support different LLM configurations
+- Update documentation in README.md to reflect the new LLM options
+- Maintain backward compatibility with existing OpenAI configuration
+
+This change allows users to choose their preferred LLM provider while
+maintaining the same functionality. The application now supports OpenAI,
+Anthropic Claude, Google Gemini, or any custom API-compatible LLM service. 
