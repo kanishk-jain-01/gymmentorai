@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import axios from 'axios';
+import { useTheme } from 'next-themes';
 
 // Register ChartJS components
 ChartJS.register(
@@ -56,6 +57,13 @@ export default function WorkoutVisualization() {
   const [exerciseOptions, setExerciseOptions] = useState<string[]>([]);
   const [chartData, setChartData] = useState<ChartData<'line', number[], string> | null>(null);
   const [frequencyData, setFrequencyData] = useState<ChartData<'bar', number[], string> | null>(null);
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Handle theme mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Fetch workouts
   useEffect(() => {
@@ -108,7 +116,7 @@ export default function WorkoutVisualization() {
   
   // Update chart data when selected exercise changes
   useEffect(() => {
-    if (!selectedExercise || workouts.length === 0) return;
+    if (!selectedExercise || workouts.length === 0 || !mounted) return;
     
     // Find all instances of the selected exercise
     const exerciseData: { date: string; weight?: number; reps?: number }[] = [];
@@ -131,6 +139,9 @@ export default function WorkoutVisualization() {
     // Prepare chart data
     if (exerciseData.length > 0) {
       const labels = exerciseData.map(d => new Date(d.date).toLocaleDateString());
+      const isDark = theme === 'dark';
+      const textColor = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
       
       // Weight progression chart
       setChartData({
@@ -165,52 +176,108 @@ export default function WorkoutVisualization() {
         ],
       });
     }
-  }, [selectedExercise, workouts]);
+  }, [selectedExercise, workouts, theme, mounted]);
   
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-64 bg-gray-200 rounded"></div>
-        <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-        <div className="h-64 bg-gray-200 rounded"></div>
+        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
       </div>
     );
   }
   
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500 dark:text-red-400">{error}</div>;
   }
   
   if (workouts.length === 0) {
     return (
-      <div className="bg-white shadow sm:rounded-lg p-6 text-center">
-        <p className="text-gray-500">No workout data available for visualization. Start logging your workouts!</p>
+      <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6 text-center">
+        <p className="text-gray-500 dark:text-gray-400">No workout data available for visualization. Start logging your workouts!</p>
       </div>
     );
   }
   
+  const isDark = theme === 'dark';
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Weight (lbs)',
+          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+        },
+        grid: {
+          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+        },
+        ticks: {
+          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+        },
+        grid: {
+          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+        },
+        ticks: {
+          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+        }
+      }
+    }
+  };
+  
+  const frequencyOptions = {
+    ...chartOptions,
+    scales: {
+      ...chartOptions.scales,
+      y: {
+        ...chartOptions.scales.y,
+        title: {
+          ...chartOptions.scales.y.title,
+          text: 'Number of Workouts'
+        }
+      }
+    }
+  };
+  
   return (
     <div className="space-y-6">
       {analysis && (
-        <div className="bg-white shadow sm:rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">AI Analysis</h3>
-          <div className="prose max-w-none">
-            <p>{analysis}</p>
+        <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">AI Analysis</h3>
+          <div className="prose dark:prose-invert max-w-none">
+            <p className="text-gray-700 dark:text-gray-300">{analysis}</p>
           </div>
         </div>
       )}
       
-      <div className="bg-white shadow sm:rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Exercise Progress</h3>
+      <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Exercise Progress</h3>
         
         <div className="mb-4">
-          <label htmlFor="exercise-select" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="exercise-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Select Exercise
           </label>
           <select
             id="exercise-select"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
             value={selectedExercise || ''}
             onChange={(e) => setSelectedExercise(e.target.value)}
           >
@@ -225,25 +292,7 @@ export default function WorkoutVisualization() {
         {chartData && (
           <div className="h-64">
             <Line
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    title: {
-                      display: true,
-                      text: 'Weight (lbs)'
-                    }
-                  },
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Date'
-                    }
-                  }
-                }
-              }}
+              options={chartOptions}
               data={chartData}
             />
           </div>
@@ -251,23 +300,11 @@ export default function WorkoutVisualization() {
       </div>
       
       {frequencyData && (
-        <div className="bg-white shadow sm:rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Workout Frequency</h3>
+        <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Workout Frequency</h3>
           <div className="h-64">
             <Bar
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    title: {
-                      display: true,
-                      text: 'Number of Workouts'
-                    }
-                  }
-                }
-              }}
+              options={frequencyOptions}
               data={frequencyData}
             />
           </div>
