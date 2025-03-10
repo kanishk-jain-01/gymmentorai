@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { parseWorkoutText } from '@/lib/ai/openai';
+import { parseWorkoutText } from '@/lib/ai/llm-service';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
