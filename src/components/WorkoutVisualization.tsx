@@ -52,7 +52,6 @@ export default function WorkoutVisualization() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [exerciseOptions, setExerciseOptions] = useState<string[]>([]);
   const [chartData, setChartData] = useState<ChartData<'line', number[], string> | null>(null);
@@ -98,22 +97,6 @@ export default function WorkoutVisualization() {
     fetchWorkouts();
   }, []);
   
-  // Fetch AI analysis
-  useEffect(() => {
-    const fetchAnalysis = async () => {
-      if (workouts.length === 0) return;
-      
-      try {
-        const response = await axios.get('/api/ai/analyze');
-        setAnalysis(response.data.analysis);
-      } catch (err) {
-        console.error('Failed to load analysis:', err);
-      }
-    };
-    
-    fetchAnalysis();
-  }, [workouts]);
-  
   // Update chart data when selected exercise changes
   useEffect(() => {
     if (!selectedExercise || workouts.length === 0 || !mounted) return;
@@ -123,7 +106,6 @@ export default function WorkoutVisualization() {
     
     workouts.forEach(workout => {
       workout.exercises.forEach(exercise => {
-        // Use normalized exercise names for comparison
         if (exercise.name === selectedExercise) {
           exerciseData.push({
             date: workout.date,
@@ -260,15 +242,6 @@ export default function WorkoutVisualization() {
   
   return (
     <div className="space-y-6">
-      {analysis && (
-        <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">AI Analysis</h3>
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="text-gray-700 dark:text-gray-300">{analysis}</p>
-          </div>
-        </div>
-      )}
-      
       <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Exercise Progress</h3>
         
