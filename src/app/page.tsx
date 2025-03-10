@@ -110,22 +110,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
-      {/* Small debug section at the bottom */}
-      {process.env.NODE_ENV !== 'production' && (
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-8">
-          <details className="mt-4 p-2 border rounded bg-gray-50 text-xs">
-            <summary className="font-medium cursor-pointer">Session Debug Info</summary>
-            <div className="mt-2 p-2 bg-white rounded">
-              <p>Status: {status}</p>
-              <p>User ID: {session?.user?.id || 'Not available'}</p>
-              <pre className="mt-2 overflow-auto max-h-40">
-                {JSON.stringify(session, null, 2)}
-              </pre>
-            </div>
-          </details>
-        </div>
-      )}
     </div>
   );
 }
