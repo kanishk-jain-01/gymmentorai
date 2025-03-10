@@ -250,6 +250,20 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
         
         Only include fields that are explicitly mentioned or can be reasonably inferred.
         For exercises, at minimum include the name.
+        
+        IMPORTANT INSTRUCTIONS FOR EXERCISE NAMES:
+        1. Normalize all exercise names to a standard format
+        2. Use proper capitalization (e.g., "Bench Press" not "bench press")
+        3. Use the plural form for bodyweight exercises (e.g., "Pushups" not "Pushup")
+        4. Standardize common variations:
+           - "pushup", "push up", "push-up" should all be "Pushups"
+           - "pullup", "pull up", "pull-up" should all be "Pullups"
+           - "squat" should be "Squats"
+           - "bench", "bench press", "benchpress" should all be "Bench Press"
+           - "deadlift" should be "Deadlifts"
+           - "running", "run", "jogging", "jog" should all be "Running"
+        5. Correct minor spelling mistakes (e.g., "puships" should be "Pushups")
+        
         IMPORTANT: All numeric values (sets, reps, weight, duration, distance) must be numbers, not strings.`
       },
       {
@@ -268,7 +282,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
       notes: parsedResponse.notes,
       exercises: Array.isArray(parsedResponse.exercises) 
         ? parsedResponse.exercises.map((ex: any) => ({
-            name: ex.name,
+            name: ex.name, // The LLM should now return normalized names
             sets: ensureNumericType(ex.sets),
             reps: ensureNumericType(ex.reps),
             weight: ensureNumericType(ex.weight),
