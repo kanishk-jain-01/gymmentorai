@@ -109,7 +109,7 @@ This project uses PostgreSQL for all environments:
 
 2. **Environment Setup**
    - Copy `.env.example` to `.env.local` for local development
-   - Update the `DATABASE_URL` in both `.env` and `.env.local`
+   - Update the `DATABASE_URL` in `.env.local`
    - Run migrations: `npx prisma migrate dev`
 
 ### Environment Variables
