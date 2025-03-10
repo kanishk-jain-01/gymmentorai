@@ -10,35 +10,6 @@ const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
 
-// For development only - get a default user ID if authentication is not available
-async function getDefaultUserId() {
-  if (process.env.NODE_ENV === 'production') {
-    return null;
-  }
-  
-  // In development, try to find or create a default user
-  try {
-    let defaultUser = await prisma.user.findFirst({
-      where: {
-        email: 'dev@example.com',
-      },
-    });
-    
-    if (!defaultUser) {
-      defaultUser = await prisma.user.create({
-        data: {
-          name: 'Development User',
-          email: 'dev@example.com',
-        },
-      });
-    }
-    
-    return defaultUser.id;
-  } catch (error) {
-    return null;
-  }
-}
-
 // Helper function to ensure numeric values are properly converted
 function ensureNumericType(value: any): number | undefined {
   if (value === null || value === undefined) {
@@ -54,24 +25,9 @@ function ensureNumericType(value: any): number | undefined {
 
 export async function POST(req: NextRequest) {
   try {
-    // Try to get user ID from session or use default in development
-    let userId: string | null = null;
-    
-    try {
-      // Check authentication - use try/catch to handle potential errors
-      const session = await getServerSession(authOptions);
-      
-      if (session?.user) {
-        userId = (session.user as any)?.id;
-      }
-    } catch (sessionError) {
-      // Handle session error silently
-    }
-    
-    // In development, use a default user if no authenticated user
-    if (!userId && process.env.NODE_ENV !== 'production') {
-      userId = await getDefaultUserId();
-    }
+    // Get user ID from session
+    const session = await getServerSession(authOptions);
+    const userId = session?.user ? (session.user as any)?.id : null;
     
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
@@ -137,24 +93,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // Try to get user ID from session or use default in development
-    let userId: string | null = null;
-    
-    try {
-      // Check authentication - use try/catch to handle potential errors
-      const session = await getServerSession(authOptions);
-      
-      if (session?.user) {
-        userId = (session.user as any)?.id;
-      }
-    } catch (sessionError) {
-      // Handle session error silently
-    }
-    
-    // In development, use a default user if no authenticated user
-    if (!userId && process.env.NODE_ENV !== 'production') {
-      userId = await getDefaultUserId();
-    }
+    // Get user ID from session
+    const session = await getServerSession(authOptions);
+    const userId = session?.user ? (session.user as any)?.id : null;
     
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
