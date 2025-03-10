@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 interface Exercise {
   id: string;
@@ -27,6 +27,14 @@ interface WorkoutListProps {
 }
 
 export default function WorkoutList({ workouts, isLoading }: WorkoutListProps) {
+  
+  // Function to format date in a timezone-agnostic way
+  const formatCalendarDate = (dateStr: string) => {
+    // Parse the date with a fixed time (noon UTC) to avoid timezone issues
+    const date = parseISO(`${dateStr}T12:00:00Z`);
+    return format(date, 'MMM d, yyyy');
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md p-6 border border-gray-200 dark:border-gray-700">
@@ -66,7 +74,7 @@ export default function WorkoutList({ workouts, isLoading }: WorkoutListProps) {
                 </h3>
                 <div className="ml-2 flex-shrink-0 flex">
                   <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
-                    {format(new Date(workout.date), 'MMM d, yyyy')}
+                    {formatCalendarDate(workout.date)}
                   </p>
                 </div>
               </div>

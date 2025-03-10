@@ -232,7 +232,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
         Parse the following workout description and return a JSON object with the following structure:
         {
           "name": "optional workout name",
-          "date": "ISO date string (use today if not specified)",
+          "date": "ISO date string",
           "duration": optional duration in minutes,
           "notes": "optional notes",
           "exercises": [
