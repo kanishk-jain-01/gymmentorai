@@ -6,7 +6,7 @@ const openai = process.env.OPENAI_API_KEY
   : null;
 
 if (!openai) {
-  console.warn('OpenAI API key not found. Using mock data for development.');
+  console.warn('OpenAI API key not found. AI features will be limited.');
 }
 
 export interface ParsedWorkout {
@@ -25,51 +25,6 @@ export interface ParsedWorkout {
   }[];
 }
 
-// Mock parsed workout for development
-const mockParsedWorkout: ParsedWorkout = {
-  name: "Full Body Workout",
-  date: new Date(),
-  duration: 60,
-  notes: "Felt strong today",
-  exercises: [
-    {
-      name: "Bench Press",
-      sets: 3,
-      reps: 10,
-      weight: 185,
-    },
-    {
-      name: "Squats",
-      sets: 3,
-      reps: 8,
-      weight: 225,
-    },
-    {
-      name: "Treadmill",
-      duration: 1200, // 20 minutes in seconds
-      distance: 2.5,
-      notes: "Moderate pace"
-    }
-  ]
-};
-
-// Mock analysis for development
-export const mockAnalysis = `
-Based on your recent workouts, here's an analysis of your fitness journey:
-
-Strengths:
-- Consistent training frequency with regular workouts
-- Good balance between upper and lower body exercises
-- Progressive overload on key lifts like bench press and squats
-
-Areas for improvement:
-- Consider adding more variety to your routine
-- Your workout duration is good, but you might benefit from shorter, more intense sessions
-- Try to increase weight on bench press by 5-10 lbs in the next few weeks
-
-Keep up the good work! Your consistency is the key to long-term progress.
-`;
-
 // Helper function to ensure numeric values are properly converted
 function ensureNumericType(value: any): number | undefined {
   if (value === null || value === undefined) {
@@ -87,7 +42,7 @@ function ensureNumericType(value: any): number | undefined {
  * Check if AI services are available
  */
 export function isAIAvailable(): boolean {
-  return !!openai && process.env.NODE_ENV === 'production';
+  return !!openai || !!process.env.OLLAMA_URL;
 }
 
 /**
@@ -112,8 +67,7 @@ async function callOpenAI(messages: any[], responseFormat?: { type: string }) {
 
 /**
  * Parse a natural language workout description into structured data
- * In development, returns mock data
- * In production, uses OpenAI
+ * Uses OpenAI or Ollama depending on configuration
  */
 export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
   // First check if Ollama is configured
@@ -122,13 +76,13 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     try {
       return await parseWithOllama(text);
     } catch (error) {
-      console.error('Ollama parsing failed, falling back to alternatives:', error);
-      // Fall through to next options if Ollama fails
+      console.error('Ollama parsing failed, falling back to OpenAI:', error);
+      // Fall through to OpenAI if Ollama fails
     }
   }
   
-  // Then try OpenAI if available
-  if (isAIAvailable()) {
+  // Then try OpenAI
+  if (openai) {
     try {
       // Use OpenAI
       const response = await callOpenAI([
@@ -186,16 +140,12 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
       };
     } catch (error) {
       console.error('OpenAI parsing failed:', error);
-      // Fall through to mock data
+      throw new Error('Failed to parse workout text: AI services unavailable or error occurred');
     }
   }
   
-  // In development or if all else fails, return mock data
-  console.log('Using mock workout data (development mode or AI services unavailable)');
-  return {
-    ...mockParsedWorkout,
-    date: new Date(), // Always use current date for the mock
-  };
+  // If no AI services are available
+  throw new Error('No AI services available. Please configure OpenAI API key or Ollama URL.');
 }
 
 /**
@@ -206,9 +156,9 @@ export async function analyzeWorkouts(workoutData: any[]): Promise<string> {
     return "Not enough workout data to provide analysis. Please log more workouts.";
   }
   
-  // If in development or OpenAI client is not available, use mock analysis
-  if (!isAIAvailable()) {
-    return mockAnalysis;
+  // Check if OpenAI is available
+  if (!openai) {
+    throw new Error('OpenAI API key not configured. Analysis features unavailable.');
   }
   
   try {
@@ -230,7 +180,7 @@ export async function analyzeWorkouts(workoutData: any[]): Promise<string> {
     return response.choices[0].message.content || "Unable to generate analysis.";
   } catch (error) {
     console.error('Error analyzing workouts:', error);
-    return "Sorry, we couldn't generate an analysis at this time. Please try again later.";
+    throw new Error('Failed to analyze workouts: AI service error');
   }
 }
 
@@ -329,10 +279,6 @@ async function parseWithOllama(text: string): Promise<ParsedWorkout> {
     }
   } catch (error) {
     console.error('Error parsing with Ollama:', error);
-    // Fall back to mock data if Ollama fails
-    return {
-      ...mockParsedWorkout,
-      date: new Date(),
-    };
+    throw error;
   }
 } 
