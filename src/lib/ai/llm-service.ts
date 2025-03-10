@@ -296,39 +296,4 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     console.error('LLM parsing failed:', error);
     throw new Error('Failed to parse workout text: AI service error');
   }
-}
-
-/**
- * Analyze workout data and provide insights
- */
-export async function analyzeWorkouts(workoutData: any[]): Promise<string> {
-  if (workoutData.length === 0) {
-    return "Not enough workout data to provide analysis. Please log more workouts.";
-  }
-  
-  if (!isAIAvailable()) {
-    throw new Error('No LLM service configured. Please set up an LLM API provider.');
-  }
-  
-  try {
-    // Get AI analysis using the configured provider
-    const response = await callLLM([
-      {
-        role: "system",
-        content: `You are a fitness coach analyzing workout data. 
-        Provide insights, trends, and recommendations based on the user's recent workouts.
-        Focus on progress, consistency, exercise balance, and potential areas for improvement.
-        Keep your analysis concise but informative, with actionable advice.`
-      },
-      {
-        role: "user",
-        content: JSON.stringify(workoutData)
-      }
-    ]);
-    
-    return response.choices[0].message.content || "Unable to generate analysis.";
-  } catch (error) {
-    console.error('Error analyzing workouts:', error);
-    throw new Error('Failed to analyze workouts: AI service error');
-  }
 } 
