@@ -97,7 +97,11 @@ export default function Dashboard() {
           
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Workouts</h2>
-            <WorkoutList workouts={workouts} isLoading={isLoading} />
+            <WorkoutList 
+              workouts={workouts} 
+              isLoading={isLoading} 
+              onWorkoutUpdated={fetchWorkouts}
+            />
           </div>
         </div>
       </div>

@@ -123,6 +123,7 @@ export default function WorkoutVisualization() {
     
     workouts.forEach(workout => {
       workout.exercises.forEach(exercise => {
+        // Use normalized exercise names for comparison
         if (exercise.name === selectedExercise) {
           exerciseData.push({
             date: workout.date,
