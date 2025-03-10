@@ -7,7 +7,7 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GymMentor - AI-Powered Workout Tracking",
+  title: "GymMentorAI - AI-Powered Workout Tracking",
   description: "Track your workouts with AI assistance",
 };
 
