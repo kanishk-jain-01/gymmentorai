@@ -30,7 +30,8 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const workoutId = params.id;
+    // Ensure params is awaited before accessing properties
+    const workoutId = params?.id;
     
     // Get user ID from session
     const session = await getServerSession(authOptions);
@@ -126,7 +127,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const workoutId = params.id;
+    // Ensure params is awaited before accessing properties
+    const workoutId = params?.id;
     
     // Get user ID from session
     const session = await getServerSession(authOptions);
