@@ -11,8 +11,6 @@ const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
 
-// Helper function removed and imported from utils
-
 export async function POST(req: NextRequest) {
   try {
     // Get user ID from session
@@ -35,20 +33,13 @@ export async function POST(req: NextRequest) {
     const { text } = result.data;
     
     try {
-      // Append today's date to the input text
-      const today = new Date().toISOString().split('T')[0]; // Gets date in YYYY-MM-DD format
-      const textWithDate = `${text} on ${today}`;
-
-      // Parse workout text using AI
-      const parsedWorkout = await parseWorkoutText(textWithDate);
+      // Parse workout text using AI (without appending date)
+      const parsedWorkout = await parseWorkoutText(text);
       
-      // Create a date object at noon UTC for this calendar date to avoid any timezone issues
-      const todayDate = new Date(`${today}T12:00:00Z`);
-      
-      // Create workout in database
+      // Create workout in database with current date/time
       const workoutData = {
         name: parsedWorkout.name,
-        date: todayDate,
+        date: parsedWorkout.date, // Just use the current date/time without any formatting
         duration: ensureNumericType(parsedWorkout.duration),
         notes: parsedWorkout.notes,
         rawInput: text,
@@ -111,18 +102,8 @@ export async function GET(req: NextRequest) {
       },
     });
     
-    // Format dates to ensure they're interpreted correctly by the client
-    const formattedWorkouts = workouts.map(workout => {
-      // Extract just the date part (YYYY-MM-DD) to make it timezone-agnostic
-      const dateStr = workout.date.toISOString().split('T')[0];
-      
-      return {
-        ...workout,
-        date: dateStr,
-      };
-    });
-    
-    return NextResponse.json({ workouts: formattedWorkouts });
+    // Return workouts without any date formatting
+    return NextResponse.json({ workouts });
   } catch (error) {
     return NextResponse.json({ 
       error: 'Internal server error',
