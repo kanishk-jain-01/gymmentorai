@@ -88,9 +88,15 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{exercise.name}</p>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-x-4 text-xs text-gray-500 dark:text-gray-400">
-                          {exercise.sets && exercise.reps && (
+                          {/* Display sets and reps in different scenarios */}
+                          {exercise.sets && exercise.reps ? (
                             <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">{exercise.sets} sets × {exercise.reps} reps</span>
-                          )}
+                          ) : exercise.sets ? (
+                            <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">{exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}</span>
+                          ) : exercise.reps ? (
+                            <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">{exercise.reps} reps</span>
+                          ) : null}
+                          
                           {exercise.weight && (
                             <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">{exercise.weight} {exercise.weight === 1 ? 'lb' : 'lbs'}</span>
                           )}
