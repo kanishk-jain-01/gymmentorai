@@ -205,7 +205,6 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
         Parse the following workout description and return a JSON object with the following structure:
         {
           "name": "optional workout name",
-          "date": "ISO date string",
           "duration": optional duration in minutes,
           "notes": "optional notes",
           "exercises": [
@@ -250,7 +249,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     // Ensure numeric values are properly converted
     return {
       name: parsedResponse.name,
-      date: parsedResponse.date ? new Date(parsedResponse.date) : new Date(),
+      date: new Date(),
       duration: ensureNumericType(parsedResponse.duration),
       notes: parsedResponse.notes,
       exercises: Array.isArray(parsedResponse.exercises) 

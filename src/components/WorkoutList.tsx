@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { format, parseISO } from 'date-fns';
 import WorkoutEditor from './WorkoutEditor';
 import { Exercise, Workout } from '@/types';
 
@@ -11,13 +10,6 @@ interface WorkoutListProps {
 
 export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: WorkoutListProps) {
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
-  
-  // Function to format date in a timezone-agnostic way
-  const formatCalendarDate = (dateStr: string) => {
-    // Parse the date with a fixed time (noon UTC) to avoid timezone issues
-    const date = parseISO(`${dateStr}T12:00:00Z`);
-    return format(date, 'MMM d, yyyy');
-  };
 
   if (isLoading) {
     return (
@@ -65,7 +57,7 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                       Edit
                     </button>
                     <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
-                      {formatCalendarDate(workout.date)}
+                      {new Date(workout.date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
