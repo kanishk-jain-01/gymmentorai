@@ -16,12 +16,6 @@ export default function Layout({ children }: LayoutProps) {
   const loading = status === 'loading';
   const { resolvedTheme } = useTheme();
 
-  // For debugging
-  useEffect(() => {
-    console.log('Layout rendered with theme:', resolvedTheme);
-    console.log('HTML classes:', document.documentElement.className);
-  }, [resolvedTheme]);
-
   // Apply theme on mount and when theme changes
   useEffect(() => {
     applyTheme();

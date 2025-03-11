@@ -12,14 +12,6 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  // For debugging
-  useEffect(() => {
-    if (mounted) {
-      console.log('Current theme:', theme);
-      console.log('Resolved theme:', resolvedTheme);
-    }
-  }, [theme, resolvedTheme, mounted]);
-
   // Ensure the theme is applied correctly
   useEffect(() => {
     if (mounted && resolvedTheme) {
@@ -40,7 +32,6 @@ export default function ThemeToggle() {
 
   const toggleTheme = () => {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    console.log('Setting theme to:', newTheme);
     
     // Directly manipulate the DOM for immediate visual feedback
     if (newTheme === 'dark') {
