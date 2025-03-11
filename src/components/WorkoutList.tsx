@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import WorkoutEditor from './WorkoutEditor';
+import { Exercise, Workout } from '@/types';
 
-interface Exercise {
-  id: string;
-  name: string;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  distance?: number;
-  notes?: string;
-}
+// Using shared types instead of local interfaces
+// interface Exercise {
+//   id: string;
+//   name: string;
+//   sets?: number;
+//   reps?: number;
+//   weight?: number;
+//   duration?: number;
+//   distance?: number;
+//   notes?: string;
+// }
 
-interface Workout {
-  id: string;
-  date: string;
-  name?: string;
-  notes?: string;
-  duration?: number;
-  exercises: Exercise[];
-}
+// interface Workout {
+//   id: string;
+//   date: string;
+//   name?: string;
+//   notes?: string;
+//   duration?: number;
+//   exercises: Exercise[];
+// }
 
 interface WorkoutListProps {
   workouts: Workout[];
