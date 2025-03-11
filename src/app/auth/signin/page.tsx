@@ -2,13 +2,11 @@
 
 import { signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
   const [callbackUrl, setCallbackUrl] = useState('/dashboard');
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   
   useEffect(() => {
     // Check if we're being redirected from somewhere
