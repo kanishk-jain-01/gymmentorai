@@ -17,4 +17,56 @@ export function ensureNumericType(value: any): number | undefined {
   
   // Return undefined if not a valid number
   return isNaN(num) ? undefined : num;
+}
+
+/**
+ * Organizes workouts by year
+ */
+export function organizeWorkoutsByYear(workouts: any[]) {
+  const workoutsByYear: Record<string, any[]> = {};
+  
+  workouts.forEach(workout => {
+    const date = new Date(workout.date);
+    const year = date.getFullYear().toString();
+    
+    if (!workoutsByYear[year]) {
+      workoutsByYear[year] = [];
+    }
+    
+    workoutsByYear[year].push(workout);
+  });
+  
+  return workoutsByYear;
+}
+
+/**
+ * Organizes workouts by month for a specific year
+ */
+export function organizeWorkoutsByMonth(workouts: any[], year: string) {
+  const workoutsByMonth: Record<string, any[]> = {};
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  
+  // Filter workouts for the specified year
+  const yearWorkouts = workouts.filter(workout => {
+    const date = new Date(workout.date);
+    return date.getFullYear().toString() === year;
+  });
+  
+  // Organize by month
+  yearWorkouts.forEach(workout => {
+    const date = new Date(workout.date);
+    const monthIndex = date.getMonth();
+    const monthName = monthNames[monthIndex];
+    
+    if (!workoutsByMonth[monthName]) {
+      workoutsByMonth[monthName] = [];
+    }
+    
+    workoutsByMonth[monthName].push(workout);
+  });
+  
+  return workoutsByMonth;
 } 
