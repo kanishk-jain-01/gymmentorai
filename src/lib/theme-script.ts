@@ -22,13 +22,7 @@ export function applyTheme(): void {
         document.documentElement.classList.remove('dark');
       }
       
-      // Log for debugging
-      console.log('Theme script executed:', {
-        storedTheme,
-        systemPrefersDark,
-        shouldUseDarkTheme,
-        classList: document.documentElement.classList.toString()
-      });
+      // Debug logging removed
     }
   } catch (error) {
     console.error('Error applying theme:', error);

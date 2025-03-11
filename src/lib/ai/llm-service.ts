@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { ensureNumericType } from '@/lib/utils';
 
 // LLM Provider Types
 export type LLMProvider = 'openai' | 'anthropic' | 'google' | 'custom';
@@ -79,19 +80,6 @@ export interface ParsedWorkout {
     distance?: number;
     notes?: string;
   }[];
-}
-
-// Helper function to ensure numeric values are properly converted
-function ensureNumericType(value: any): number | undefined {
-  if (value === null || value === undefined) {
-    return undefined;
-  }
-  
-  // Convert string to number
-  const num = Number(value);
-  
-  // Return undefined if not a valid number
-  return isNaN(num) ? undefined : num;
 }
 
 /**

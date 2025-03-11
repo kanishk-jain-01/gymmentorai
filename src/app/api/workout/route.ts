@@ -4,24 +4,14 @@ import { parseWorkoutText } from '@/lib/ai/llm-service';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { ensureNumericType } from '@/lib/utils';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
   text: z.string().min(1, 'Workout description is required'),
 });
 
-// Helper function to ensure numeric values are properly converted
-function ensureNumericType(value: any): number | undefined {
-  if (value === null || value === undefined) {
-    return undefined;
-  }
-  
-  // Convert string to number
-  const num = Number(value);
-  
-  // Return undefined if not a valid number
-  return isNaN(num) ? undefined : num;
-}
+// Helper function removed and imported from utils
 
 export async function POST(req: NextRequest) {
   try {
