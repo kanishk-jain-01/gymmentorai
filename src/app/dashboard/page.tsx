@@ -8,6 +8,7 @@ import WorkoutInput from '@/components/WorkoutInput';
 import WorkoutList from '@/components/WorkoutList';
 import axios from 'axios';
 import { Workout } from '@/types';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -77,7 +78,12 @@ export default function Dashboard() {
           </div>
           
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Workouts</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">Recent Workouts</h2>
+              <Link href="/workouts" className="text-sm text-indigo-600 hover:text-indigo-800">
+                View All →
+              </Link>
+            </div>
             <WorkoutList 
               workouts={workouts} 
               isLoading={isLoading} 

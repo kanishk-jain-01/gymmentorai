@@ -100,6 +100,7 @@ export async function GET(req: NextRequest) {
       orderBy: {
         date: 'desc',
       },
+      take: 3, // Limit to the three most recent workouts
     });
     
     // Return workouts without any date formatting
