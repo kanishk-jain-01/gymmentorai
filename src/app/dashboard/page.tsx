@@ -7,26 +7,28 @@ import Layout from '@/components/Layout';
 import WorkoutInput from '@/components/WorkoutInput';
 import WorkoutList from '@/components/WorkoutList';
 import axios from 'axios';
+import { Workout } from '@/types';
 
-interface Exercise {
-  id: string;
-  name: string;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  distance?: number;
-  notes?: string;
-}
+// Use shared types instead of local interfaces
+// interface Exercise {
+//   id: string;
+//   name: string;
+//   sets?: number;
+//   reps?: number;
+//   weight?: number;
+//   duration?: number;
+//   distance?: number;
+//   notes?: string;
+// }
 
-interface Workout {
-  id: string;
-  date: string;
-  name?: string;
-  notes?: string;
-  duration?: number;
-  exercises: Exercise[];
-}
+// interface Workout {
+//   id: string;
+//   date: string;
+//   name?: string;
+//   notes?: string;
+//   duration?: number;
+//   exercises: Exercise[];
+// }
 
 export default function Dashboard() {
   const { data: session, status } = useSession();

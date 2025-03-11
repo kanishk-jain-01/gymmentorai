@@ -1,26 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import axios from 'axios';
-
-interface Exercise {
-  id: string;
-  name: string;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  distance?: number;
-  notes?: string;
-}
-
-interface Workout {
-  id: string;
-  date: string;
-  name?: string;
-  notes?: string;
-  duration?: number;
-  exercises: Exercise[];
-}
+import { Exercise, Workout } from '@/types';
 
 interface WorkoutEditorProps {
   workout: Workout;

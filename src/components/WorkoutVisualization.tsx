@@ -14,6 +14,7 @@ import {
 import { Line, Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { useTheme } from 'next-themes';
+import { Exercise, Workout } from '@/types';
 
 // Register ChartJS components
 ChartJS.register(
@@ -26,27 +27,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-interface Exercise {
-  id: string;
-  name: string;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  distance?: number;
-  notes?: string;
-  createdAt: string;
-}
-
-interface Workout {
-  id: string;
-  date: string;
-  name?: string;
-  notes?: string;
-  duration?: number;
-  exercises: Exercise[];
-}
 
 export default function WorkoutVisualization() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -161,6 +141,54 @@ export default function WorkoutVisualization() {
     }
   }, [selectedExercise, workouts, theme, mounted]);
   
+  // Create a function to get common chart options based on theme
+  const getChartOptions = (yAxisTitle: string) => {
+    const isDark = theme === 'dark';
+    const textColor = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: yAxisTitle,
+            color: textColor
+          },
+          grid: {
+            color: gridColor
+          },
+          ticks: {
+            color: textColor
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Date',
+            color: textColor
+          },
+          grid: {
+            color: gridColor
+          },
+          ticks: {
+            color: textColor
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor
+          }
+        }
+      }
+    };
+  };
+  
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
@@ -185,60 +213,8 @@ export default function WorkoutVisualization() {
   }
   
   const isDark = theme === 'dark';
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Weight (lbs)',
-          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-        },
-        grid: {
-          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-        },
-        ticks: {
-          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-        }
-      },
-      x: {
-        title: {
-          display: true,
-          text: 'Date',
-          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-        },
-        grid: {
-          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-        },
-        ticks: {
-          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        labels: {
-          color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
-        }
-      }
-    }
-  };
-  
-  const frequencyOptions = {
-    ...chartOptions,
-    scales: {
-      ...chartOptions.scales,
-      y: {
-        ...chartOptions.scales.y,
-        title: {
-          ...chartOptions.scales.y.title,
-          text: 'Number of Workouts'
-        }
-      }
-    }
-  };
+  const weightChartOptions = getChartOptions('Weight (lbs)');
+  const frequencyOptions = getChartOptions('Number of Workouts');
   
   return (
     <div className="space-y-6">
@@ -256,9 +232,7 @@ export default function WorkoutVisualization() {
             onChange={(e) => setSelectedExercise(e.target.value)}
           >
             {exerciseOptions.map(exercise => (
-              <option key={exercise} value={exercise}>
-                {exercise}
-              </option>
+              <option key={exercise} value={exercise}>{exercise}</option>
             ))}
           </select>
         </div>
@@ -266,24 +240,25 @@ export default function WorkoutVisualization() {
         {chartData && (
           <div className="h-64">
             <Line
-              options={chartOptions}
+              options={weightChartOptions}
               data={chartData}
             />
           </div>
         )}
       </div>
       
-      {frequencyData && (
-        <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Workout Frequency</h3>
+      <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Workout Frequency</h3>
+        
+        {frequencyData && (
           <div className="h-64">
             <Bar
               options={frequencyOptions}
               data={frequencyData}
             />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 } 

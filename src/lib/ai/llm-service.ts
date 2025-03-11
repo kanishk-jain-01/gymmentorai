@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { ensureNumericType } from '@/lib/utils';
+import { ParsedWorkout } from '@/types';
 
 // LLM Provider Types
 export type LLMProvider = 'openai' | 'anthropic' | 'google' | 'custom';
@@ -64,22 +65,6 @@ const openaiClient = llmConfig?.provider === 'openai'
 
 if (!llmConfig) {
   console.warn('No LLM API configuration found. AI features will be unavailable.');
-}
-
-export interface ParsedWorkout {
-  name?: string;
-  date: Date;
-  duration?: number;
-  notes?: string;
-  exercises: {
-    name: string;
-    sets?: number;
-    reps?: number;
-    weight?: number;
-    duration?: number;
-    distance?: number;
-    notes?: string;
-  }[];
 }
 
 /**
