@@ -88,6 +88,7 @@ This project follows a structured development workflow using Git branches and Ve
 4. Set up the database:
    ```bash
    npx prisma migrate dev
+   npx prisma generate
    ```
 
 5. Start the development server:
