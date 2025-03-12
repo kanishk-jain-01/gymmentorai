@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { Session } from "next-auth";
 import { NextAuthOptions } from "next-auth";
 import { setupTrialPeriod } from "@/lib/stripe/subscription-service";
+import { UserWithSubscription } from "@/types";
 
 // Extend the Session type to include user.id
 interface ExtendedSession extends Session {
@@ -43,26 +44,7 @@ export const authOptions: NextAuthOptions = {
       return session as ExtendedSession;
     },
     async signIn({ user, account, profile }) {
-      // Set up trial period for new users
-      if (account?.provider === 'google' && user.id) {
-        try {
-          // Check if the user already has a trial period set
-          const existingUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: { trialEndsAt: true }
-          });
-          
-          // If the user doesn't have a trial period set, set it up
-          if (!existingUser?.trialEndsAt) {
-            await setupTrialPeriod(user.id);
-          }
-        } catch (error) {
-          console.error('Error setting up trial period:', error);
-          // Don't block sign-in if there's an error setting up the trial
-        }
-      }
-      
-      // Always allow sign-in
+      // Always allow sign-in first
       return true;
     },
     async redirect({ url, baseUrl }) {
@@ -78,6 +60,30 @@ export const authOptions: NextAuthOptions = {
       
       // Otherwise, return to the base URL
       return baseUrl;
+    }
+  },
+  events: {
+    // Set up trial period after the user is created
+    async createUser({ user }) {
+      try {
+        if (user.id) {
+          // Calculate trial end date directly
+          const trialEndDate = new Date();
+          const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
+          trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DAYS);
+          
+          // Use raw query to update the user to avoid TypeScript errors
+          await prisma.$executeRaw`
+            UPDATE "User" 
+            SET "trialEndsAt" = ${trialEndDate} 
+            WHERE id = ${user.id}
+          `;
+          
+          console.log(`Trial period set up for user ${user.id} until ${trialEndDate}`);
+        }
+      } catch (error) {
+        console.error('Error setting up trial period:', error);
+      }
     }
   },
   debug: false, // Set to false to disable debug messages
