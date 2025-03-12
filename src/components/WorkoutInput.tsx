@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import Link from 'next/link';
 
 interface WorkoutInputProps {
   onWorkoutAdded: () => void;
@@ -12,7 +13,7 @@ interface FormData {
 
 export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'subscription'; message: string } | null>(null);
   
   const {
     register,
@@ -31,8 +32,16 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
       reset();
       onWorkoutAdded();
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
-      setFeedback({ type: 'error', message: errorMessage });
+      // Check if this is a subscription required error
+      if (err.response?.data?.code === 'SUBSCRIPTION_REQUIRED') {
+        setFeedback({ 
+          type: 'subscription', 
+          message: err.response?.data?.message || 'Your trial has ended. Please subscribe to continue adding workouts.' 
+        });
+      } else {
+        const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
+        setFeedback({ type: 'error', message: errorMessage });
+      }
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -63,8 +72,24 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
           </div>
           
           {feedback && (
-            <div className={`mt-2 text-sm ${feedback.type === 'error' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+            <div className={`mt-2 text-sm ${
+              feedback.type === 'error' 
+                ? 'text-red-600 dark:text-red-400' 
+                : feedback.type === 'subscription'
+                  ? 'text-yellow-600 dark:text-yellow-400'
+                  : 'text-green-600 dark:text-green-400'
+            }`}>
               {feedback.message}
+              {feedback.type === 'subscription' && (
+                <div className="mt-2">
+                  <Link 
+                    href="/account" 
+                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
+                  >
+                    Subscribe now →
+                  </Link>
+                </div>
+              )}
             </div>
           )}
           

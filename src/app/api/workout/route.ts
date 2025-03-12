@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { ensureNumericType } from '@/lib/utils';
+import { canAddWorkouts } from '@/lib/stripe/stripe-server';
+import { UserWithSubscription } from '@/types';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
@@ -19,6 +21,24 @@ export async function POST(req: NextRequest) {
     
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    
+    // Check if the user can add workouts based on subscription status
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    }) as unknown as UserWithSubscription;
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
+    // Check if the user can add workouts
+    if (!canAddWorkouts(user.trialEndsAt, user.stripeCurrentPeriodEnd)) {
+      return NextResponse.json({ 
+        error: 'Subscription required',
+        message: 'Your trial period has ended. Please subscribe to continue adding workouts.',
+        code: 'SUBSCRIPTION_REQUIRED'
+      }, { status: 403 });
     }
     
     // Parse request body
