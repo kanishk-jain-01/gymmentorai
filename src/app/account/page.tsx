@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import SubscriptionStatus from '@/components/SubscriptionStatus';
 import axios from 'axios';
+import TrialSetup from '@/components/TrialSetup';
 
 // Component to handle search params
 function AccountContent() {
@@ -234,6 +235,7 @@ function AccountLoading() {
 export default function AccountPage() {
   return (
     <Layout>
+      <TrialSetup />
       <Suspense fallback={<AccountLoading />}>
         <AccountContent />
       </Suspense>

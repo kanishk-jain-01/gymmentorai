@@ -9,6 +9,7 @@ import WorkoutList from '@/components/WorkoutList';
 import axios from 'axios';
 import { Workout } from '@/types';
 import Link from 'next/link';
+import TrialSetup from '@/components/TrialSetup';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -63,24 +64,26 @@ export default function Dashboard() {
   
   return (
     <Layout>
+      <TrialSetup />
+      
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Log your workouts and track your progress
           </p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Log a Workout</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Log a Workout</h2>
             <WorkoutInput onWorkoutAdded={fetchWorkouts} />
           </div>
           
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Workouts</h2>
-              <Link href="/workouts" className="text-sm text-indigo-600 hover:text-indigo-800">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Workouts</h2>
+              <Link href="/workouts" className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
                 View All →
               </Link>
             </div>
@@ -90,6 +93,15 @@ export default function Dashboard() {
               onWorkoutUpdated={fetchWorkouts}
             />
           </div>
+        </div>
+        
+        <div className="flex justify-center">
+          <Link 
+            href="/visualization" 
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-900"
+          >
+            View Workout Analytics
+          </Link>
         </div>
       </div>
     </Layout>
