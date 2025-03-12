@@ -5,6 +5,7 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from 'next-themes';
 import { applyTheme } from '@/lib/theme-script';
+import ProfileDropdown from './ProfileDropdown';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -68,28 +69,8 @@ export default function Layout({ children }: LayoutProps) {
                   Sign in
                 </button>
               )}
-              {session && (
-                <div className="flex items-center space-x-4">
-                  {session?.user?.image ? (
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src={session.user.image}
-                      alt={session.user.name || 'User'}
-                    />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                      <span className="text-indigo-800 dark:text-indigo-200 font-medium text-sm">
-                        {session?.user?.name?.charAt(0) || 'U'}
-                      </span>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => signOut()}
-                    className="text-sm font-medium text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </div>
+              {session && session.user && (
+                <ProfileDropdown user={session.user} />
               )}
             </div>
           </div>
