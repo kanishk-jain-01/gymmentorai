@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import GoogleProvider from "next-auth/providers/google";
 import { Session } from "next-auth";
 import { NextAuthOptions } from "next-auth";
+import { setupTrialPeriod } from "@/lib/stripe/subscription-service";
 
 // Extend the Session type to include user.id
 interface ExtendedSession extends Session {
@@ -42,6 +43,25 @@ export const authOptions: NextAuthOptions = {
       return session as ExtendedSession;
     },
     async signIn({ user, account, profile }) {
+      // Set up trial period for new users
+      if (account?.provider === 'google' && user.id) {
+        try {
+          // Check if the user already has a trial period set
+          const existingUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { trialEndsAt: true }
+          });
+          
+          // If the user doesn't have a trial period set, set it up
+          if (!existingUser?.trialEndsAt) {
+            await setupTrialPeriod(user.id);
+          }
+        } catch (error) {
+          console.error('Error setting up trial period:', error);
+          // Don't block sign-in if there's an error setting up the trial
+        }
+      }
+      
       // Always allow sign-in
       return true;
     },

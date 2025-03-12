@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,9 +15,7 @@ export async function GET(req: NextRequest) {
     
     // Get user data
     const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
+      where: { id: userId },
       select: {
         id: true,
         name: true,
@@ -73,17 +71,17 @@ export async function GET(req: NextRequest) {
     
     // Set headers for file download
     const headers = new Headers();
-    headers.set('Content-Disposition', `attachment; filename="gymmentor-data-export-${new Date().toISOString().split('T')[0]}.json"`);
     headers.set('Content-Type', 'application/json');
+    headers.set('Content-Disposition', `attachment; filename="gymmentor-data-export-${new Date().toISOString().split('T')[0]}.json"`);
     
     return new NextResponse(JSON.stringify(exportData, null, 2), {
       status: 200,
       headers,
     });
   } catch (error) {
-    console.error('Error exporting user data:', error);
+    console.error('Export error:', error);
     return NextResponse.json({ 
-      error: 'Failed to export user data',
+      error: 'Failed to export data',
       details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
