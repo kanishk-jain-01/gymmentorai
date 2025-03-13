@@ -320,6 +320,9 @@ export default function WorkoutVisualization() {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      animation: {
+        duration: 0 // Disable animations to avoid rendering issues
+      },
       scales: {
         y: {
           beginAtZero: true,
@@ -368,6 +371,11 @@ export default function WorkoutVisualization() {
               return label;
             }
           }
+        }
+      },
+      elements: {
+        line: {
+          tension: 0 // Disable bezier curves at the global level too
         }
       }
     };
@@ -487,11 +495,13 @@ export default function WorkoutVisualization() {
           data: exerciseData.map(d => d[config.metric] || 0),
           borderColor: color.border,
           backgroundColor: color.background,
-          tension: 0.1,
+          tension: 0, // Set to 0 to disable bezier curves completely
           fill: config.chartType === 'line' ? false : undefined,
           // Increase point size for better visibility with few points
           pointRadius: exerciseData.length < 3 ? 5 : 3,
           pointHoverRadius: exerciseData.length < 3 ? 7 : 5,
+          spanGaps: true, // Handle missing data points gracefully
+          stepped: config.chartType === 'line' ? 'before' : undefined, // Use stepped lines for line charts
         },
       ],
     };
