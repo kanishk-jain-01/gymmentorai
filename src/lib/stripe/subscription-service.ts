@@ -151,6 +151,7 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
       stripePriceId: true,
       stripeCurrentPeriodEnd: true,
       trialEndsAt: true,
+      cancelAtPeriodEnd: true,
     },
   });
 
@@ -175,5 +176,7 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
     plan: currentPlan,
     periodEnd: user.stripeCurrentPeriodEnd,
     canAddWorkouts: canAdd,
+    stripeSubscriptionId: user.stripeSubscriptionId,
+    cancelAtPeriodEnd: user.cancelAtPeriodEnd || false,
   };
 } 
