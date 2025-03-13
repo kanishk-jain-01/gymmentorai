@@ -123,7 +123,11 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
                     </h4>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {status.plan} plan
-                      {status.periodEnd && ` (renews on ${new Date(status.periodEnd).toLocaleDateString()})`}
+                      {status.periodEnd && status.cancelAtPeriodEnd 
+                        ? ` (ends on ${new Date(status.periodEnd).toLocaleDateString()})` 
+                        : status.periodEnd 
+                          ? ` (renews on ${new Date(status.periodEnd).toLocaleDateString()})` 
+                          : ''}
                     </p>
                   </div>
                 </div>

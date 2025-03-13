@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
             stripePriceId: priceId,
             stripeCurrentPeriodEnd: currentPeriodEnd,
             trialEndsAt: null,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
         
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
               stripePriceId: priceId,
               stripeCurrentPeriodEnd: currentPeriodEnd,
               trialEndsAt: null,
+              cancelAtPeriodEnd: subscription.cancel_at_period_end,
             },
           });
         }
@@ -99,6 +101,7 @@ export async function POST(req: NextRequest) {
             stripePriceId: priceId,
             stripeCurrentPeriodEnd: currentPeriodEnd,
             trialEndsAt: null,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
         
@@ -116,6 +119,7 @@ export async function POST(req: NextRequest) {
             stripeSubscriptionId: null,
             stripePriceId: null,
             stripeCurrentPeriodEnd: null,
+            cancelAtPeriodEnd: false,
           },
         });
         

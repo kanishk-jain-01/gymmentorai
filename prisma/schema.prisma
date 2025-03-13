@@ -31,6 +31,7 @@ model User {
   stripePriceId         String?
   stripeCurrentPeriodEnd DateTime?
   trialEndsAt           DateTime?
+  cancelAtPeriodEnd     Boolean   @default(false)
 }
 
 model Account {

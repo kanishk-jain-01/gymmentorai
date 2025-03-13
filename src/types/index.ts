@@ -74,6 +74,8 @@ export interface SubscriptionStatus {
   plan: string | null;
   periodEnd: Date | null;
   canAddWorkouts: boolean;
+  stripeSubscriptionId?: string | null;
+  cancelAtPeriodEnd: boolean;
 }
 
 /**
