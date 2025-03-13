@@ -12,6 +12,7 @@ interface WorkoutEditorProps {
 export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: WorkoutEditorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmState, setDeleteConfirmState] = useState(false);
   
   const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
@@ -50,6 +51,28 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
       console.error(err);
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  const handleDeleteWorkout = async () => {
+    if (!deleteConfirmState) {
+      setDeleteConfirmState(true);
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      await axios.delete(`/api/workout/${workout.id}`);
+      onWorkoutUpdated();
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to delete workout');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+      setDeleteConfirmState(false);
     }
   };
   
@@ -274,23 +297,41 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
             </div>
           </div>
           
-          <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 text-right space-x-3 rounded-b-lg">
+          <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-between items-center rounded-b-lg">
             <button
               type="button"
-              onClick={onClose}
-              className="inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
+              onClick={handleDeleteWorkout}
               disabled={isLoading}
-              className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                isLoading ? 'opacity-75 cursor-not-allowed' : ''
-              }`}
+              className={`inline-flex justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-md transition-all duration-300 ease-in-out ${
+                deleteConfirmState 
+                  ? 'border-red-500 text-white bg-red-600 hover:bg-red-700 focus:ring-red-500' 
+                  : 'border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 focus:ring-red-500'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2`}
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? 'Deleting...' : deleteConfirmState ? 'Confirm Delete' : 'Delete Workout'}
             </button>
+            
+            <div className="flex space-x-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteConfirmState(false);
+                  onClose();
+                }}
+                className="inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                }`}
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
