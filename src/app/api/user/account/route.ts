@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe/stripe-server';
+import { hasActiveSubscription } from '@/lib/stripe/stripe-server';
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -17,16 +18,49 @@ export async function DELETE(req: NextRequest) {
     // Get user data to check for Stripe customer ID
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: {
+        id: true,
+        stripeSubscriptionId: true,
+        stripeCurrentPeriodEnd: true,
+        cancelAtPeriodEnd: true,
+      }
     });
     
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     
-    // If the user has a Stripe subscription, cancel it
-    if ((user as any).stripeSubscriptionId) {
+    // Check if the user has an active subscription (regardless of cancellation status)
+    const hasActiveSubscriptionPeriod = hasActiveSubscription(user.stripeCurrentPeriodEnd);
+    
+    if (hasActiveSubscriptionPeriod) {
+      // If subscription is active but set to cancel, inform user they need to wait
+      if (user.cancelAtPeriodEnd) {
+        const formattedDate = user.stripeCurrentPeriodEnd 
+          ? new Date(user.stripeCurrentPeriodEnd).toLocaleDateString() 
+          : 'the end of your billing period';
+          
+        return NextResponse.json({ 
+          error: 'Cannot delete account with active subscription period', 
+          message: `Your subscription is set to cancel, but you need to wait until it expires on ${formattedDate} before deleting your account.`,
+          code: 'ACTIVE_SUBSCRIPTION_PERIOD',
+          expiryDate: user.stripeCurrentPeriodEnd
+        }, { status: 400 });
+      } 
+      // If subscription is active and not set to cancel, inform user they need to cancel first
+      else {
+        return NextResponse.json({ 
+          error: 'Cannot delete account with active subscription', 
+          message: 'Please cancel your subscription before deleting your account. You can do this by going to Account Settings > Subscription > Manage Subscription.',
+          code: 'ACTIVE_SUBSCRIPTION'
+        }, { status: 400 });
+      }
+    }
+    
+    // If the user has a Stripe subscription that's already set to cancel, cancel it immediately
+    if (user.stripeSubscriptionId) {
       try {
-        await stripe.subscriptions.cancel((user as any).stripeSubscriptionId);
+        await stripe.subscriptions.cancel(user.stripeSubscriptionId);
       } catch (stripeError) {
         console.error('Error canceling Stripe subscription:', stripeError);
         // Continue with account deletion even if subscription cancellation fails
