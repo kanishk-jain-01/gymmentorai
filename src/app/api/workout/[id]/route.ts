@@ -31,7 +31,7 @@ export async function PUT(
 ) {
   try {
     // Ensure params is properly handled
-    const workoutId = params.id;
+    const { id: workoutId } = await params;
     
     // Get user ID from session
     const session = await getServerSession(authOptions);
@@ -54,7 +54,12 @@ export async function PUT(
     }
     
     // Parse request body
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
     
     // Validate input
     const result = workoutUpdateSchema.safeParse(body);
@@ -64,8 +69,22 @@ export async function PUT(
     
     const { name, date, duration, notes, exercises } = result.data;
     
-    // Create a date object at noon UTC for this calendar date to avoid any timezone issues
-    const workoutDate = date ? new Date(`${date}T12:00:00Z`) : undefined;
+    // Create a date object properly handling both date-only strings and full ISO date strings
+    let workoutDate: Date | undefined = undefined;
+    if (date) {
+      try {
+        // Check if the date string already includes time information
+        if (date.includes('T')) {
+          // It's already a full ISO string, just parse it directly
+          workoutDate = new Date(date);
+        } else {
+          // It's just a date without time, append noon UTC
+          workoutDate = new Date(`${date}T12:00:00Z`);
+        }
+      } catch (e) {
+        // If date parsing fails, continue with undefined date
+      }
+    }
     
     // Update workout in database
     const updatedWorkout = await prisma.$transaction(async (tx) => {
@@ -128,7 +147,7 @@ export async function DELETE(
 ) {
   try {
     // Ensure params is properly handled
-    const workoutId = params.id;
+    const { id: workoutId } = await params;
     
     // Get user ID from session
     const session = await getServerSession(authOptions);
