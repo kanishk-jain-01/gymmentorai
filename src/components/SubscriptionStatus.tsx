@@ -109,27 +109,7 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
         
         {status && (
           <div className="mt-5">
-            {status.isInTrial ? (
-              <div className="mb-4">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                    <svg className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Free Trial
-                    </h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {status.trialDaysRemaining > 0 
-                        ? `You have ${status.trialDaysRemaining} day${status.trialDaysRemaining === 1 ? '' : 's'} left in your trial.`
-                        : 'Your trial has ended.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : status.isSubscribed ? (
+            {status.isSubscribed ? (
               <div className="mb-4">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
@@ -159,6 +139,26 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
                   </button>
                 </div>
               </div>
+            ) : status.isInTrial ? (
+              <div className="mb-4">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                    <svg className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                      Free Trial
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {status.trialDaysRemaining > 0 
+                        ? `You have ${status.trialDaysRemaining} day${status.trialDaysRemaining === 1 ? '' : 's'} left in your trial.`
+                        : 'Your trial has ended.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="mb-4">
                 <div className="flex items-center">
@@ -181,7 +181,7 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
               </div>
             )}
             
-            {(!status.isSubscribed || status.isInTrial) && (
+            {!status.isSubscribed && (
               <div className="mt-6">
                 <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
                   Available Plans
