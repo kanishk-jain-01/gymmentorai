@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SubscriptionStatus as SubscriptionStatusType, SubscriptionPlan } from '@/types';
 
 interface SubscriptionStatusProps {
-  onSubscriptionChange?: () => void;
+  onSubscriptionChange?: (status: SubscriptionStatusType) => void;
 }
 
 export default function SubscriptionStatus({ onSubscriptionChange }: SubscriptionStatusProps) {
@@ -22,6 +22,11 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
       const response = await axios.get('/api/subscription');
       setStatus(response.data.status);
       setPlans(response.data.plans);
+      
+      // Call the callback with the subscription status
+      if (onSubscriptionChange && response.data.status) {
+        onSubscriptionChange(response.data.status);
+      }
     } catch (err) {
       setError('Failed to load subscription status');
       console.error(err);

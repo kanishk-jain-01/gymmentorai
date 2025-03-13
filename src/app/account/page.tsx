@@ -7,11 +7,12 @@ import Layout from '@/components/Layout';
 import SubscriptionStatus from '@/components/SubscriptionStatus';
 import axios from 'axios';
 import TrialSetup from '@/components/TrialSetup';
+import { SubscriptionStatus as SubscriptionStatusType } from '@/types';
 
 // Component to handle search params
 function AccountContent() {
   const searchParams = useSearchParams();
-  const { data: session, status } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   
   // Check for success or canceled parameters from Stripe redirect
@@ -21,14 +22,31 @@ function AccountContent() {
   // State for account deletion
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<React.ReactNode>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatusType | null>(null);
   
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (authStatus === 'unauthenticated') {
       router.push('/auth/signin?callbackUrl=/account');
     }
-  }, [status, router]);
+  }, [authStatus, router]);
+
+  // Fetch subscription status
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      try {
+        const response = await axios.get('/api/subscription');
+        setSubscriptionStatus(response.data.status);
+      } catch (err) {
+        console.error('Failed to load subscription status', err);
+      }
+    };
+
+    if (authStatus === 'authenticated') {
+      fetchSubscriptionStatus();
+    }
+  }, [authStatus]);
   
   // Handle account deletion
   const handleDeleteAccount = async () => {
@@ -42,12 +60,50 @@ function AccountContent() {
       // Sign out the user
       await signOut({ callbackUrl: '/' });
     } catch (error: any) {
-      setDeleteError(error.response?.data?.error || 'Failed to delete account. Please try again.');
+      if (error.response?.data?.code === 'ACTIVE_SUBSCRIPTION') {
+        setDeleteError(
+          <div>
+            <p className="mb-2">{error.response.data.message}</p>
+            <button
+              type="button"
+              onClick={handleManageSubscription}
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Manage Subscription
+            </button>
+          </div>
+        );
+      } else if (error.response?.data?.code === 'ACTIVE_SUBSCRIPTION_PERIOD') {
+        setDeleteError(
+          <div>
+            <p className="mb-2">{error.response.data.message}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Your subscription benefits will continue until this date. You can return after this date to delete your account.
+            </p>
+          </div>
+        );
+      } else {
+        setDeleteError(error.response?.data?.error || 'Failed to delete account. Please try again.');
+      }
       setIsLoading(false);
     }
   };
   
-  if (status === 'loading') {
+  // Handle manage subscription
+  const handleManageSubscription = async () => {
+    try {
+      const response = await axios.post('/api/stripe/portal');
+      
+      // Redirect to Stripe Portal
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (err) {
+      console.error('Failed to create portal session', err);
+    }
+  };
+  
+  if (authStatus === 'loading') {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
@@ -144,7 +200,7 @@ function AccountContent() {
         
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Subscription</h2>
-          <SubscriptionStatus />
+          <SubscriptionStatus onSubscriptionChange={(status) => setSubscriptionStatus(status)} />
         </div>
         
         <div>
@@ -186,6 +242,16 @@ function AccountContent() {
                       <div className="space-y-3">
                         <p className="text-sm font-medium text-red-600 dark:text-red-400">
                           Are you sure? This will permanently delete all your workout data and cannot be undone.
+                          {subscriptionStatus?.isSubscribed && !subscriptionStatus.cancelAtPeriodEnd && (
+                            <span className="block mt-1">
+                              Note: You must cancel your active subscription before deleting your account.
+                            </span>
+                          )}
+                          {subscriptionStatus?.isSubscribed && subscriptionStatus.cancelAtPeriodEnd && subscriptionStatus.periodEnd && (
+                            <span className="block mt-1">
+                              Note: You must wait until your subscription expires on {new Date(subscriptionStatus.periodEnd).toLocaleDateString()} before deleting your account.
+                            </span>
+                          )}
                         </p>
                         <div className="flex space-x-3">
                           <button
@@ -208,7 +274,7 @@ function AccountContent() {
                           </button>
                         </div>
                         {deleteError && (
-                          <p className="text-sm text-red-600 dark:text-red-400">{deleteError}</p>
+                          <div className="text-sm text-red-600 dark:text-red-400">{deleteError}</div>
                         )}
                       </div>
                     )}
