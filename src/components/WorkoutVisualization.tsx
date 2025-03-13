@@ -37,6 +37,10 @@ ChartJS.register(
   Filler
 );
 
+// Set global defaults for Chart.js
+ChartJS.defaults.elements.line.tension = 0; // Disable tension/bezier curves globally
+ChartJS.defaults.elements.point.hitRadius = 10; // Increase hit radius for better interaction
+
 // Date range options
 const DATE_RANGES = [
   { label: 'Last 30 days', value: 30 },
@@ -434,7 +438,7 @@ export default function WorkoutVisualization() {
             pointRadius: 8, // Even larger point for better visibility
             pointHoverRadius: 10,
             borderWidth: 3,
-            tension: 0,
+            tension: 0, // Always use 0 tension to avoid control point errors
             fill: false,
           },
         ],
@@ -467,8 +471,8 @@ export default function WorkoutVisualization() {
           data: exerciseData.map(d => d[config.metric] || 0),
           borderColor: color.border,
           backgroundColor: color.background,
-          // Set tension to 0 when there are fewer than 3 data points to avoid control point errors
-          tension: exerciseData.length < 3 ? 0 : 0.1,
+          // Always set tension to 0 to completely avoid control point errors in production
+          tension: 0,
           fill: config.chartType === 'line' ? false : undefined,
           // Increase point size for better visibility with few points
           pointRadius: exerciseData.length < 3 ? 5 : 3,
@@ -614,7 +618,15 @@ export default function WorkoutVisualization() {
       
       {/* Custom Charts */}
       {customCharts.map((chartConfig) => {
-        const chartData = generateChartData(chartConfig);
+        // Wrap chart data generation in try-catch to prevent rendering errors
+        let chartData;
+        try {
+          chartData = generateChartData(chartConfig);
+        } catch (error) {
+          console.error('Error generating chart data:', error);
+          chartData = null;
+        }
+        
         // Add a safety check to prevent accessing properties of undefined data
         const isSinglePoint = chartData?.datasets?.[0]?.data?.length === 1;
         const chartOptions = getChartOptions(
@@ -758,9 +770,15 @@ export default function WorkoutVisualization() {
               {chartData ? (
                 <div className="h-80">
                   {chartConfig.chartType === 'line' ? (
-                    <Line options={chartOptions} data={chartData as ChartData<'line', number[], string>} />
+                    <Line 
+                      options={chartOptions} 
+                      data={chartData as ChartData<'line', number[], string>} 
+                    />
                   ) : (
-                    <Bar options={chartOptions} data={chartData as ChartData<'bar', number[], string>} />
+                    <Bar 
+                      options={chartOptions} 
+                      data={chartData as ChartData<'bar', number[], string>} 
+                    />
                   )}
                 </div>
               ) : (
@@ -830,8 +848,17 @@ export default function WorkoutVisualization() {
         )}
         
         {(() => {
-          const frequencyData = generateFrequencyData();
-          const isSinglePoint = frequencyData?.datasets[0]?.data.length === 1;
+          // Wrap frequency data generation in try-catch
+          let frequencyData;
+          try {
+            frequencyData = generateFrequencyData();
+          } catch (error) {
+            console.error('Error generating frequency data:', error);
+            frequencyData = null;
+          }
+          
+          // Add more safety checks with optional chaining
+          const isSinglePoint = frequencyData?.datasets?.[0]?.data?.length === 1;
           
           return frequencyData ? (
             <div className="h-80">
