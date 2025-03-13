@@ -467,7 +467,8 @@ export default function WorkoutVisualization() {
           data: exerciseData.map(d => d[config.metric] || 0),
           borderColor: color.border,
           backgroundColor: color.background,
-          tension: 0.1,
+          // Set tension to 0 when there are fewer than 3 data points to avoid control point errors
+          tension: exerciseData.length < 3 ? 0 : 0.1,
           fill: config.chartType === 'line' ? false : undefined,
           // Increase point size for better visibility with few points
           pointRadius: exerciseData.length < 3 ? 5 : 3,
@@ -614,7 +615,8 @@ export default function WorkoutVisualization() {
       {/* Custom Charts */}
       {customCharts.map((chartConfig) => {
         const chartData = generateChartData(chartConfig);
-        const isSinglePoint = chartData?.datasets[0]?.data.length === 1;
+        // Add a safety check to prevent accessing properties of undefined data
+        const isSinglePoint = chartData?.datasets?.[0]?.data?.length === 1;
         const chartOptions = getChartOptions(
           AVAILABLE_METRICS.find(m => m.value === chartConfig.metric)?.label || chartConfig.metric,
           isSinglePoint
@@ -827,16 +829,21 @@ export default function WorkoutVisualization() {
           </div>
         )}
         
-        {generateFrequencyData() ? (
-          <div className="h-80">
-            <Bar
-              options={getChartOptions('Number of Workouts', generateFrequencyData()?.datasets[0]?.data.length === 1)}
-              data={generateFrequencyData()!}
-            />
-          </div>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-10">No frequency data available.</p>
-        )}
+        {(() => {
+          const frequencyData = generateFrequencyData();
+          const isSinglePoint = frequencyData?.datasets[0]?.data.length === 1;
+          
+          return frequencyData ? (
+            <div className="h-80">
+              <Bar
+                options={getChartOptions('Number of Workouts', isSinglePoint)}
+                data={frequencyData}
+              />
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-10">No frequency data available.</p>
+          );
+        })()}
       </div>
       
       {/* Workout Stats Summary */}
