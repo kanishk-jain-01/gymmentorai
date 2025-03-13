@@ -94,6 +94,9 @@ This project follows a structured development workflow using Git branches and Ve
 5. Start the development server:
    ```bash
    npm run dev
+   npx prisma studio 
+   stripe listen --forward-to http://localhost:3000/api/stripe/webhook
+   npx prisma db seed
    ```
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
