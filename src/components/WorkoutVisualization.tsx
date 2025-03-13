@@ -311,11 +311,12 @@ export default function WorkoutVisualization() {
   }, [workouts]);
   
   // Create a function to get common chart options based on theme
-  const getChartOptions = (yAxisTitle: string) => {
+  const getChartOptions = (yAxisTitle: string, isSinglePoint: boolean = false) => {
     const isDark = theme === 'dark';
     const textColor = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
     const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
     
+    // Base options that work for both single and multiple data points
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -416,6 +417,48 @@ export default function WorkoutVisualization() {
     const colorIndex = parseInt(config.id) % CHART_COLORS.length;
     const color = CHART_COLORS[colorIndex];
     
+    // Check if we have a single data point
+    const isSinglePoint = exerciseData.length === 1;
+    
+    // For single data points in line charts, we need special handling
+    if (isSinglePoint && config.chartType === 'line') {
+      // For a single point, create a dataset with enhanced point styling
+      return {
+        labels: [new Date(exerciseData[0].date).toLocaleDateString()],
+        datasets: [
+          {
+            label: metricLabel,
+            data: [exerciseData[0][config.metric] || 0],
+            borderColor: color.border,
+            backgroundColor: color.background,
+            pointRadius: 8, // Even larger point for better visibility
+            pointHoverRadius: 10,
+            borderWidth: 3,
+            tension: 0,
+            fill: false,
+          },
+        ],
+      };
+    }
+    
+    // For single data points in bar charts, make the bar wider
+    if (isSinglePoint && config.chartType === 'bar') {
+      return {
+        labels: [new Date(exerciseData[0].date).toLocaleDateString()],
+        datasets: [
+          {
+            label: metricLabel,
+            data: [exerciseData[0][config.metric] || 0],
+            borderColor: color.border,
+            backgroundColor: color.background,
+            borderWidth: 2,
+            barThickness: 60, // Wider bar for single point
+          },
+        ],
+      };
+    }
+    
+    // Normal case with multiple data points
     return {
       labels: exerciseData.map(d => new Date(d.date).toLocaleDateString()),
       datasets: [
@@ -426,6 +469,9 @@ export default function WorkoutVisualization() {
           backgroundColor: color.background,
           tension: 0.1,
           fill: config.chartType === 'line' ? false : undefined,
+          // Increase point size for better visibility with few points
+          pointRadius: exerciseData.length < 3 ? 5 : 3,
+          pointHoverRadius: exerciseData.length < 3 ? 7 : 5,
         },
       ],
     };
@@ -454,6 +500,27 @@ export default function WorkoutVisualization() {
       return aDate.getTime() - bDate.getTime();
     });
     
+    // For a single data point, enhance the styling
+    const isSinglePoint = sortedMonths.length === 1;
+    
+    // If we have a single data point, make it more prominent
+    if (isSinglePoint) {
+      return {
+        labels: sortedMonths,
+        datasets: [
+          {
+            label: 'Workout Frequency',
+            data: sortedMonths.map(month => exerciseCounts[month]),
+            backgroundColor: 'rgba(54, 162, 235, 0.7)', // More vibrant color
+            borderColor: 'rgb(54, 162, 235)',
+            borderWidth: 2,
+            barThickness: 80, // Extra wide bar for single point
+          },
+        ],
+      };
+    }
+    
+    // Normal case with multiple data points
     return {
       labels: sortedMonths,
       datasets: [
@@ -462,7 +529,9 @@ export default function WorkoutVisualization() {
           data: sortedMonths.map(month => exerciseCounts[month]),
           backgroundColor: 'rgba(54, 162, 235, 0.5)',
           borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1
+          borderWidth: 1,
+          // Make bars wider when there are fewer data points
+          barThickness: sortedMonths.length < 3 ? 60 : undefined,
         },
       ],
     };
@@ -545,8 +614,10 @@ export default function WorkoutVisualization() {
       {/* Custom Charts */}
       {customCharts.map((chartConfig) => {
         const chartData = generateChartData(chartConfig);
+        const isSinglePoint = chartData?.datasets[0]?.data.length === 1;
         const chartOptions = getChartOptions(
-          AVAILABLE_METRICS.find(m => m.value === chartConfig.metric)?.label || chartConfig.metric
+          AVAILABLE_METRICS.find(m => m.value === chartConfig.metric)?.label || chartConfig.metric,
+          isSinglePoint
         );
         
         return (
@@ -759,7 +830,7 @@ export default function WorkoutVisualization() {
         {generateFrequencyData() ? (
           <div className="h-80">
             <Bar
-              options={getChartOptions('Number of Workouts')}
+              options={getChartOptions('Number of Workouts', generateFrequencyData()?.datasets[0]?.data.length === 1)}
               data={generateFrequencyData()!}
             />
           </div>
