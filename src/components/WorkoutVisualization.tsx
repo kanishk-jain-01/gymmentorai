@@ -320,9 +320,6 @@ export default function WorkoutVisualization() {
     return {
       responsive: true,
       maintainAspectRatio: false,
-      animation: {
-        duration: 800 // Restore animation with a reasonable duration
-      },
       scales: {
         y: {
           beginAtZero: true,
@@ -371,11 +368,6 @@ export default function WorkoutVisualization() {
               return label;
             }
           }
-        }
-      },
-      elements: {
-        line: {
-          tension: 0.05 // Very slight curve that shouldn't trigger the error
         }
       }
     };
@@ -428,26 +420,6 @@ export default function WorkoutVisualization() {
     // Check if we have a single data point
     const isSinglePoint = exerciseData.length === 1;
     
-    // Create unique labels for data points on the same day
-    const createUniqueLabels = (data: typeof exerciseData) => {
-      // Group by date to find duplicates
-      const dateGroups: Record<string, number> = {};
-      
-      return data.map(d => {
-        const dateStr = new Date(d.date).toLocaleDateString();
-        // Count occurrences of this date
-        dateGroups[dateStr] = (dateGroups[dateStr] || 0) + 1;
-        
-        // If this is the first occurrence, just use the date
-        if (dateGroups[dateStr] === 1) {
-          return dateStr;
-        }
-        
-        // Otherwise, add a suffix to make it unique
-        return `${dateStr} (${dateGroups[dateStr]})`;
-      });
-    };
-    
     // For single data points in line charts, we need special handling
     if (isSinglePoint && config.chartType === 'line') {
       // For a single point, create a dataset with enhanced point styling
@@ -488,20 +460,18 @@ export default function WorkoutVisualization() {
     
     // Normal case with multiple data points
     return {
-      labels: createUniqueLabels(exerciseData),
+      labels: exerciseData.map(d => new Date(d.date).toLocaleDateString()),
       datasets: [
         {
           label: metricLabel,
           data: exerciseData.map(d => d[config.metric] || 0),
           borderColor: color.border,
           backgroundColor: color.background,
-          tension: 0.05, // Very slight curve that shouldn't trigger the error
+          tension: 0.1,
           fill: config.chartType === 'line' ? false : undefined,
           // Increase point size for better visibility with few points
           pointRadius: exerciseData.length < 3 ? 5 : 3,
           pointHoverRadius: exerciseData.length < 3 ? 7 : 5,
-          spanGaps: true, // Keep this to handle missing data points gracefully
-          stepped: false, // Remove stepped lines to restore smooth appearance
         },
       ],
     };
