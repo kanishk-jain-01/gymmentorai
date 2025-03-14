@@ -1,37 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8f9fa; /* Soft off-white background */
-  --foreground: #334155; /* Slate-700 - softer than pure black */
-  --card-bg: #ffffff;    /* Cards remain white for contrast */
-  --subtle-accent: #f1f5f9; /* Slate-100 for subtle accents */
-  --border-color: #e2e8f0; /* Slate-200 for borders */
-}
-
-.dark {
-  --background: #0f172a !important; /* Deep blue background (Tailwind slate-900) */
-  --foreground: #ededed !important;
-  --card-bg: #1e293b !important; /* Slate-800 for cards */
-  --subtle-accent: #334155 !important; /* Slate-700 for subtle accents */
-  --border-color: #334155 !important; /* Slate-700 for borders */
-}
-
-@theme inline {
+  /* Base colors */
+  --background: #f8f9fa;
+  --foreground: #334155;
+  --card-bg: #ffffff;
+  --subtle-accent: #f1f5f9;
+  --border-color: #e2e8f0;
+  
+  /* Semantic mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* Keep this for system preference detection, but our theme toggle will override it */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0f172a; /* Deep blue background (Tailwind slate-900) */
-    --foreground: #ededed;
-    --card-bg: #1e293b; /* Slate-800 for cards */
-    --subtle-accent: #334155; /* Slate-700 for subtle accents */
-    --border-color: #334155; /* Slate-700 for borders */
-  }
+.dark {
+  --background: #0f172a ; /* Deep blue background (Tailwind slate-900) */
+  --foreground: #ededed ;
+  --card-bg: #1e293b ; /* Slate-800 for cards */
+  --subtle-accent: #334155 ; /* Slate-700 for subtle accents */
+  --border-color: #334155 ; /* Slate-700 for borders */
 }
 
 body {
@@ -43,17 +32,10 @@ body {
 
 /* Additional explicit dark mode styles */
 .dark body {
-  background-color: #0f172a !important; /* Deep blue background (Tailwind slate-900) */
-  color: #ededed !important;
+  background-color: #0f172a ; /* Deep blue background (Tailwind slate-900) */
+  color: #ededed ;
 }
 
-/* Explicit light mode styles */
-:root:not(.dark) body {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), 
-                    linear-gradient(to top left, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0));
-}
 
 /* Ensure transitions are smooth */
 * {
@@ -63,84 +45,96 @@ body {
 
 /* Force dark mode styles for specific elements */
 .dark .bg-white {
-  background-color: #1e293b !important; /* Slightly lighter blue (Tailwind slate-800) */
+  background-color: #1e293b ; /* Slightly lighter blue (Tailwind slate-800) */
 }
 
 .dark .bg-gray-50 {
-  background-color: #0f172a !important; /* Deep blue background (Tailwind slate-900) */
+  background-color: #0f172a ; /* Deep blue background (Tailwind slate-900) */
 }
 
 .dark .text-gray-900 {
-  color: #ffffff !important;
+  color: #ffffff ;
 }
 
 .dark .text-gray-500 {
-  color: #94a3b8 !important; /* Tailwind slate-400 */
+  color: #94a3b8 ; /* Tailwind slate-400 */
 }
 
 /* Dark mode navigation styles */
 .dark nav {
-  background-color: #1e293b !important; /* Slightly lighter blue (Tailwind slate-800) */
-  border-bottom: 1px solid #334155 !important; /* Tailwind slate-600 */
+  background-color: #1e293b ; /* Slightly lighter blue (Tailwind slate-800) */
+  border-bottom: 1px solid #334155 ; /* Tailwind slate-600 */
 }
 
 /* Dark mode card styles */
 .dark .shadow {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) ;
 }
 
 /* Dark mode accent colors */
 .dark .text-indigo-600 {
-  color: #818cf8 !important; /* Tailwind indigo-400 - brighter in dark mode */
+  color: #818cf8 ; /* Tailwind indigo-400 - brighter in dark mode */
 }
 
 .dark .bg-indigo-600 {
-  background-color: #4f46e5 !important; /* Tailwind indigo-600 */
+  background-color: #4f46e5 ; /* Tailwind indigo-600 */
 }
 
 .dark .border-indigo-500 {
-  border-color: #6366f1 !important; /* Tailwind indigo-500 */
+  border-color: #6366f1 ; /* Tailwind indigo-500 */
 }
 
 /* Force light mode styles for specific elements */
+
+:root:not(.dark) textarea {
+  color: #1e293b ;
+}
+
+:root:not(.dark) body {
+  background-color: var(--background) ;
+  color: var(--foreground) ;
+  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), 
+                    linear-gradient(to top left, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0));
+}
+
 :root:not(.dark) .bg-white {
-  background-color: var(--card-bg) !important;
+  background-color: var(--card-bg) ;
   border: 1px solid var(--border-color);
 }
 
 :root:not(.dark) .bg-gray-50 {
-  background-color: var(--background) !important;
+  background-color: var(--background) ;
 }
 
 :root:not(.dark) .text-gray-900 {
-  color: #334155 !important; /* Slate-700 - softer than pure black */
+  color: #334155 ; /* Slate-700 - softer than pure black */
 }
 
 :root:not(.dark) .text-gray-500 {
-  color: #64748b !important; /* Slate-500 - better contrast on light bg */
+  color: #64748b ; /* Slate-500 - better contrast on light bg */
 }
 
 /* Light mode navigation styles */
 :root:not(.dark) nav {
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) ;
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid var(--border-color) ;
 }
 
 /* Light mode card styles */
 :root:not(.dark) .shadow {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.02) ;
 }
 
 /* Light mode accent colors */
 :root:not(.dark) .text-indigo-600 {
-  color: #4f46e5 !important; /* Indigo-600 - slightly deeper for light mode */
+  color: #4f46e5 ; /* Indigo-600 - slightly deeper for light mode */
 }
 
 :root:not(.dark) .bg-indigo-600 {
-  background-color: #4f46e5 !important; /* Indigo-600 */
+  background-color: #4f46e5 ; /* Indigo-600 */
 }
 
 :root:not(.dark) .border-indigo-500 {
-  border-color: #6366f1 !important; /* Indigo-500 */
+  border-color: #6366f1 ; /* Indigo-500 */
 }
