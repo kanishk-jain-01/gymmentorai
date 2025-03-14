@@ -196,8 +196,14 @@ export default function WorkoutVisualization() {
   
   return (
     <div className="space-y-6">
-      {/* Add Chart Button */}
-      <div className="flex justify-end">
+      {/* Header with title and Add Chart button */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Workout Visualization</h1>
+          <p className="mt-1 text-sm">
+            Track your progress and get insights into your fitness journey
+          </p>
+        </div>
         <button
           onClick={addChart}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -5,6 +5,7 @@
   --foreground: #334155;
   --card-bg: #ffffff;
   --border-color: #e2e8f0;
+  --accent-color: #e0e7ff;
 }
 
 .dark {
@@ -12,6 +13,7 @@
   --foreground: #ededed;
   --card-bg: #1F2937;
   --border-color: #334155;
+  --accent-color: #3b4f7d;
 }
 
 body {
