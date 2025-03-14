@@ -12,36 +12,14 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  // Ensure the theme is applied correctly
-  useEffect(() => {
-    if (mounted && resolvedTheme) {
-      if (resolvedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  }, [resolvedTheme, mounted]);
-
   if (!mounted) {
     return null;
   }
 
-  // Use resolvedTheme for the UI to ensure we're showing the actual applied theme
   const currentTheme = resolvedTheme || theme;
 
   const toggleTheme = () => {
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    // Directly manipulate the DOM for immediate visual feedback
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Also update the theme in next-themes
-    setTheme(newTheme);
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -74,7 +52,7 @@ export default function ThemeToggle() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          className="h-5 w-5 text-gray-800"
+          className="h-5 w-5 text-slate-800 dark:text-slate-200"
         >
           <path
             strokeLinecap="round"
@@ -86,4 +64,5 @@ export default function ThemeToggle() {
       )}
     </button>
   );
-} 
+
+}

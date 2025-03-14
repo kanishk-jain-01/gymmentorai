@@ -5,13 +5,33 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  darkMode: 'class', // This is crucial for next-themes to work properly
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // You can customize your color palette here
+        // Map your CSS variables to Tailwind colors
+        'theme': {
+          'bg': 'var(--background)',
+          'fg': 'var(--foreground)',
+          'card': 'var(--card-bg)',
+          'accent': 'var(--subtle-accent)',
+          'border': 'var(--border-color)',
+        },
+      },
+      backgroundColor: {
+        // Shortcuts for common backgrounds
+        'page': 'var(--background)',
+        'card': 'var(--card-bg)',
+      },
+      textColor: {
+        // Shortcuts for common text colors
+        'body': 'var(--foreground)',
+      },
+      borderColor: {
+        // Shortcuts for common border colors
+        'theme': 'var(--border-color)',
       },
     },
   },
   plugins: [],
-}; 
+};

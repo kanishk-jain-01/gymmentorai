@@ -12,38 +12,13 @@ export function Providers({ children }: { children: ReactNode }) {
     setMounted(true);
   }, []);
 
-  // Force dark mode to be applied correctly
-  useEffect(() => {
-    // This is a direct DOM manipulation to ensure the theme is applied
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const updateTheme = (e: MediaQueryListEvent | MediaQueryList) => {
-      const isDark = e.matches;
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-
-    // Initial check
-    updateTheme(darkModeMediaQuery);
-    
-    // Listen for changes
-    darkModeMediaQuery.addEventListener('change', updateTheme);
-    
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', updateTheme);
-    };
-  }, []);
-
   return (
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
-      storageKey="gymmentor-theme"
-      forcedTheme={null}
+      storageKey="theme"
     >
       <SessionProvider>
         {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
