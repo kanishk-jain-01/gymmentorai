@@ -13,7 +13,7 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
 
   if (isLoading) {
     return (
-      <div className="bg-card shadow overflow-hidden sm:rounded-md p-6 border border-theme">
+      <div className="bg-theme-card shadow overflow-hidden sm:rounded-md p-6 border border-theme-border">
         <div className="animate-pulse flex space-x-4">
           <div className="flex-1 space-y-6 py-1">
             <div className="h-4 bg-theme-accent rounded w-3/4"></div>
@@ -32,7 +32,7 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
 
   if (workouts.length === 0) {
     return (
-      <div className="bg-card shadow overflow-hidden sm:rounded-md p-6 text-center border border-theme">
+      <div className="bg-theme-card shadow overflow-hidden sm:rounded-md p-6 text-center border border-theme-border">
         <p className="text-body">No workouts found. Start logging your workouts!</p>
       </div>
     );
@@ -40,8 +40,8 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
 
   return (
     <>
-      <div className="bg-card shadow overflow-hidden sm:rounded-md border border-theme">
-        <ul className="divide-y divide-theme">
+      <div className="bg-theme-card shadow overflow-hidden sm:rounded-md border border-theme-border">
+        <ul className="divide-y divide-theme-border">
           {workouts.map((workout) => (
             <li key={workout.id}>
               <div className="px-4 py-4 sm:px-6">
@@ -73,7 +73,7 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                 
                 <div className="mt-4">
                   <h4 className="text-sm font-medium text-body">Exercises:</h4>
-                  <ul className="mt-2 divide-y divide-theme">
+                  <ul className="mt-2 divide-y divide-theme-border">
                     {workout.exercises.map((exercise) => (
                       <li key={exercise.id} className="py-2">
                         <div className="flex items-center justify-between">
