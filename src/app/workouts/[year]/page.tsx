@@ -61,7 +61,7 @@ export default function YearPage({ params }: YearPageProps) {
       <Layout>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-          <p className="ml-3 text-gray-600">Loading workouts...</p>
+          <p className="ml-3">Loading workouts...</p>
         </div>
       </Layout>
     );
@@ -71,7 +71,7 @@ export default function YearPage({ params }: YearPageProps) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Redirecting to sign in...</p>
+          <p>Redirecting to sign in...</p>
         </div>
       </Layout>
     );
@@ -91,20 +91,20 @@ export default function YearPage({ params }: YearPageProps) {
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center">
-              <Link href="/workouts" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 mr-2">
+              <Link href="/workouts" className="hover:text-indigo-800 mr-2">
                 ← Back to Years
               </Link>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">Workouts in {year}</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h1 className="text-2xl font-bold mt-4">Workouts in {year}</h1>
+            <p className="mt-1 text-sm">
               Browse your workout history by month
             </p>
           </div>
         </div>
         
         {months.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md p-6 text-center border border-gray-200 dark:border-gray-700">
-            <p className="text-gray-500 dark:text-gray-400">No workouts found for {year}.</p>
+          <div className="shadow overflow-hidden sm:rounded-md p-6 text-center border border-theme-border">
+            <p>No workouts found for {year}.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

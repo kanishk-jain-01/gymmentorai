@@ -26,7 +26,7 @@ export default function ThemeToggle() {
     <button
       aria-label="Toggle Dark Mode"
       type="button"
-      className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-theme-fg"
       onClick={toggleTheme}
     >
       {currentTheme === 'dark' ? (
@@ -52,7 +52,7 @@ export default function ThemeToggle() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          className="h-5 w-5 text-slate-800 dark:text-slate-200"
+          className="h-5 w-5 text-slate-800"
         >
           <path
             strokeLinecap="round"

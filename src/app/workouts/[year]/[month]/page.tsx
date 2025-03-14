@@ -77,7 +77,7 @@ export default function MonthPage({ params }: MonthPageProps) {
       <Layout>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-          <p className="ml-3 text-gray-600">Loading workouts...</p>
+          <p className="ml-3">Loading workouts...</p>
         </div>
       </Layout>
     );
@@ -87,7 +87,7 @@ export default function MonthPage({ params }: MonthPageProps) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Redirecting to sign in...</p>
+          <p>Redirecting to sign in...</p>
         </div>
       </Layout>
     );
@@ -98,12 +98,12 @@ export default function MonthPage({ params }: MonthPageProps) {
       <div className="space-y-8">
         <div>
           <div className="flex items-center">
-            <Link href={`/workouts/${year}`} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 mr-2">
+            <Link href={`/workouts/${year}`} className="hover:text-indigo-800 mr-2">
               ← Back to {year}
             </Link>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-4">{monthName} {year}</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold mt-4">{monthName} {year}</h1>
+          <p className="mt-1 text-sm">
             All workouts from this month
           </p>
         </div>

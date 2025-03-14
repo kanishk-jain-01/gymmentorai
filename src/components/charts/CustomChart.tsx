@@ -159,7 +159,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
   );
   
   return (
-    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg overflow-hidden">
+    <div className="bg-theme-card shadow sm:rounded-lg overflow-hidden">
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex-1">
@@ -167,12 +167,12 @@ const CustomChart: React.FC<CustomChartProps> = ({
               type="text"
               value={config.title}
               onChange={(e) => onUpdateConfig(config.id, 'title', e.target.value)}
-              className="text-lg font-medium text-gray-900 dark:text-white bg-transparent border-b border-transparent hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:border-indigo-500 w-full"
+              className="text-lg font-medium text-theme-fg bg-transparent border-b border-transparent hover:border-theme-border focus:outline-none focus:border-indigo-500 w-full"
             />
           </div>
           <button
             onClick={() => onRemoveChart(config.id)}
-            className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+            className="text-gray-400 hover:text-theme-fg"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
@@ -185,8 +185,8 @@ const CustomChart: React.FC<CustomChartProps> = ({
         />
         
         {config.exercise && personalRecords[config.exercise] && config.metric === 'weight' && (
-          <div className="mb-4 p-3 bg-indigo-50 dark:bg-indigo-900 rounded-md">
-            <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+          <div className="mb-4 p-3 bg-indigo-50 rounded-md">
+            <p className="text-sm font-medium text-indigo-700">
               Personal Record: {personalRecords[config.exercise].weight} lbs on {new Date(personalRecords[config.exercise].date).toLocaleDateString()}
             </p>
           </div>
@@ -208,7 +208,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
             )}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-10">
+          <p className="text-gray-500 text-center py-10">
             No data available for this configuration.
           </p>
         )}

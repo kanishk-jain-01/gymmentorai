@@ -13,7 +13,6 @@ module.exports = {
           'bg': 'var(--background)',
           'fg': 'var(--foreground)',
           'card': 'var(--card-bg)',
-          'accent': 'var(--subtle-accent)',
           'border': 'var(--border-color)',
         }
       }

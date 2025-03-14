@@ -1,25 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* Base colors */
-  --background: #f8f9fa;
+  --background: #f8f7fc;
   --foreground: #334155;
   --card-bg: #ffffff;
-  --subtle-accent: #f1f5f9;
   --border-color: #e2e8f0;
-  
-  /* Semantic mappings */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 .dark {
   --background: #0f172a;
   --foreground: #ededed;
-  --card-bg: #1e293b;
-  --subtle-accent: #334155;
+  --card-bg: #1F2937;
   --border-color: #334155;
 }
 
@@ -28,6 +19,11 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Overriding an issue with the theme card background color */
+.bg-theme-card {
+  background-color: var(--card-bg) !important;
 }
 
 /* Ensure transitions are smooth */

@@ -18,7 +18,7 @@ export function Providers({ children }: { children: ReactNode }) {
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
-      storageKey="theme"
+      storageKey="gymmentor-theme"
     >
       <SessionProvider>
         {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
