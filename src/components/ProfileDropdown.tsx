@@ -38,7 +38,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+        className="flex rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="sr-only">Open user menu</span>
@@ -49,8 +49,8 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
             alt={user.name || 'User'}
           />
         ) : (
-          <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-            <span className="text-indigo-800 dark:text-indigo-200 font-medium text-sm">
+          <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+            <span className="text-indigo-800 font-medium text-sm">
               {user?.name?.charAt(0) || 'U'}
             </span>
           </div>
