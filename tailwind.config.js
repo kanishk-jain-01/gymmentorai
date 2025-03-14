@@ -14,6 +14,7 @@ module.exports = {
           'fg': 'var(--foreground)',
           'card': 'var(--card-bg)',
           'border': 'var(--border-color)',
+          'accent': 'var(--accent-color)',
         }
       }
     }

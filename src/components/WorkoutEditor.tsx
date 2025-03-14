@@ -92,7 +92,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
   return (
     <div className="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center pointer-events-none">
       <div className="relative bg-theme-card rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto pointer-events-auto border border-theme-border transform transition-all duration-300 ease-in-out">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-blue-50 opacity-50 rounded-lg -z-10"></div>
+        <div className="absolute inset-0 bg-theme-bg opacity-30 rounded-lg -z-10"></div>
         <div className="px-6 py-4 border-b border-theme-border">
           <h3 className="text-lg font-medium text-theme-fg">Edit Workout</h3>
           <button
