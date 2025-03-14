@@ -227,7 +227,7 @@ function AccountContent() {
                 </a>
               </div>
               
-              <div className="pt-6 border-t border-theme-border">
+              <div className="pt-6">
                 <h4 className="text-md font-medium text-red-600">Delete Account</h4>
                 <p className="mt-1 text-sm text-theme-fg opacity-70">
                   Permanently delete your account and all associated data. This action cannot be undone.
