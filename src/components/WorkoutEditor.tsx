@@ -97,7 +97,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
           <h3 className="text-lg font-medium text-theme-fg">Edit Workout</h3>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-theme-fg"
+            className="absolute top-4 right-4 text-theme-fg opacity-50 hover:text-theme-fg hover:opacity-100"
           >
             <span className="sr-only">Close</span>
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -122,7 +122,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                 <input
                   type="text"
                   id="name"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                   placeholder="Workout Name"
                   {...register('name')}
                 />
@@ -135,7 +135,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                 <input
                   type="date"
                   id="date"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                   {...register('date')}
                 />
               </div>
@@ -147,7 +147,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                 <input
                   type="number"
                   id="duration"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                   placeholder="Duration in minutes"
                   {...register('duration', { valueAsNumber: true })}
                 />
@@ -160,7 +160,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                 <textarea
                   id="notes"
                   rows={2}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                   placeholder="Workout notes"
                   {...register('notes')}
                 />
@@ -180,17 +180,17 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
               </div>
               
               {fields.length === 0 ? (
-                <div className="text-center py-4 text-gray-500">
+                <div className="text-center py-4 text-theme-fg opacity-70">
                   No exercises added. Click "Add Exercise" to add one.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {fields.map((field, index) => (
-                    <div key={field.id} className="border border-gray-200 rounded-md p-4 relative">
+                    <div key={field.id} className="border border-theme-border rounded-md p-4 relative">
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+                        className="absolute top-2 right-2 text-theme-fg opacity-50 hover:text-theme-fg hover:opacity-100"
                       >
                         <span className="sr-only">Remove</span>
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,7 +205,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           </label>
                           <input
                             type="text"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Exercise Name"
                             {...register(`exercises.${index}.name` as const, { required: 'Exercise name is required' })}
                           />
@@ -222,7 +222,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           </label>
                           <input
                             type="number"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Number of sets"
                             {...register(`exercises.${index}.sets` as const, { valueAsNumber: true })}
                           />
@@ -234,7 +234,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           </label>
                           <input
                             type="number"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Number of reps"
                             {...register(`exercises.${index}.reps` as const, { valueAsNumber: true })}
                           />
@@ -247,7 +247,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           <input
                             type="number"
                             step="0.1"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Weight in lbs"
                             {...register(`exercises.${index}.weight` as const, { valueAsNumber: true })}
                           />
@@ -259,7 +259,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           </label>
                           <input
                             type="number"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Duration in seconds"
                             {...register(`exercises.${index}.duration` as const, { valueAsNumber: true })}
                           />
@@ -272,7 +272,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           <input
                             type="number"
                             step="0.1"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Distance in miles"
                             {...register(`exercises.${index}.distance` as const, { valueAsNumber: true })}
                           />
@@ -284,7 +284,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                           </label>
                           <textarea
                             rows={2}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="mt-1 block w-full rounded-md border-theme-border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-theme-card text-theme-fg"
                             placeholder="Exercise notes"
                             {...register(`exercises.${index}.notes` as const)}
                           />
@@ -297,7 +297,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
             </div>
           </div>
           
-          <div className="px-6 py-4 bg-gray-50 flex justify-between items-center rounded-b-lg">
+          <div className="px-6 py-4 bg-theme-bg flex justify-between items-center rounded-b-lg">
             <button
               type="button"
               onClick={handleDeleteWorkout}
@@ -318,7 +318,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                   setDeleteConfirmState(false);
                   onClose();
                 }}
-                className="inline-flex justify-center py-2 px-4 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex justify-center py-2 px-4 border border-theme-border text-theme-fg bg-theme-card hover:bg-theme-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Cancel
               </button>

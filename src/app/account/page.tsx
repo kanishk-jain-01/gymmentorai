@@ -77,7 +77,7 @@ function AccountContent() {
         setDeleteError(
           <div>
             <p className="mb-2">{error.response.data.message}</p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-theme-fg opacity-70 mt-1">
               Your subscription benefits will continue until this date. You can return after this date to delete your account.
             </p>
           </div>
@@ -114,7 +114,7 @@ function AccountContent() {
   if (!session) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Redirecting to sign in...</p>
+        <p className="text-theme-fg opacity-70">Redirecting to sign in...</p>
       </div>
     );
   }

@@ -49,10 +49,10 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   };
   
   return (
-    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
       <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Log your workout</h3>
-        <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+        <h3 className="text-lg leading-6 font-medium text-theme-fg">Log your workout</h3>
+        <div className="mt-2 max-w-xl text-sm text-theme-fg opacity-80">
           <p>
             Describe your workout in natural language. Our AI will understand and organize it for you.
           </p>
@@ -62,29 +62,29 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
             <textarea
               id="workoutText"
               rows={5}
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white bg-white"
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-theme-border rounded-md bg-theme-card text-theme-fg"
               placeholder="Example: Today I did 3 sets of bench press at 185lbs for 8 reps, followed by 3 sets of squats at 225lbs for 5 reps. I finished with a 20 minute run on the treadmill."
               {...register('workoutText', { required: 'Please enter your workout details' })}
             />
             {errors.workoutText && (
-              <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.workoutText.message}</p>
+              <p className="mt-2 text-sm text-red-500">{errors.workoutText.message}</p>
             )}
           </div>
           
           {feedback && (
             <div className={`mt-2 text-sm ${
               feedback.type === 'error' 
-                ? 'text-red-600 dark:text-red-400' 
+                ? 'text-red-500' 
                 : feedback.type === 'subscription'
-                  ? 'text-yellow-600 dark:text-yellow-400'
-                  : 'text-green-600 dark:text-green-400'
+                  ? 'text-yellow-500'
+                  : 'text-green-500'
             }`}>
               {feedback.message}
               {feedback.type === 'subscription' && (
                 <div className="mt-2">
                   <Link 
                     href="/account" 
-                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
+                    className="text-indigo-500 hover:text-indigo-700 font-medium"
                   >
                     Subscribe now →
                   </Link>
@@ -97,7 +97,7 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-900 ${
+              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
                 isLoading ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >

@@ -124,7 +124,7 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
       {frequencyDateRange === -1 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-theme-bg rounded-md">
           <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
+            <CalendarIcon className="h-5 w-5 text-theme-fg opacity-50 mr-2" />
             <div>
               <label htmlFor="frequency-start-date" className="block text-sm font-medium text-theme-fg">
                 Start Date
@@ -140,7 +140,7 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
           </div>
           
           <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
+            <CalendarIcon className="h-5 w-5 text-theme-fg opacity-50 mr-2" />
             <div>
               <label htmlFor="frequency-end-date" className="block text-sm font-medium text-theme-fg">
                 End Date
@@ -178,7 +178,7 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
             />
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-10">No frequency data available.</p>
+          <p className="text-theme-fg opacity-70 text-center py-10">No frequency data available.</p>
         );
       })()}
     </div>

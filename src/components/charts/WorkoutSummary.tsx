@@ -51,14 +51,14 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
   };
   
   return (
-    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+    <div className="bg-theme-card shadow sm:rounded-lg p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Workout Summary</h3>
+        <h3 className="text-lg font-medium text-theme-fg">Workout Summary</h3>
         
         <div className="mt-2 md:mt-0 w-full md:w-48">
           <select
             id="summary-date-range"
-            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+            className="block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
             value={summaryDateRange}
             onChange={(e) => setSummaryDateRange(parseInt(e.target.value))}
           >
@@ -71,17 +71,17 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
       
       {/* Custom Date Range for Summary */}
       {summaryDateRange === -1 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-theme-bg rounded-md">
           <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
+            <CalendarIcon className="h-5 w-5 text-theme-fg opacity-50 mr-2" />
             <div>
-              <label htmlFor="summary-start-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="summary-start-date" className="block text-sm font-medium text-theme-fg">
                 Start Date
               </label>
               <input
                 type="date"
                 id="summary-start-date"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
                 value={summaryCustomStartDate}
                 onChange={(e) => setSummaryCustomStartDate(e.target.value)}
               />
@@ -89,15 +89,15 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
           </div>
           
           <div className="flex items-center">
-            <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
+            <CalendarIcon className="h-5 w-5 text-theme-fg opacity-50 mr-2" />
             <div>
-              <label htmlFor="summary-end-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="summary-end-date" className="block text-sm font-medium text-theme-fg">
                 End Date
               </label>
               <input
                 type="date"
                 id="summary-end-date"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
                 value={summaryCustomEndDate}
                 onChange={(e) => setSummaryCustomEndDate(e.target.value)}
               />
@@ -107,19 +107,19 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
       )}
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Workouts</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{getFilteredWorkoutsForSummary().length}</p>
+        <div className="bg-theme-bg p-4 rounded-lg">
+          <p className="text-sm text-theme-fg opacity-70">Total Workouts</p>
+          <p className="text-2xl font-bold text-theme-fg">{getFilteredWorkoutsForSummary().length}</p>
         </div>
         
-        <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Unique Exercises</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{exerciseOptions.length}</p>
+        <div className="bg-theme-bg p-4 rounded-lg">
+          <p className="text-sm text-theme-fg opacity-70">Unique Exercises</p>
+          <p className="text-2xl font-bold text-theme-fg">{exerciseOptions.length}</p>
         </div>
         
-        <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Avg. Workout Duration</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="bg-theme-bg p-4 rounded-lg">
+          <p className="text-sm text-theme-fg opacity-70">Avg. Workout Duration</p>
+          <p className="text-2xl font-bold text-theme-fg">
             {calculateAverageWorkoutDuration()} min
           </p>
         </div>

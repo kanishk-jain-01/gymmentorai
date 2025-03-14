@@ -172,7 +172,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
           </div>
           <button
             onClick={() => onRemoveChart(config.id)}
-            className="text-gray-400 hover:text-theme-fg"
+            className="text-theme-fg opacity-50 hover:text-theme-fg hover:opacity-100"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
@@ -208,7 +208,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
             )}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-10">
+          <p className="text-theme-fg opacity-70 text-center py-10">
             No data available for this configuration.
           </p>
         )}
