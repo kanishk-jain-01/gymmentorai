@@ -122,14 +122,14 @@ function AccountContent() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-bold text-theme-fg">Account</h1>
+        <p className="mt-1 text-sm text-theme-fg opacity-70">
           Manage your account and subscription
         </p>
       </div>
       
       {success && (
-        <div className="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-800 rounded-md p-4">
+        <div className="bg-green-50 border border-green-200 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -137,10 +137,10 @@ function AccountContent() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800 dark:text-green-200">
+              <h3 className="text-sm font-medium text-green-800">
                 Subscription successful
               </h3>
-              <div className="mt-2 text-sm text-green-700 dark:text-green-300">
+              <div className="mt-2 text-sm text-green-700">
                 <p>
                   Thank you for subscribing to GymMentor! Your subscription is now active.
                 </p>
@@ -151,7 +151,7 @@ function AccountContent() {
       )}
       
       {canceled && (
-        <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -159,10 +159,10 @@ function AccountContent() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              <h3 className="text-sm font-medium text-yellow-800">
                 Subscription canceled
               </h3>
-              <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+              <div className="mt-2 text-sm text-yellow-700">
                 <p>
                   You canceled the subscription process. If you have any questions or need help, please contact us.
                 </p>
@@ -174,23 +174,27 @@ function AccountContent() {
       
       <div className="grid grid-cols-1 gap-8">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">User Information</h2>
-          <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-theme-fg mb-4">User Information</h2>
+          <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
             <div className="px-4 py-5 sm:p-6">
-              <div className="flex items-center space-x-4">
-                {session.user?.image && (
-                  <img 
-                    src={session.user.image} 
-                    alt={session.user?.name || 'User'} 
-                    className="h-12 w-12 rounded-full"
-                  />
-                )}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                    {session.user?.name || 'User'}
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  {session?.user?.image ? (
+                    <img className="h-12 w-12 rounded-full" src={session.user.image} alt={session.user.name || 'User'} />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                      <span className="text-indigo-800 text-lg font-medium">
+                        {session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || '?'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-medium text-theme-fg">
+                    {session?.user?.name || 'User'}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {session.user?.email || ''}
+                  <p className="text-sm text-theme-fg opacity-70">
+                    {session?.user?.email}
                   </p>
                 </div>
               </div>
@@ -199,86 +203,84 @@ function AccountContent() {
         </div>
         
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Subscription</h2>
-          <SubscriptionStatus onSubscriptionChange={(status) => setSubscriptionStatus(status)} />
+          <h2 className="text-xl font-semibold text-theme-fg mb-4">Subscription</h2>
+          <SubscriptionStatus />
         </div>
         
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Data & Privacy</h2>
-          <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-theme-fg mb-4">Data & Privacy</h2>
+          <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
             <div className="px-4 py-5 sm:p-6">
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-md font-medium text-gray-900 dark:text-white">Export Your Data</h4>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Download a copy of your workout data in JSON format.
-                  </p>
-                  <div className="mt-3">
-                    <a
-                      href="/api/user/export"
-                      download
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-900"
+              <div>
+                <h4 className="text-md font-medium text-theme-fg">Export Your Data</h4>
+                <p className="mt-1 text-sm text-theme-fg opacity-70">
+                  Download a copy of all your workout data in JSON format.
+                </p>
+              </div>
+              <div className="mt-5">
+                <a
+                  href="/api/user/export"
+                  download
+                  className="inline-flex items-center px-4 py-2 border border-theme-border shadow-sm text-sm font-medium rounded-md text-theme-fg bg-theme-card hover:bg-theme-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Export Data
+                </a>
+              </div>
+              
+              <div className="pt-6 border-t border-theme-border">
+                <h4 className="text-md font-medium text-red-600">Delete Account</h4>
+                <p className="mt-1 text-sm text-theme-fg opacity-70">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+                <div className="mt-3">
+                  {!showDeleteConfirm ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     >
-                      Export Data
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <h4 className="text-md font-medium text-red-600 dark:text-red-400">Delete Account</h4>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Permanently delete your account and all associated data. This action cannot be undone.
-                  </p>
-                  <div className="mt-3">
-                    {!showDeleteConfirm ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-red-400 dark:focus:ring-offset-gray-900"
-                      >
-                        Delete Account
-                      </button>
-                    ) : (
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                          Are you sure? This will permanently delete all your workout data and cannot be undone.
-                          {subscriptionStatus?.isSubscribed && !subscriptionStatus.cancelAtPeriodEnd && (
-                            <span className="block mt-1">
-                              Note: You must cancel your active subscription before deleting your account.
-                            </span>
-                          )}
-                          {subscriptionStatus?.isSubscribed && subscriptionStatus.cancelAtPeriodEnd && subscriptionStatus.periodEnd && (
-                            <span className="block mt-1">
-                              Note: You must wait until your subscription expires on {new Date(subscriptionStatus.periodEnd).toLocaleDateString()} before deleting your account.
-                            </span>
-                          )}
-                        </p>
-                        <div className="flex space-x-3">
-                          <button
-                            type="button"
-                            onClick={handleDeleteAccount}
-                            disabled={isLoading}
-                            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-red-400 dark:focus:ring-offset-gray-900 ${
-                              isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                            }`}
-                          >
-                            {isLoading ? 'Deleting...' : 'Yes, Delete My Account'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowDeleteConfirm(false)}
-                            disabled={isLoading}
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-900"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                        {deleteError && (
-                          <div className="text-sm text-red-600 dark:text-red-400">{deleteError}</div>
+                      Delete Account
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-red-600">
+                        Are you sure? This will permanently delete all your workout data and cannot be undone.
+                        {subscriptionStatus?.isSubscribed && !subscriptionStatus.cancelAtPeriodEnd && (
+                          <span className="block mt-1">
+                            Note: You must cancel your active subscription before deleting your account.
+                          </span>
                         )}
+                        {subscriptionStatus?.isSubscribed && subscriptionStatus.cancelAtPeriodEnd && subscriptionStatus.periodEnd && (
+                          <span className="block mt-1">
+                            Note: You must wait until your subscription expires on {new Date(subscriptionStatus.periodEnd).toLocaleDateString()} before deleting your account.
+                          </span>
+                        )}
+                      </p>
+                      <div className="flex space-x-3">
+                        <button
+                          type="button"
+                          onClick={handleDeleteAccount}
+                          disabled={isLoading}
+                          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+                            isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          {isLoading ? 'Deleting...' : 'Yes, Delete My Account'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowDeleteConfirm(false)}
+                          disabled={isLoading}
+                          className="inline-flex items-center px-4 py-2 border border-theme-border shadow-sm text-sm font-medium rounded-md text-theme-fg bg-theme-card hover:bg-theme-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          Cancel
+                        </button>
                       </div>
-                    )}
-                  </div>
+                      {deleteError && (
+                        <div className="text-sm text-red-600">{deleteError}</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

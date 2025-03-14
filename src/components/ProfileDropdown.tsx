@@ -58,19 +58,19 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
       </button>
       
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-theme-card ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+          <div className="px-4 py-3 border-b border-theme-border">
+            <p className="text-sm font-medium text-theme-fg truncate">
               {user?.name || 'User'}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            <p className="text-xs text-theme-fg opacity-70 truncate">
               {user?.email || ''}
             </p>
           </div>
           
           <Link
             href="/account"
-            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="block px-4 py-2 text-sm text-theme-fg hover:bg-theme-bg"
             onClick={() => setIsOpen(false)}
           >
             Account Settings
@@ -78,7 +78,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
           
           <button
             onClick={handleSignOut}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="block w-full text-left px-4 py-2 text-sm text-theme-fg hover:bg-theme-bg"
           >
             Sign out
           </button>

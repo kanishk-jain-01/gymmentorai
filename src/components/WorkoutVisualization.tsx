@@ -174,22 +174,22 @@ export default function WorkoutVisualization() {
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div className="h-6 bg-theme-border rounded w-1/4"></div>
+        <div className="h-64 bg-theme-border rounded"></div>
+        <div className="h-6 bg-theme-border rounded w-1/3"></div>
+        <div className="h-64 bg-theme-border rounded"></div>
       </div>
     );
   }
   
   if (error) {
-    return <div className="text-red-500 dark:text-red-400">{error}</div>;
+    return <div className="text-red-500">{error}</div>;
   }
   
   if (workouts.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6 text-center">
-        <p className="text-gray-500 dark:text-gray-400">No workout data available for visualization. Start logging your workouts!</p>
+      <div className="bg-theme-card shadow sm:rounded-lg p-6 text-center">
+        <p className="text-theme-fg opacity-70">No workout data available for visualization. Start logging your workouts!</p>
       </div>
     );
   }

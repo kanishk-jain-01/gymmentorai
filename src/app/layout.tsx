@@ -51,7 +51,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-theme-bg text-theme-fg border-theme-border`}>
         <Providers>{children}</Providers>
       </body>
     </html>

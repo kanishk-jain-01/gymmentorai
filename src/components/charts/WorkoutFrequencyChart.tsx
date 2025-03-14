@@ -102,14 +102,14 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
   };
   
   return (
-    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
+    <div className="bg-theme-card shadow sm:rounded-lg p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Workout Frequency</h3>
+        <h3 className="text-lg font-medium text-theme-fg">Workout Frequency</h3>
         
         <div className="mt-2 md:mt-0 w-full md:w-48">
           <select
             id="frequency-date-range"
-            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+            className="block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
             value={frequencyDateRange}
             onChange={(e) => setFrequencyDateRange(parseInt(e.target.value))}
           >
@@ -122,17 +122,17 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
       
       {/* Custom Date Range for Frequency */}
       {frequencyDateRange === -1 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-theme-bg rounded-md">
           <div className="flex items-center">
             <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
             <div>
-              <label htmlFor="frequency-start-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="frequency-start-date" className="block text-sm font-medium text-theme-fg">
                 Start Date
               </label>
               <input
                 type="date"
                 id="frequency-start-date"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
                 value={frequencyCustomStartDate}
                 onChange={(e) => setFrequencyCustomStartDate(e.target.value)}
               />
@@ -142,13 +142,13 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
           <div className="flex items-center">
             <CalendarIcon className="h-5 w-5 text-gray-400 mr-2" />
             <div>
-              <label htmlFor="frequency-end-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="frequency-end-date" className="block text-sm font-medium text-theme-fg">
                 End Date
               </label>
               <input
                 type="date"
                 id="frequency-end-date"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
                 value={frequencyCustomEndDate}
                 onChange={(e) => setFrequencyCustomEndDate(e.target.value)}
               />
