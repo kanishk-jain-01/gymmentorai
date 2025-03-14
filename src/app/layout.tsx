@@ -33,8 +33,8 @@ export default function RootLayout({
                   
                   // Determine which theme to use
                   const shouldUseDarkTheme = 
-                    storedTheme === 'dark' || 
-                    (storedTheme === 'system' && systemPrefersDark) ||
+                    storedTheme === '"dark"' || // next-themes stores values with quotes
+                    (storedTheme === '"system"' && systemPrefersDark) ||
                     (!storedTheme && systemPrefersDark);
                   
                   // Apply the theme
