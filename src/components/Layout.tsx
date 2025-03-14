@@ -17,10 +17,11 @@ export default function Layout({ children }: LayoutProps) {
   const loading = status === 'loading';
   const { resolvedTheme } = useTheme();
 
-  // Apply theme on mount and when theme changes
+  // Apply theme only on initial mount, not on theme changes
   useEffect(() => {
-    applyTheme();
-  }, [resolvedTheme]);
+    // We don't need to call applyTheme here as next-themes handles this
+    // The ThemeProvider in providers.tsx already manages theme persistence
+  }, []);
 
   return (
     <div className="min-h-screen transition-colors duration-200">

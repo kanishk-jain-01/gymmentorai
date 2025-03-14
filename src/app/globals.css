@@ -26,8 +26,3 @@ body {
   background-color: var(--card-bg) !important;
 }
 
-/* Ensure transitions are smooth */
-* {
-  transition-property: color, background-color, border-color;
-  transition-duration: 200ms;
-}
