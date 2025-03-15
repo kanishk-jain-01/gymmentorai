@@ -46,13 +46,13 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
             <li key={workout.id}>
               <div className="px-4 py-4 sm:px-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-indigo-600 truncate">
+                  <h3 className="text-lg font-medium truncate">
                     {workout.name || 'Workout'}
                   </h3>
                   <div className="ml-2 flex-shrink-0 flex items-center space-x-2">
                     <button
                       onClick={() => setEditingWorkout(workout)}
-                      className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded bg-theme-accent hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
                       Edit
                     </button>

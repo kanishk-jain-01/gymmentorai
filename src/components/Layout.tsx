@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signIn} from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -74,9 +75,31 @@ export default function Layout({ children }: LayoutProps) {
 
       <footer className="border-t py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm">
-            &copy; {new Date().getFullYear()} GymMentorAI. All rights reserved.
-          </p>
+          <div className="flex flex-col items-center">
+            <p className="text-center text-sm mb-4">
+              &copy; {new Date().getFullYear()} GymMentorAI. All rights reserved.
+            </p>
+            
+            {/* Social Media Icons */}
+            <div className="flex space-x-6 mt-2">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaFacebook className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Facebook</span>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaTwitter className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Twitter</span>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaInstagram className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaLinkedin className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
