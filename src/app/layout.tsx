@@ -8,6 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "GymMentorAI - AI-Powered Workout Tracking",
   description: "Track your workouts with AI assistance",
+  icons: {
+    icon: '/dumbbell-favicon.svg',
+    apple: '/dumbbell-favicon.svg',
+    shortcut: '/dumbbell-favicon.svg'
+  }
 };
 
 export default function RootLayout({
