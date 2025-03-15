@@ -51,7 +51,6 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   return (
     <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
       <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg leading-6 font-medium text-theme-fg">Log your workout</h3>
         <div className="mt-2 max-w-xl text-sm text-theme-fg opacity-80">
           <p>
             Describe your workout in natural language. Our AI will understand and organize it for you.
