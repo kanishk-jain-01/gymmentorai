@@ -188,12 +188,62 @@ async function callLLM(messages: any[], responseFormat?: { type: string }): Prom
 }
 
 /**
+ * Validate if the input text is workout-related
+ */
+export async function isWorkoutRelated(text: string): Promise<boolean> {
+  if (!isAIAvailable()) {
+    throw new Error('No LLM service configured. Please set up an LLM API provider.');
+  }
+
+  try {
+    const response = await callLLM([
+      {
+        role: "system",
+        content: `You are a fitness assistant that validates if text is workout-related.
+        Return a JSON object with a single boolean field "isWorkoutRelated" indicating if the text describes a workout or exercise activity.
+        Consider the following as workout-related:
+        - Exercise descriptions
+        - Workout routines
+        - Training sessions
+        - Physical activities
+        - Gym activities
+        - Sports training
+        
+        Consider the following as NOT workout-related:
+        - General conversation
+        - Non-physical activities
+        - Unrelated text
+        - Random characters or nonsense
+        
+        Return format: { "isWorkoutRelated": true/false }`
+      },
+      {
+        role: "user",
+        content: text
+      }
+    ], { type: "json_object" });
+
+    const validation = JSON.parse(response.choices[0].message.content || '{"isWorkoutRelated": false}');
+    return validation.isWorkoutRelated;
+  } catch (error) {
+    console.error('Workout validation failed:', error);
+    return false;
+  }
+}
+
+/**
  * Parse a natural language workout description into structured data
  * Uses the configured LLM provider
  */
 export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
   if (!isAIAvailable()) {
     throw new Error('No LLM service configured. Please set up an LLM API provider.');
+  }
+  
+  // First validate if the text is workout-related
+  const isValid = await isWorkoutRelated(text);
+  if (!isValid) {
+    throw new Error('The input text does not appear to be workout-related. Please provide a valid workout description.');
   }
   
   try {
