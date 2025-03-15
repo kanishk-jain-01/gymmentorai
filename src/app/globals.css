@@ -16,15 +16,26 @@
   --accent-color: #3b4f7d;
 }
 
+/* Ensure your theme variables are applied */
+@layer utilities {
+  .bg-theme-bg {
+    background-color: var(--background);
+  }
+  .text-theme-fg {
+    color: var(--foreground);
+  }
+  .bg-theme-card {
+    background-color: var(--card-bg);
+  }
+  .border-theme-border {
+    border-color: var(--border-color);
+  }
+  .bg-theme-accent {
+    background-color: var(--accent-color);
+  }
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-/* Overriding an issue with the theme card background color */
-.bg-theme-card {
-  background-color: var(--card-bg) !important;
-}
-

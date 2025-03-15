@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signIn} from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
-import { useTheme } from 'next-themes';
-import { applyTheme } from '@/lib/theme-script';
 import ProfileDropdown from './ProfileDropdown';
 
 interface LayoutProps {
@@ -15,13 +12,6 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const { resolvedTheme } = useTheme();
-
-  // Apply theme only on initial mount, not on theme changes
-  useEffect(() => {
-    // We don't need to call applyTheme here as next-themes handles this
-    // The ThemeProvider in providers.tsx already manages theme persistence
-  }, []);
 
   return (
     <div className="min-h-screen transition-colors duration-200">

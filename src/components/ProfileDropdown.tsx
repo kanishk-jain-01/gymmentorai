@@ -14,7 +14,6 @@ interface ProfileDropdownProps {
 export default function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   
   // Close dropdown when clicking outside
   useEffect(() => {
