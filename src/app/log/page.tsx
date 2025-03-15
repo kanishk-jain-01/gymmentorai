@@ -20,7 +20,7 @@ export default function Dashboard() {
   useEffect(() => {
     // Redirect to sign-in if not authenticated
     if (status === 'unauthenticated') {
-      router.push('/auth/signin?callbackUrl=/dashboard');
+      router.push('/auth/signin?callbackUrl=/log');
     }
     
     // Fetch workouts when authenticated
@@ -68,9 +68,9 @@ export default function Dashboard() {
       
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">Workout Log</h1>
           <p className="mt-1 text-sm">
-            Log your workouts and track your progress
+            Log and view your workouts
           </p>
         </div>
         

@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 export default function SignIn() {
-  const [callbackUrl, setCallbackUrl] = useState('/dashboard');
+  const [callbackUrl, setCallbackUrl] = useState('/log');
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   

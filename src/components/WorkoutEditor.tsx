@@ -339,12 +339,12 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
             </div>
           </div>
           
-          <div className="px-8 py-5 bg-theme-bg/50 flex justify-between items-center rounded-b-xl border-t border-theme-border/30">
+          <div className="px-8 py-5 bg-theme-bg/50 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 rounded-b-xl border-t border-theme-border/30">
             <button
               type="button"
               onClick={handleDeleteWorkout}
               disabled={isLoading}
-              className={`inline-flex items-center justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-full transition-all duration-300 ease-in-out ${
+              className={`inline-flex items-center justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-full transition-all duration-300 ease-in-out w-full sm:w-auto ${
                 deleteConfirmState 
                   ? 'border-red-500 text-white bg-red-600 hover:bg-red-700 focus:ring-red-500' 
                   : 'border-red-300 text-red-700 dark:text-red-400 bg-white dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/40 focus:ring-red-500'
@@ -367,21 +367,21 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
               {isLoading ? 'Deleting...' : deleteConfirmState ? 'Confirm Delete' : 'Delete Workout'}
             </button>
             
-            <div className="flex space-x-3">
+            <div className="flex w-full sm:w-auto space-x-3">
               <button
                 type="button"
                 onClick={() => {
                   setDeleteConfirmState(false);
                   onClose();
                 }}
-                className="inline-flex items-center justify-center py-2 px-4 border border-theme-border/50 text-theme-fg bg-theme-card hover:bg-theme-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full transition-all duration-200 transform hover:scale-105"
+                className="inline-flex items-center justify-center py-2 px-4 border border-theme-border/50 text-theme-fg bg-theme-card hover:bg-theme-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-full transition-all duration-200 transform hover:scale-105 flex-1 sm:flex-initial"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`inline-flex items-center justify-center py-2 px-5 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105 ${
+                className={`inline-flex items-center justify-center py-2 px-5 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105 flex-1 sm:flex-initial ${
                   isLoading ? 'opacity-75 cursor-not-allowed' : ''
                 }`}
               >
