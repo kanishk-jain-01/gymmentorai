@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { ReactNode, useEffect, useState } from 'react';
 
 export function Providers({ children }: { children: ReactNode }) {
-  // This helps prevent hydration mismatch
+  
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
