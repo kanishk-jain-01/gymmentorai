@@ -201,7 +201,7 @@ export default function WorkoutVisualization() {
         <div>
           <h1 className="text-2xl font-bold">Workout Visualization</h1>
           <p className="mt-1 text-sm">
-            Track your progress and get insights into your fitness journey
+            Get insights into your fitness journey
           </p>
         </div>
         <button
