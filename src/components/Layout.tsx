@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signIn} from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaDumbbell } from 'react-icons/fa';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,8 +21,11 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link href="/" className="text-xl font-bold text-indigo-600">
-                  GymMentorAI
+                <Link href="/" className="group flex items-center">
+                  <FaDumbbell className="h-6 w-6 mr-2 text-indigo-600 group-hover:text-indigo-500 transition-transform duration-300 ease-in-out group-hover:rotate-12" />
+                  <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300 ease-in-out">
+                    GymMentorAI
+                  </span>
                 </Link>
               </div>
               {(session || process.env.NODE_ENV !== 'production') && (
