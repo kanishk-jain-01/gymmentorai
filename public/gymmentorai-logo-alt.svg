@@ -2,11 +2,12 @@
   <!-- Background with solid color -->
   <rect width="500" height="500" fill="#4f46e5" />
   
-  <!-- Dumbbell Icon - made smaller -->
-  <g transform="translate(190, 140) scale(0.2)">
+  <!-- Dumbbell Icon - centered and smaller -->
+  <g transform="translate(200, 120) scale(0.18)">
     <path d="M104 96H56c-13.3 0-24 10.7-24 24v104H8c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h24v104c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V120c0-13.3-10.7-24-24-24zm528 128h-24V120c0-13.3-10.7-24-24-24h-48c-13.3 0-24 10.7-24 24v272c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V288h24c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zM456 32h-48c-13.3 0-24 10.7-24 24v168H256V56c0-13.3-10.7-24-24-24h-48c-13.3 0-24 10.7-24 24v400c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V288h128v168c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24z" fill="white" />
   </g>
   
-  <!-- Company Name - made larger -->
-  <text x="250" y="320" font-family="Arial, sans-serif" font-size="56" font-weight="bold" text-anchor="middle" fill="white">GymMentorAI</text>
+  <!-- Company Name - larger and better positioned -->
+  <text x="250" y="300" font-family="Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="white">Gym</text>
+  <text x="250" y="370" font-family="Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="white">MentorAI</text>
 </svg> 

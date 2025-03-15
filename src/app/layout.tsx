@@ -9,9 +9,12 @@ export const metadata: Metadata = {
   title: "GymMentorAI - AI-Powered Workout Tracking",
   description: "Track your workouts with AI assistance",
   icons: {
-    icon: '/dumbbell-favicon.svg',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32 16x16', type: 'image/x-icon' },
+      { url: '/dumbbell-favicon.svg', type: 'image/svg+xml' }
+    ],
     apple: '/dumbbell-favicon.svg',
-    shortcut: '/dumbbell-favicon.svg'
+    shortcut: '/favicon.ico'
   }
 };
 
