@@ -185,8 +185,8 @@ const CustomChart: React.FC<CustomChartProps> = ({
         />
         
         {config.exercise && personalRecords[config.exercise] && config.metric === 'weight' && (
-          <div className="mb-4 p-3 bg-indigo-50 rounded-md">
-            <p className="text-sm font-medium text-indigo-700">
+          <div className="mb-4 p-3 bg-theme-accent bg-indigo-50 rounded-md">
+            <p className="text-sm font-medium text-theme-fg">
               Personal Record: {personalRecords[config.exercise].weight} lbs on {new Date(personalRecords[config.exercise].date).toLocaleDateString()}
             </p>
           </div>
