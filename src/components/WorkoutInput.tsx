@@ -14,6 +14,7 @@ interface FormData {
 export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'subscription'; message: string } | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
   
   const {
     register,
@@ -22,11 +23,35 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
     formState: { errors },
   } = useForm<FormData>();
   
+  const validateWorkout = async (text: string): Promise<boolean> => {
+    try {
+      const response = await axios.post('/api/validate-workout', { text });
+      return response.data.isWorkoutRelated;
+    } catch (error) {
+      console.error('Validation error:', error);
+      return false;
+    }
+  };
+  
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setFeedback(null);
     
     try {
+      // First validate if the input is workout-related
+      setIsValidating(true);
+      const isValid = await validateWorkout(data.workoutText);
+      setIsValidating(false);
+      
+      if (!isValid) {
+        setFeedback({ 
+          type: 'error', 
+          message: 'Please enter a valid workout description. Random text or non-workout content is not allowed.' 
+        });
+        return;
+      }
+      
+      // If valid, proceed with saving the workout
       await axios.post('/api/workout', { text: data.workoutText });
       setFeedback({ type: 'success', message: 'Workout added successfully!' });
       reset();
@@ -45,6 +70,7 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
       console.error(err);
     } finally {
       setIsLoading(false);
+      setIsValidating(false);
     }
   };
   
@@ -63,7 +89,13 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
               rows={5}
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-theme-border rounded-md bg-theme-card text-theme-fg"
               placeholder="Example: Today I did 3 sets of bench press at 185lbs for 8 reps, followed by 3 sets of squats at 225lbs for 5 reps. I finished with a 20 minute run on the treadmill."
-              {...register('workoutText', { required: 'Please enter your workout details' })}
+              {...register('workoutText', { 
+                required: 'Please enter your workout details',
+                minLength: {
+                  value: 10,
+                  message: 'Please provide more details about your workout'
+                }
+              })}
             />
             {errors.workoutText && (
               <p className="mt-2 text-sm text-red-500">{errors.workoutText.message}</p>
@@ -95,12 +127,12 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
           <div className="mt-5">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isValidating}
               className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                (isLoading || isValidating) ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
-              {isLoading ? 'Processing...' : 'Save Workout'}
+              {isValidating ? 'Validating...' : isLoading ? 'Processing...' : 'Save Workout'}
             </button>
           </div>
         </form>
