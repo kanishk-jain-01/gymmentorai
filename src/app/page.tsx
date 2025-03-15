@@ -39,11 +39,11 @@ export default function Home() {
                 <FaFacebook className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+              <a href="https://twitter.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaTwitter className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+              <a href="https://instagram.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaInstagram className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Instagram</span>
               </a>
