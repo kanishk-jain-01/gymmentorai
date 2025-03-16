@@ -173,7 +173,15 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
         return frequencyData ? (
           <div className="h-80">
             <Bar
-              options={getChartOptions('Number of Workouts', isSinglePoint)}
+              options={{
+                ...getChartOptions('Number of Workouts', isSinglePoint),
+                plugins: {
+                  ...getChartOptions('Number of Workouts', isSinglePoint).plugins,
+                  legend: {
+                    display: false
+                  }
+                }
+              }}
               data={frequencyData}
             />
           </div>
