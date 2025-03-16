@@ -66,7 +66,7 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
       if (validationResult.apiLimitExceeded) {
         setFeedback({ 
           type: 'limit', 
-          message: validationResult.message || 'You have reached your daily API request limit. Please try again tomorrow.'
+          message: validationResult.message || 'You have reached your daily API request limit. Please try again tomorrow or edit a logged workout'
         });
         return;
       }
@@ -122,11 +122,7 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-theme-border rounded-md bg-theme-card text-theme-fg"
               placeholder="Example: Today I did 3 sets of bench press at 185lbs for 8 reps, followed by 3 sets of squats at 225lbs for 5 reps. I finished with a 20 minute run on the treadmill."
               {...register('workoutText', { 
-                required: 'Please enter your workout details',
-                minLength: {
-                  value: 10,
-                  message: 'Please provide more details about your workout'
-                }
+                required: 'Please enter your workout details'
               })}
             />
             {errors.workoutText && (
