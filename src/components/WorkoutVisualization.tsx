@@ -12,7 +12,8 @@ import {
   Title, 
   Tooltip, 
   Legend,
-  Filler
+  Filler,
+  ScatterController
 } from 'chart.js';
 import axios from 'axios';
 import { PlusIcon } from '@heroicons/react/24/outline';
@@ -41,7 +42,8 @@ ChartJS.register(
   Title, 
   Tooltip, 
   Legend,
-  Filler
+  Filler,
+  ScatterController
 );
 
 // Set global defaults for Chart.js
