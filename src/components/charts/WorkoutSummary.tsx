@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { Workout } from '@/types';
 import { DATE_RANGES, filterWorkoutsByDateRange } from './chartUtils';
+import { formatWorkoutDuration } from '@/lib/utils';
 
 interface WorkoutSummaryProps {
   workouts: Workout[];
@@ -120,7 +121,7 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
         <div className="bg-theme-bg p-4 rounded-lg">
           <p className="text-sm text-theme-fg opacity-70">Avg. Workout Duration</p>
           <p className="text-2xl font-bold text-theme-fg">
-            {calculateAverageWorkoutDuration()} min
+            {formatWorkoutDuration(calculateAverageWorkoutDuration())}
           </p>
         </div>
       </div>

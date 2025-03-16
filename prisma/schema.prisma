@@ -91,7 +91,7 @@ model Set {
   id          String   @id @default(cuid())
   reps        Int?
   weight      Float?   // in kg or lbs
-  duration    Int?     // in seconds
+  duration    Int?     // in seconds (stored as seconds, displayed as MM:SS)
   distance    Float?   // in km or miles
   notes       String?
   exerciseId  String

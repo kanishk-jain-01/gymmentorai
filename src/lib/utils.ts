@@ -20,6 +20,53 @@ export function ensureNumericType(value: any): number | undefined {
 }
 
 /**
+ * Converts seconds to MM:SS format for set durations
+ * @param seconds Total seconds
+ * @returns Formatted string in MM:SS format
+ */
+export function formatDuration(seconds?: number): string {
+  if (seconds === undefined || seconds === null) return '';
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Formats workout duration in minutes
+ * @param minutes Workout duration in minutes
+ * @returns Formatted string with minutes
+ */
+export function formatWorkoutDuration(minutes?: number): string {
+  if (minutes === undefined || minutes === null) return '';
+  return `${minutes} min`;
+}
+
+/**
+ * Parses MM:SS format to seconds for set durations
+ * @param mmss String in MM:SS format
+ * @returns Total seconds as a number, or undefined if invalid
+ */
+export function parseDuration(mmss?: string): number | undefined {
+  if (!mmss) return undefined;
+  
+  // Handle case where only minutes are provided (no colon)
+  if (!mmss.includes(':')) {
+    const minutes = parseInt(mmss, 10);
+    return isNaN(minutes) ? undefined : minutes * 60;
+  }
+  
+  const [minutesStr, secondsStr] = mmss.split(':');
+  const minutes = parseInt(minutesStr, 10);
+  const seconds = parseInt(secondsStr, 10);
+  
+  if (isNaN(minutes) || isNaN(seconds)) return undefined;
+  
+  return minutes * 60 + seconds;
+}
+
+/**
  * Organizes workouts by year
  */
 export function organizeWorkoutsByYear(workouts: any[]) {

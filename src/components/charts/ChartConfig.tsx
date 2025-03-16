@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { ChartConfig as ChartConfigType, DATE_RANGES, CHART_TYPES, AVAILABLE_METRICS } from './chartUtils';
 
@@ -13,26 +13,36 @@ const ChartConfig: React.FC<ChartConfigProps> = ({
   exerciseOptions, 
   onUpdateConfig 
 }) => {
+  // When switching to workout duration, clear the exercise selection
+  useEffect(() => {
+    if (config.metric === 'workoutDuration' && config.exercise) {
+      onUpdateConfig('exercise', null);
+    }
+  }, [config.metric]);
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div>
-          <label htmlFor={`exercise-${config.id}`} className="block text-sm font-medium text-theme-fg">
-            Exercise
-          </label>
-          <select
-            id={`exercise-${config.id}`}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
-            value={config.exercise || ''}
-            onChange={(e) => onUpdateConfig('exercise', e.target.value)}
-          >
-            {exerciseOptions.map(exercise => (
-              <option key={exercise} value={exercise}>{exercise}</option>
-            ))}
-          </select>
-        </div>
+        {/* Only show exercise selector if not using workout duration metric */}
+        {config.metric !== 'workoutDuration' && (
+          <div>
+            <label htmlFor={`exercise-${config.id}`} className="block text-sm font-medium text-theme-fg">
+              Exercise
+            </label>
+            <select
+              id={`exercise-${config.id}`}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-theme-border focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-theme-card text-theme-fg"
+              value={config.exercise || ''}
+              onChange={(e) => onUpdateConfig('exercise', e.target.value)}
+            >
+              {exerciseOptions.map(exercise => (
+                <option key={exercise} value={exercise}>{exercise}</option>
+              ))}
+            </select>
+          </div>
+        )}
         
-        <div>
+        <div className={config.metric === 'workoutDuration' ? 'md:col-span-2' : ''}>
           <label htmlFor={`metric-${config.id}`} className="block text-sm font-medium text-theme-fg">
             Y-Axis Metric
           </label>
