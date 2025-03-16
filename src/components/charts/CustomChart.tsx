@@ -1,6 +1,6 @@
 import React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
-import { ChartData } from 'chart.js';
+import { Line, Bar, Scatter, Chart } from 'react-chartjs-2';
+import { ChartData, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Workout, Exercise, Set } from '@/types';
 import { 
@@ -22,6 +22,16 @@ interface CustomChartProps {
   onRemoveChart: (id: string) => void;
 }
 
+// Define a type for mixed chart data
+interface MixedChartData {
+  labels: string[];
+  datasets: Array<
+    | ChartDataset<'line', number[]>
+    | ChartDataset<'scatter', ScatterDataPoint[]>
+    | ChartDataset<'bar', number[]>
+  >;
+}
+
 const CustomChart: React.FC<CustomChartProps> = ({
   config,
   workouts,
@@ -33,7 +43,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
   const { getChartOptions } = useChartOptions();
   
   // Generate chart data based on configuration
-  const generateChartData = (): CustomChartData | null => {
+  const generateChartData = (): CustomChartData | MixedChartData | null => {
     if (!config.exercise || workouts.length === 0) return null;
     
     // Get workouts filtered by this chart's date range
@@ -44,12 +54,37 @@ const CustomChart: React.FC<CustomChartProps> = ({
       config.customEndDate
     );
     
-    // Find all instances of the selected exercise and their sets
-    const exerciseData: { date: string; setIndex: number; [key: string]: any }[] = [];
+    // Group data by date first
+    const exerciseDataByDate: Record<string, {
+      date: string;
+      formattedDate: string;
+      sets: {
+        setIndex: number;
+        weight?: number;
+        reps?: number;
+        volume?: number;
+        duration?: number;
+        distance?: number;
+      }[];
+    }> = {};
     
+    // Find all instances of the selected exercise and their sets
     chartFilteredWorkouts.forEach(workout => {
+      const workoutDate = new Date(workout.date);
+      const dateKey = workoutDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const formattedDate = workoutDate.toLocaleDateString();
+      
       workout.exercises.forEach(exercise => {
         if (exercise.name === config.exercise) {
+          // Initialize date entry if it doesn't exist
+          if (!exerciseDataByDate[dateKey]) {
+            exerciseDataByDate[dateKey] = {
+              date: workout.date,
+              formattedDate,
+              sets: []
+            };
+          }
+          
           // Process each set individually
           exercise.sets.forEach((set, setIndex) => {
             // Calculate volume if weight and reps are present
@@ -58,33 +93,25 @@ const CustomChart: React.FC<CustomChartProps> = ({
               volume = set.reps * set.weight;
             }
             
-            exerciseData.push({
-              date: workout.date,
+            exerciseDataByDate[dateKey].sets.push({
               setIndex: setIndex + 1,
               weight: set.weight,
               reps: set.reps,
               volume,
               duration: set.duration,
-              distance: set.distance,
-              // Create a unique label for each set
-              label: `${new Date(workout.date).toLocaleDateString()} (Set ${setIndex + 1})`
+              distance: set.distance
             });
           });
         }
       });
     });
     
-    // Sort by date
-    exerciseData.sort((a, b) => {
-      const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-      if (dateComparison === 0) {
-        // If same date, sort by set index
-        return a.setIndex - b.setIndex;
-      }
-      return dateComparison;
-    });
+    // Convert to array and sort by date
+    const dateEntries = Object.values(exerciseDataByDate).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
     
-    if (exerciseData.length === 0) return null;
+    if (dateEntries.length === 0) return null;
     
     // Get metric label
     const metricLabel = AVAILABLE_METRICS.find(m => m.value === config.metric)?.label || config.metric;
@@ -93,65 +120,132 @@ const CustomChart: React.FC<CustomChartProps> = ({
     const colorIndex = parseInt(config.id) % CHART_COLORS.length;
     const color = CHART_COLORS[colorIndex];
     
-    // Check if we have a single data point
-    const isSinglePoint = exerciseData.length === 1;
+    // Check if we have a single date point
+    const isSingleDate = dateEntries.length === 1;
     
-    // For single data points in line charts, we need special handling
-    if (isSinglePoint && config.chartType === 'line') {
-      // For a single point, create a dataset with enhanced point styling
+    // For line charts, we'll create two datasets:
+    // 1. A line connecting the average value for each day
+    // 2. Scatter points showing individual sets
+    if (config.chartType === 'line') {
+      // Calculate average values for each day for the line
+      const averageValues = dateEntries.map(entry => {
+        const validValues = entry.sets
+          .map(set => set[config.metric])
+          .filter(val => val !== undefined && val !== null) as number[];
+        
+        return validValues.length > 0
+          ? validValues.reduce((sum, val) => sum + val, 0) / validValues.length
+          : 0;
+      });
+      
+      // Create scatter data for individual sets
+      const scatterData: ScatterDataPoint[] = [];
+      dateEntries.forEach((entry, dateIndex) => {
+        entry.sets.forEach(set => {
+          const value = set[config.metric];
+          if (value !== undefined && value !== null) {
+            // Add a small random offset to x to prevent points from stacking exactly on top of each other
+            const jitter = (Math.random() - 0.5) * 0.4; // Small random value between -0.2 and 0.2
+            scatterData.push({
+              x: dateIndex + jitter, // Use numeric index with jitter for x value
+              y: value
+            });
+          }
+        });
+      });
+      
+      // For a single date with multiple sets, just show the scatter points
+      if (isSingleDate) {
+        return {
+          labels: [dateEntries[0].formattedDate],
+          datasets: [
+            {
+              type: 'scatter' as const,
+              label: `${metricLabel} (Sets)`,
+              data: scatterData,
+              backgroundColor: color.background,
+              borderColor: color.border,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            }
+          ],
+        };
+      }
+      
+      // For multiple dates, show both line and scatter
       return {
-        labels: [exerciseData[0].label],
+        labels: dateEntries.map(entry => entry.formattedDate),
         datasets: [
           {
-            label: metricLabel,
-            data: [exerciseData[0][config.metric] || 0],
+            type: 'line' as const,
+            label: `${metricLabel} (Average)`,
+            data: averageValues,
             borderColor: color.border,
-            backgroundColor: color.background,
-            pointRadius: 8, // Even larger point for better visibility
-            pointHoverRadius: 10,
-            borderWidth: 3,
-            tension: 0, // Always use 0 tension to avoid control point errors
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            tension: 0,
             fill: false,
+            pointRadius: 0, // Hide points on the line
           },
+          {
+            type: 'scatter' as const,
+            label: `${metricLabel} (Sets)`,
+            data: scatterData,
+            backgroundColor: color.background,
+            borderColor: color.border,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+          }
         ],
       };
     }
     
-    // For single data points in bar charts, make the bar wider
-    if (isSinglePoint && config.chartType === 'bar') {
+    // For bar charts, we'll show the average value for each day
+    if (config.chartType === 'bar') {
+      // Calculate average values for each day
+      const averageValues = dateEntries.map(entry => {
+        const validValues = entry.sets
+          .map(set => set[config.metric])
+          .filter(val => val !== undefined && val !== null) as number[];
+        
+        return validValues.length > 0
+          ? validValues.reduce((sum, val) => sum + val, 0) / validValues.length
+          : 0;
+      });
+      
+      // For a single date, make the bar wider
+      if (isSingleDate) {
+        return {
+          labels: [dateEntries[0].formattedDate],
+          datasets: [
+            {
+              label: `${metricLabel} (Average)`,
+              data: [averageValues[0]],
+              borderColor: color.border,
+              backgroundColor: color.background,
+              borderWidth: 2,
+              barThickness: 60, // Wider bar for single point
+            },
+          ],
+        };
+      }
+      
+      // For multiple dates
       return {
-        labels: [exerciseData[0].label],
+        labels: dateEntries.map(entry => entry.formattedDate),
         datasets: [
           {
-            label: metricLabel,
-            data: [exerciseData[0][config.metric] || 0],
+            label: `${metricLabel} (Average)`,
+            data: averageValues,
             borderColor: color.border,
             backgroundColor: color.background,
             borderWidth: 2,
-            barThickness: 60, // Wider bar for single point
           },
         ],
       };
     }
     
-    // Normal case with multiple data points
-    return {
-      labels: exerciseData.map(d => d.label),
-      datasets: [
-        {
-          label: metricLabel,
-          data: exerciseData.map(d => d[config.metric] || 0),
-          borderColor: color.border,
-          backgroundColor: color.background,
-          // Always set tension to 0 to completely avoid control point errors in production
-          tension: 0,
-          fill: config.chartType === 'line' ? false : undefined,
-          // Increase point size for better visibility with few points
-          pointRadius: exerciseData.length < 3 ? 5 : 3,
-          pointHoverRadius: exerciseData.length < 3 ? 7 : 5,
-        },
-      ],
-    };
+    return null;
   };
   
   // Wrap chart data generation in try-catch to prevent rendering errors
@@ -164,7 +258,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
   }
   
   // Add a safety check to prevent accessing properties of undefined data
-  const isSinglePoint = chartData?.datasets?.[0]?.data?.length === 1;
+  const isSinglePoint = chartData?.labels?.length === 1;
   const chartOptions = getChartOptions(
     AVAILABLE_METRICS.find(m => m.value === config.metric)?.label || config.metric,
     isSinglePoint
@@ -208,9 +302,42 @@ const CustomChart: React.FC<CustomChartProps> = ({
         {chartData ? (
           <div className="h-80">
             {config.chartType === 'line' ? (
-              <Line 
-                options={chartOptions} 
-                data={chartData as ChartData<'line', number[], string>} 
+              <Chart 
+                type="line"
+                options={{
+                  ...chartOptions,
+                  plugins: {
+                    ...chartOptions.plugins,
+                    tooltip: {
+                      ...chartOptions.plugins?.tooltip,
+                      callbacks: {
+                        label: function(context) {
+                          const datasetLabel = context.dataset.label || '';
+                          const value = context.parsed.y;
+                          return `${datasetLabel}: ${value}`;
+                        }
+                      }
+                    }
+                  },
+                  scales: {
+                    ...chartOptions.scales,
+                    x: {
+                      ...chartOptions.scales?.x,
+                      type: 'category',
+                      ticks: {
+                        ...chartOptions.scales?.x?.ticks,
+                        autoSkip: true,
+                        maxRotation: 45,
+                        minRotation: 0
+                      }
+                    }
+                  },
+                  interaction: {
+                    mode: 'nearest',
+                    intersect: true
+                  }
+                }} 
+                data={chartData as any} 
               />
             ) : (
               <Bar 
