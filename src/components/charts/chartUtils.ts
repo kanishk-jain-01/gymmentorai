@@ -1,9 +1,19 @@
-import { ChartData } from 'chart.js';
+import { ChartData, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { Workout } from '@/types';
 import { useTheme } from 'next-themes';
 
-// Type for chart data that can be either line or bar
-export type CustomChartData = ChartData<'line', number[], string> | ChartData<'bar', number[], string>;
+// Type for chart data that can be either line, bar, or mixed
+export type CustomChartData = 
+  | ChartData<'line', number[], string> 
+  | ChartData<'bar', number[], string>
+  | {
+      labels: string[];
+      datasets: Array<
+        | ChartDataset<'line', number[]>
+        | ChartDataset<'scatter', ScatterDataPoint[]>
+        | ChartDataset<'bar', number[]>
+      >;
+    };
 
 // Interface for custom chart configuration
 export interface ChartConfig {
