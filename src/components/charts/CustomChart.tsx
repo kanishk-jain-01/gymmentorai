@@ -325,6 +325,9 @@ const CustomChart: React.FC<CustomChartProps> = ({
                   ...chartOptions,
                   plugins: {
                     ...chartOptions.plugins,
+                    legend: {
+                      display: false
+                    },
                     tooltip: {
                       ...chartOptions.plugins?.tooltip,
                       callbacks: {
@@ -382,7 +385,15 @@ const CustomChart: React.FC<CustomChartProps> = ({
               />
             ) : (
               <Bar 
-                options={chartOptions} 
+                options={{
+                  ...chartOptions,
+                  plugins: {
+                    ...chartOptions.plugins,
+                    legend: {
+                      display: false
+                    }
+                  }
+                }} 
                 data={chartData as ChartData<'bar', number[], string>} 
               />
             )}
