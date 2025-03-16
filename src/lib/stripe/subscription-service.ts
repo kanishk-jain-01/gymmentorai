@@ -12,7 +12,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: 'Monthly',
     description: 'Monthly subscription plan',
     priceId: PLANS.MONTHLY,
-    price: 999, // $9.99 per month
+    price: 499, // $4.99 per month
     interval: 'month',
   },
   {
@@ -20,7 +20,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: 'Yearly',
     description: 'Yearly subscription with 2 months free',
     priceId: PLANS.YEARLY,
-    price: 9990, // $99.90 per year
+    price: 4499, // $44.99 per year
     interval: 'year',
   },
 ];
