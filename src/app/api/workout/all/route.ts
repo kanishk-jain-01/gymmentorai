@@ -19,7 +19,11 @@ export async function GET(req: NextRequest) {
         userId,
       },
       include: {
-        exercises: true,
+        exercises: {
+          include: {
+            sets: true,
+          },
+        },
       },
       orderBy: {
         date: 'desc',

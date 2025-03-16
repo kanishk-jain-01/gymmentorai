@@ -79,14 +79,23 @@ model Workout {
 model Exercise {
   id          String   @id @default(cuid())
   name        String
-  sets        Int?
+  notes       String?
+  workoutId   String
+  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  sets        Set[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Set {
+  id          String   @id @default(cuid())
   reps        Int?
   weight      Float?   // in kg or lbs
   duration    Int?     // in seconds
   distance    Float?   // in km or miles
   notes       String?
-  workoutId   String
-  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

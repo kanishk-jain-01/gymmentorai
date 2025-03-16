@@ -15,12 +15,17 @@ const workoutUpdateSchema = z.object({
     z.object({
       id: z.string().optional(),
       name: z.string(),
-      sets: z.number().optional().nullable(),
-      reps: z.number().optional().nullable(),
-      weight: z.number().optional().nullable(),
-      duration: z.number().optional().nullable(),
-      distance: z.number().optional().nullable(),
       notes: z.string().optional(),
+      sets: z.array(
+        z.object({
+          id: z.string().optional(),
+          reps: z.number().optional().nullable(),
+          weight: z.number().optional().nullable(),
+          duration: z.number().optional().nullable(),
+          distance: z.number().optional().nullable(),
+          notes: z.string().optional(),
+        })
+      ),
     })
   ),
 });
@@ -101,28 +106,44 @@ export async function PUT(
         },
       });
       
-      // Delete existing exercises
+      // Delete existing exercises (cascade will delete sets too)
       await tx.exercise.deleteMany({
         where: {
           workoutId,
         },
       });
       
-      // Create new exercises
-      const exercisePromises = exercises.map(exercise => 
-        tx.exercise.create({
+      // Create new exercises with their sets
+      const exercisePromises = exercises.map(async (exercise) => {
+        const createdExercise = await tx.exercise.create({
           data: {
             name: exercise.name,
-            sets: ensureNumericType(exercise.sets),
-            reps: ensureNumericType(exercise.reps),
-            weight: ensureNumericType(exercise.weight),
-            duration: ensureNumericType(exercise.duration),
-            distance: ensureNumericType(exercise.distance),
             notes: exercise.notes,
             workoutId,
           },
-        })
-      );
+        });
+        
+        // Create sets for this exercise
+        const setPromises = exercise.sets.map(set => 
+          tx.set.create({
+            data: {
+              reps: ensureNumericType(set.reps),
+              weight: ensureNumericType(set.weight),
+              duration: ensureNumericType(set.duration),
+              distance: ensureNumericType(set.distance),
+              notes: set.notes,
+              exerciseId: createdExercise.id,
+            },
+          })
+        );
+        
+        const createdSets = await Promise.all(setPromises);
+        
+        return {
+          ...createdExercise,
+          sets: createdSets,
+        };
+      });
       
       const createdExercises = await Promise.all(exercisePromises);
       
