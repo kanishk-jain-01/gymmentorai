@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa';
 
 export default function Home() {
   
@@ -35,6 +35,10 @@ export default function Home() {
             
             {/* Social Media Icons */}
             <div className="mt-8 flex justify-center space-x-6">
+            <a href="https://www.tiktok.com/@gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaTiktok className="h-6 w-6" aria-hidden="true" />
+                <span className="sr-only">TikTok</span>
+              </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaFacebook className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Facebook</span>
