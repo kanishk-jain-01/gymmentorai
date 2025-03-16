@@ -120,12 +120,15 @@ export default function WorkoutVisualization() {
     
     workouts.forEach(workout => {
       workout.exercises.forEach(exercise => {
-        if (exercise.weight && (!records[exercise.name] || exercise.weight > records[exercise.name].weight)) {
-          records[exercise.name] = {
-            weight: exercise.weight,
-            date: workout.date
-          };
-        }
+        // Check each set for personal records
+        exercise.sets.forEach(set => {
+          if (set.weight && (!records[exercise.name] || set.weight > records[exercise.name].weight)) {
+            records[exercise.name] = {
+              weight: set.weight,
+              date: workout.date
+            };
+          }
+        });
       });
     });
     

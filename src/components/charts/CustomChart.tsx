@@ -2,7 +2,7 @@ import React from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { ChartData } from 'chart.js';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Workout, Exercise } from '@/types';
+import { Workout, Exercise, Set } from '@/types';
 import { 
   ChartConfig as ChartConfigType, 
   CustomChartData, 
@@ -44,33 +44,45 @@ const CustomChart: React.FC<CustomChartProps> = ({
       config.customEndDate
     );
     
-    // Find all instances of the selected exercise
-    const exerciseData: { date: string; [key: string]: any }[] = [];
+    // Find all instances of the selected exercise and their sets
+    const exerciseData: { date: string; setIndex: number; [key: string]: any }[] = [];
     
     chartFilteredWorkouts.forEach(workout => {
       workout.exercises.forEach(exercise => {
         if (exercise.name === config.exercise) {
-          // Calculate volume if all values are present
-          let volume: number | undefined = undefined;
-          if (exercise.sets && exercise.reps && exercise.weight) {
-            volume = exercise.sets * exercise.reps * exercise.weight;
-          }
-          
-          exerciseData.push({
-            date: workout.date,
-            weight: exercise.weight,
-            reps: exercise.reps,
-            sets: exercise.sets,
-            volume,
-            duration: exercise.duration,
-            distance: exercise.distance
+          // Process each set individually
+          exercise.sets.forEach((set, setIndex) => {
+            // Calculate volume if weight and reps are present
+            let volume: number | undefined = undefined;
+            if (set.reps && set.weight) {
+              volume = set.reps * set.weight;
+            }
+            
+            exerciseData.push({
+              date: workout.date,
+              setIndex: setIndex + 1,
+              weight: set.weight,
+              reps: set.reps,
+              volume,
+              duration: set.duration,
+              distance: set.distance,
+              // Create a unique label for each set
+              label: `${new Date(workout.date).toLocaleDateString()} (Set ${setIndex + 1})`
+            });
           });
         }
       });
     });
     
     // Sort by date
-    exerciseData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    exerciseData.sort((a, b) => {
+      const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateComparison === 0) {
+        // If same date, sort by set index
+        return a.setIndex - b.setIndex;
+      }
+      return dateComparison;
+    });
     
     if (exerciseData.length === 0) return null;
     
@@ -88,7 +100,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
     if (isSinglePoint && config.chartType === 'line') {
       // For a single point, create a dataset with enhanced point styling
       return {
-        labels: [new Date(exerciseData[0].date).toLocaleDateString()],
+        labels: [exerciseData[0].label],
         datasets: [
           {
             label: metricLabel,
@@ -108,7 +120,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
     // For single data points in bar charts, make the bar wider
     if (isSinglePoint && config.chartType === 'bar') {
       return {
-        labels: [new Date(exerciseData[0].date).toLocaleDateString()],
+        labels: [exerciseData[0].label],
         datasets: [
           {
             label: metricLabel,
@@ -124,7 +136,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
     
     // Normal case with multiple data points
     return {
-      labels: exerciseData.map(d => new Date(d.date).toLocaleDateString()),
+      labels: exerciseData.map(d => d.label),
       datasets: [
         {
           label: metricLabel,

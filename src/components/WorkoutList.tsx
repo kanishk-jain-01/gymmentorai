@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor';
-import { Exercise, Workout } from '@/types';
+import { Exercise, Workout, Set } from '@/types';
 
 interface WorkoutListProps {
   workouts: Workout[];
@@ -81,28 +81,45 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-theme-fg">{exercise.name}</p>
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-x-4 text-xs text-body opacity-80">
-                        {/* Display sets and reps in different scenarios */}
-                        {exercise.sets && exercise.reps ? (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.sets} sets × {exercise.reps} reps</span>
-                        ) : exercise.sets ? (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}</span>
-                        ) : exercise.reps ? (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.reps} reps</span>
-                        ) : null}
-                        
-                        {exercise.weight && (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.weight} {exercise.weight === 1 ? 'lb' : 'lbs'}</span>
-                        )}
-                        {exercise.duration && (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.duration} seconds</span>
-                        )}
-                        {exercise.distance && (
-                          <span className="bg-theme-accent px-2 py-1 rounded-md">{exercise.distance} {exercise.distance === 1 ? 'mile' : 'miles'}</span>
-                        )}
-                        {exercise.notes && (
-                          <span className="italic">{exercise.notes}</span>
-                        )}
+                      
+                      {exercise.notes && (
+                        <p className="mt-1 text-xs text-body opacity-80 italic">{exercise.notes}</p>
+                      )}
+                      
+                      {/* Display sets */}
+                      <div className="mt-2">
+                        <table className="min-w-full divide-y divide-theme-border/30 text-xs">
+                          <thead>
+                            <tr>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70 w-10">Set</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Reps</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Weight</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Duration</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Distance</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Notes</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-theme-border/20">
+                            {exercise.sets.map((set, setIndex) => (
+                              <tr key={set.id} className={setIndex % 2 === 0 ? 'bg-theme-bg/30' : 'bg-theme-bg/10'}>
+                                <td className="px-2 py-1 whitespace-nowrap text-body font-medium">{setIndex + 1}</td>
+                                <td className="px-2 py-1 whitespace-nowrap text-body">{set.reps || '-'}</td>
+                                <td className="px-2 py-1 whitespace-nowrap text-body">
+                                  {set.weight ? `${set.weight} lbs` : '-'}
+                                </td>
+                                <td className="px-2 py-1 whitespace-nowrap text-body">
+                                  {set.duration ? `${set.duration} sec` : '-'}
+                                </td>
+                                <td className="px-2 py-1 whitespace-nowrap text-body">
+                                  {set.distance ? `${set.distance} mi` : '-'}
+                                </td>
+                                <td className="px-2 py-1 whitespace-nowrap text-body italic">
+                                  {set.notes || '-'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </li>
                   ))}

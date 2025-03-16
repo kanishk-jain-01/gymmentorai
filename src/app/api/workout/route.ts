@@ -81,12 +81,16 @@ export async function POST(req: NextRequest) {
         exercises: {
           create: parsedWorkout.exercises.map(exercise => ({
             name: exercise.name,
-            sets: ensureNumericType(exercise.sets),
-            reps: ensureNumericType(exercise.reps),
-            weight: ensureNumericType(exercise.weight),
-            duration: ensureNumericType(exercise.duration),
-            distance: ensureNumericType(exercise.distance),
             notes: exercise.notes,
+            sets: {
+              create: exercise.sets.map(set => ({
+                reps: ensureNumericType(set.reps),
+                weight: ensureNumericType(set.weight),
+                duration: ensureNumericType(set.duration),
+                distance: ensureNumericType(set.distance),
+                notes: set.notes,
+              })),
+            },
           })),
         },
       };
@@ -94,7 +98,11 @@ export async function POST(req: NextRequest) {
       const workout = await prisma.workout.create({
         data: workoutData,
         include: {
-          exercises: true,
+          exercises: {
+            include: {
+              sets: true,
+            },
+          },
         },
       });
       
@@ -131,7 +139,11 @@ export async function GET(req: NextRequest) {
         userId,
       },
       include: {
-        exercises: true,
+        exercises: {
+          include: {
+            sets: true,
+          },
+        },
       },
       orderBy: {
         date: 'desc',

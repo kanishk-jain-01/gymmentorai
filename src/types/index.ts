@@ -3,18 +3,29 @@
  */
 
 /**
- * Exercise type representing a single exercise in a workout
+ * Set type representing a single set of an exercise
  */
-export interface Exercise {
+export interface Set {
   id: string;
-  name: string;
-  sets?: number;
   reps?: number;
   weight?: number;
   duration?: number;
   distance?: number;
   notes?: string;
   createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Exercise type representing a single exercise in a workout
+ */
+export interface Exercise {
+  id: string;
+  name: string;
+  notes?: string;
+  sets: Set[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -43,11 +54,13 @@ export interface ParsedWorkout {
   notes?: string;
   exercises: {
     name: string;
-    sets?: number;
-    reps?: number;
-    weight?: number;
-    duration?: number;
-    distance?: number;
+    sets: {
+      reps?: number;
+      weight?: number;
+      duration?: number;
+      distance?: number;
+      notes?: string;
+    }[];
     notes?: string;
   }[];
 }

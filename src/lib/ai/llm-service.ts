@@ -210,18 +210,27 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
           "exercises": [
             {
               "name": "exercise name",
-              "sets": optional number of sets,
-              "reps": optional number of reps,
-              "weight": optional weight in lbs or kg,
-              "duration": optional duration in seconds,
-              "distance": optional distance in miles or km,
-              "notes": "optional notes"
+              "notes": "optional notes for this exercise",
+              "sets": [
+                {
+                  "reps": optional number of reps,
+                  "weight": optional weight in lbs or kg,
+                  "duration": optional duration in seconds,
+                  "distance": optional distance in miles or km,
+                  "notes": "optional notes for this specific set"
+                }
+              ]
             }
           ]
         }
         
         Only include fields that are explicitly mentioned or can be reasonably inferred.
         For exercises, at minimum include the name.
+        
+        IMPORTANT INSTRUCTIONS FOR PARSING SETS:
+        1. If the user specifies multiple sets with the same values (e.g., "3x10 pushups"), create 3 separate set objects with 10 reps each
+        2. If the user specifies different sets (e.g., "2x8x100lb bench press, 1x10x115 lbs bench press"), group them under the same exercise with different set configurations
+        3. If no specific set information is provided, create a single set with the available information
         
         IMPORTANT INSTRUCTIONS FOR EXERCISE NAMES:
         1. Normalize all exercise names to a standard format
@@ -236,7 +245,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
            - "running", "run", "jogging", "jog" should all be "Running"
         5. Correct minor spelling mistakes (e.g., "puships" should be "Pushups")
         
-        IMPORTANT: All numeric values (sets, reps, weight, duration, distance) must be numbers, not strings.`
+        IMPORTANT: All numeric values (reps, weight, duration, distance) must be numbers, not strings.`
       },
       {
         role: "user",
@@ -246,7 +255,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     
     const parsedResponse = JSON.parse(response.choices[0].message.content || '{}');
     
-    // Ensure numeric values are properly converted
+    // Ensure numeric values are properly converted and sets are properly structured
     return {
       name: parsedResponse.name,
       date: new Date(),
@@ -255,12 +264,16 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
       exercises: Array.isArray(parsedResponse.exercises) 
         ? parsedResponse.exercises.map((ex: any) => ({
             name: ex.name, // The LLM should now return normalized names
-            sets: ensureNumericType(ex.sets),
-            reps: ensureNumericType(ex.reps),
-            weight: ensureNumericType(ex.weight),
-            duration: ensureNumericType(ex.duration),
-            distance: ensureNumericType(ex.distance),
             notes: ex.notes,
+            sets: Array.isArray(ex.sets) 
+              ? ex.sets.map((set: any) => ({
+                  reps: ensureNumericType(set.reps),
+                  weight: ensureNumericType(set.weight),
+                  duration: ensureNumericType(set.duration),
+                  distance: ensureNumericType(set.distance),
+                  notes: set.notes,
+                }))
+              : [], // Ensure we always have a sets array
           }))
         : [],
     };
