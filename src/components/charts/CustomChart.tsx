@@ -138,65 +138,82 @@ const CustomChart: React.FC<CustomChartProps> = ({
           : 0;
       });
       
-      // Create scatter data for individual sets
-      const scatterData: ScatterDataPoint[] = [];
-      dateEntries.forEach((entry, dateIndex) => {
-        entry.sets.forEach(set => {
-          const value = set[config.metric];
-          if (value !== undefined && value !== null) {
-            // Add a small random offset to x to prevent points from stacking exactly on top of each other
-            const jitter = (Math.random() - 0.5) * 0.4; // Small random value between -0.2 and 0.2
-            scatterData.push({
-              x: dateIndex + jitter, // Use numeric index with jitter for x value
-              y: value
-            });
-          }
-        });
-      });
-      
-      // For a single date with multiple sets, just show the scatter points
+      // For a single date with multiple sets, just show a bar chart
       if (isSingleDate) {
+        // Create data points for individual sets
+        const singleDateData = dateEntries[0].sets
+          .map(set => {
+            const value = set[config.metric];
+            return value !== undefined && value !== null ? value : null;
+          })
+          .filter(value => value !== null) as number[];
+        
         return {
-          labels: [dateEntries[0].formattedDate],
+          labels: dateEntries[0].sets.map((_, i) => `Set ${i+1}`),
           datasets: [
             {
-              type: 'scatter' as const,
-              label: `${metricLabel} (Sets)`,
-              data: scatterData,
+              type: 'bar' as const,
+              label: metricLabel,
+              data: singleDateData,
               backgroundColor: color.background,
               borderColor: color.border,
-              pointRadius: 6,
-              pointHoverRadius: 8,
+              borderWidth: 1,
             }
           ],
         };
       }
       
-      // For multiple dates, show both line and scatter
-      return {
-        labels: dateEntries.map(entry => entry.formattedDate),
-        datasets: [
-          {
-            type: 'line' as const,
-            label: `${metricLabel} (Average)`,
-            data: averageValues,
-            borderColor: color.border,
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            tension: 0,
-            fill: false,
-            pointRadius: 0, // Hide points on the line
-          },
-          {
+      // For multiple dates, we'll create a different approach
+      // First, prepare the labels (dates)
+      const labels = dateEntries.map(entry => entry.formattedDate);
+      
+      // Create an array of arrays, where each inner array contains all values for a specific date
+      const valuesByDate: number[][] = dateEntries.map(entry => 
+        entry.sets
+          .map(set => set[config.metric])
+          .filter(val => val !== undefined && val !== null) as number[]
+      );
+      
+      // Create datasets: one line for averages and multiple scatter datasets (one per date)
+      const datasets: any[] = [
+        {
+          type: 'line' as const,
+          label: `${metricLabel} (Average)`,
+          data: averageValues,
+          borderColor: color.border,
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          tension: 0,
+          fill: false,
+          pointRadius: 0, // Hide points on the line
+        }
+      ];
+      
+      // Add scatter datasets - one for each date
+      valuesByDate.forEach((values, dateIndex) => {
+        if (values.length > 0) {
+          // Create a scatter dataset that places all points at the same x position (dateIndex)
+          const scatterData = values.map(value => ({
+            x: labels[dateIndex],
+            y: value
+          }));
+          
+          datasets.push({
             type: 'scatter' as const,
-            label: `${metricLabel} (Sets)`,
+            label: `${labels[dateIndex]} Sets`,
             data: scatterData,
             backgroundColor: color.background,
             borderColor: color.border,
             pointRadius: 5,
             pointHoverRadius: 7,
-          }
-        ],
+            showLine: false
+          });
+        }
+      });
+      
+      return {
+        labels,
+        datasets
       };
     }
     
@@ -314,7 +331,30 @@ const CustomChart: React.FC<CustomChartProps> = ({
                         label: function(context) {
                           const datasetLabel = context.dataset.label || '';
                           const value = context.parsed.y;
+                          
+                          // Get the metric label for consistent display
+                          const displayMetric = AVAILABLE_METRICS.find(m => m.value === config.metric)?.label || config.metric;
+                          
+                          // Check if this is a scatter dataset by checking the label pattern
+                          if (datasetLabel.includes('Sets')) {
+                            return `${displayMetric}: ${value}`;
+                          }
+                          
+                          // For line dataset (averages)
                           return `${datasetLabel}: ${value}`;
+                        },
+                        title: function(tooltipItems) {
+                          // Get the first tooltip item
+                          const item = tooltipItems[0];
+                          
+                          // Check if this is a scatter dataset by checking the label pattern
+                          if (item.dataset.label?.includes('Sets')) {
+                            // Extract the date from the dataset label (format: "Date Sets")
+                            return item.dataset.label.split(' Sets')[0];
+                          }
+                          
+                          // For line points, use the label from the x-axis
+                          return item.label;
                         }
                       }
                     }
@@ -329,12 +369,13 @@ const CustomChart: React.FC<CustomChartProps> = ({
                         autoSkip: true,
                         maxRotation: 45,
                         minRotation: 0
-                      }
+                      },
+                      offset: true
                     }
                   },
                   interaction: {
                     mode: 'nearest',
-                    intersect: true
+                    intersect: false
                   }
                 }} 
                 data={chartData as any} 
