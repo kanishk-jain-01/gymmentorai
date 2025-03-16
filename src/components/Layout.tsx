@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signIn} from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaDumbbell } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaDumbbell, FaTiktok } from 'react-icons/fa';
 import { useState } from 'react';
 
 interface LayoutProps {
@@ -163,6 +163,10 @@ export default function Layout({ children }: LayoutProps) {
             
             {/* Social Media Icons */}
             <div className="flex space-x-6 mt-2">
+            <a href="https://www.tiktok.com/@gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <FaTiktok className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">TikTok</span>
+              </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaFacebook className="h-5 w-5" aria-hidden="true" />
                 <span className="sr-only">Facebook</span>
