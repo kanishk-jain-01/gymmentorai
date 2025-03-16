@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (limitExceeded) {
       return NextResponse.json({ 
         error: 'API limit exceeded',
-        message: `You have reached your daily limit of ${limit} API requests. Please try again tomorrow.`,
+        message: `You have reached your daily API request limit. Please try again tomorrow.`,
         code: 'API_LIMIT_EXCEEDED'
       }, { status: 429 });
     }
@@ -99,11 +99,7 @@ export async function POST(req: NextRequest) {
       });
       
       return NextResponse.json({ 
-        workout,
-        apiUsage: {
-          currentCount: currentCount + 1,
-          limit
-        }
+        workout
       }, { status: 201 });
     } catch (error) {
       return NextResponse.json({ 
