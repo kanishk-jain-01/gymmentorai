@@ -138,26 +138,28 @@ const CustomChart: React.FC<CustomChartProps> = ({
           : 0;
       });
       
-      // For a single date with multiple sets, just show a bar chart
+      // For a single date with multiple sets, use a scatter chart instead of bar chart
       if (isSingleDate) {
         // Create data points for individual sets
-        const singleDateData = dateEntries[0].sets
-          .map(set => {
-            const value = set[config.metric];
-            return value !== undefined && value !== null ? value : null;
-          })
-          .filter(value => value !== null) as number[];
+        const singleDateData = dateEntries[0].sets.map(set => {
+          const value = set[config.metric];
+          return value !== undefined && value !== null ? {
+            x: 0, // Use same x-coordinate (0) for all points to stack them vertically
+            y: value
+          } : null;
+        }).filter(point => point !== null);
         
         return {
-          labels: dateEntries[0].sets.map((_, i) => `Set ${i+1}`),
+          labels: [dateEntries[0].formattedDate], // Single date label
           datasets: [
             {
-              type: 'bar' as const,
+              type: 'scatter' as const,
               label: metricLabel,
               data: singleDateData,
               backgroundColor: color.background,
               borderColor: color.border,
-              borderWidth: 1,
+              pointRadius: 5,
+              pointHoverRadius: 7,
             }
           ],
         };
@@ -229,23 +231,6 @@ const CustomChart: React.FC<CustomChartProps> = ({
           ? validValues.reduce((sum, val) => sum + val, 0) / validValues.length
           : 0;
       });
-      
-      // For a single date, make the bar wider
-      if (isSingleDate) {
-        return {
-          labels: [dateEntries[0].formattedDate],
-          datasets: [
-            {
-              label: `${metricLabel} (Average)`,
-              data: [averageValues[0]],
-              borderColor: color.border,
-              backgroundColor: color.background,
-              borderWidth: 2,
-              barThickness: 60, // Wider bar for single point
-            },
-          ],
-        };
-      }
       
       // For multiple dates
       return {
@@ -385,15 +370,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
               />
             ) : (
               <Bar 
-                options={{
-                  ...chartOptions,
-                  plugins: {
-                    ...chartOptions.plugins,
-                    legend: {
-                      display: false
-                    }
-                  }
-                }} 
+                options={chartOptions} 
                 data={chartData as ChartData<'bar', number[], string>} 
               />
             )}
