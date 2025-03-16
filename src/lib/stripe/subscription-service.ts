@@ -18,7 +18,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'yearly',
     name: 'Yearly',
-    description: 'Yearly subscription with 2 months free',
+    description: 'Yearly subscription plan',
     priceId: PLANS.YEARLY,
     price: 4499, // $44.99 per year
     interval: 'year',
