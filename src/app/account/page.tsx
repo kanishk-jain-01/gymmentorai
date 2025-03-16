@@ -16,8 +16,12 @@ function AccountContent() {
   const router = useRouter();
   
   // Check for success or canceled parameters from Stripe redirect
-  const success = searchParams.get('success');
-  const canceled = searchParams.get('canceled');
+  const successParam = searchParams.get('success');
+  const canceledParam = searchParams.get('canceled');
+  
+  // State to preserve parameter values after URL is cleared
+  const [success, setSuccess] = useState(false);
+  const [canceled, setCanceled] = useState(false);
   
   // State for account deletion
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +29,18 @@ function AccountContent() {
   const [deleteError, setDeleteError] = useState<React.ReactNode>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatusType | null>(null);
+  
+  // Store URL parameters in state and clear URL
+  useEffect(() => {
+    if (successParam) {
+      setSuccess(true);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    if (canceledParam) {
+      setCanceled(true);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [successParam, canceledParam]);
   
   useEffect(() => {
     if (authStatus === 'unauthenticated') {
@@ -164,7 +180,7 @@ function AccountContent() {
               </h3>
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
-                  You canceled the subscription process. If you have any questions or need help, please contact us.
+                  You canceled the subscription process. If you have any questions or need help, please contact us at us at kanishk@gymmentorai.com!
                 </p>
               </div>
             </div>
