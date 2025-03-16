@@ -7,6 +7,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { ensureNumericType } from '@/lib/utils';
 import { canAddWorkouts } from '@/lib/stripe/stripe-server';
 import { UserWithSubscription } from '@/types';
+import { checkApiUsageLimit, incrementApiUsage } from '@/lib/api-usage';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
@@ -21,6 +22,16 @@ export async function POST(req: NextRequest) {
     
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    
+    // Check API usage limit
+    const { limitExceeded, currentCount, limit } = await checkApiUsageLimit(userId);
+    if (limitExceeded) {
+      return NextResponse.json({ 
+        error: 'API limit exceeded',
+        message: `You have reached your daily limit of ${limit} API requests. Please try again tomorrow.`,
+        code: 'API_LIMIT_EXCEEDED'
+      }, { status: 429 });
     }
     
     // Check if the user can add workouts based on subscription status
@@ -56,6 +67,9 @@ export async function POST(req: NextRequest) {
       // Parse workout text using AI (without appending date)
       const parsedWorkout = await parseWorkoutText(text);
       
+      // Increment API usage count
+      await incrementApiUsage(userId);
+      
       // Create workout in database with current date/time
       const workoutData = {
         name: parsedWorkout.name,
@@ -84,7 +98,13 @@ export async function POST(req: NextRequest) {
         },
       });
       
-      return NextResponse.json({ workout }, { status: 201 });
+      return NextResponse.json({ 
+        workout,
+        apiUsage: {
+          currentCount: currentCount + 1,
+          limit
+        }
+      }, { status: 201 });
     } catch (error) {
       return NextResponse.json({ 
         error: 'Failed to process workout',

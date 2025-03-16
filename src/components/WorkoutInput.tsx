@@ -13,7 +13,11 @@ interface FormData {
 
 export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'subscription'; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ 
+    type: 'success' | 'error' | 'subscription' | 'limit'; 
+    message: string;
+    usage?: { current: number; limit: number };
+  } | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   
   const {
@@ -23,13 +27,38 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
     formState: { errors },
   } = useForm<FormData>();
   
-  const validateWorkout = async (text: string): Promise<boolean> => {
+  const validateWorkout = async (text: string): Promise<{ 
+    isValid: boolean; 
+    apiLimitExceeded?: boolean;
+    usage?: { current: number; limit: number };
+    message?: string;
+  }> => {
     try {
       const response = await axios.post('/api/validate-workout', { text });
-      return response.data.isWorkoutRelated;
-    } catch (error) {
+      return { 
+        isValid: response.data.isWorkoutRelated,
+        usage: {
+          current: response.data.currentUsage,
+          limit: response.data.dailyLimit
+        }
+      };
+    } catch (error: any) {
       console.error('Validation error:', error);
-      return false;
+      
+      // Check if this is an API limit exceeded error
+      if (error.response?.data?.code === 'API_LIMIT_EXCEEDED') {
+        return { 
+          isValid: false, 
+          apiLimitExceeded: true,
+          message: error.response?.data?.message || 'You have reached your daily API request limit.',
+          usage: {
+            current: error.response?.data?.currentUsage || 0,
+            limit: error.response?.data?.dailyLimit || 0
+          }
+        };
+      }
+      
+      return { isValid: false };
     }
   };
   
@@ -40,10 +69,20 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
     try {
       // First validate if the input is workout-related
       setIsValidating(true);
-      const isValid = await validateWorkout(data.workoutText);
+      const validationResult = await validateWorkout(data.workoutText);
       setIsValidating(false);
       
-      if (!isValid) {
+      // Check if API limit is exceeded
+      if (validationResult.apiLimitExceeded) {
+        setFeedback({ 
+          type: 'limit', 
+          message: validationResult.message || 'You have reached your daily API request limit. Please try again tomorrow.',
+          usage: validationResult.usage
+        });
+        return;
+      }
+      
+      if (!validationResult.isValid) {
         setFeedback({ 
           type: 'error', 
           message: 'Please enter a valid workout description. Random text or non-workout content is not allowed.' 
@@ -52,8 +91,15 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
       }
       
       // If valid, proceed with saving the workout
-      await axios.post('/api/workout', { text: data.workoutText });
-      setFeedback({ type: 'success', message: 'Workout added successfully!' });
+      const response = await axios.post('/api/workout', { text: data.workoutText });
+      setFeedback({ 
+        type: 'success', 
+        message: 'Workout added successfully!',
+        usage: response.data.apiUsage ? {
+          current: response.data.apiUsage.currentCount,
+          limit: response.data.apiUsage.limit
+        } : undefined
+      });
       reset();
       onWorkoutAdded();
     } catch (err: any) {
@@ -63,7 +109,19 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
           type: 'subscription', 
           message: err.response?.data?.message || 'Your trial has ended. Please subscribe to continue adding workouts.' 
         });
-      } else {
+      } 
+      // Check if this is an API limit exceeded error
+      else if (err.response?.data?.code === 'API_LIMIT_EXCEEDED') {
+        setFeedback({ 
+          type: 'limit', 
+          message: err.response?.data?.message || 'You have reached your daily API request limit. Please try again tomorrow.',
+          usage: {
+            current: err.response?.data?.currentUsage || 0,
+            limit: err.response?.data?.dailyLimit || 0
+          }
+        });
+      } 
+      else {
         const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
         setFeedback({ type: 'error', message: errorMessage });
       }
@@ -81,6 +139,11 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
           <p>
             Describe your workout in natural language. Our AI will understand and organize it for you.
           </p>
+          {feedback?.usage && (
+            <p className="mt-2 text-xs">
+              API Usage: {feedback.usage.current} / {feedback.usage.limit} requests today
+            </p>
+          )}
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
           <div className="w-full">
@@ -108,7 +171,9 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
                 ? 'text-red-500' 
                 : feedback.type === 'subscription'
                   ? 'text-yellow-500'
-                  : 'text-green-500'
+                  : feedback.type === 'limit'
+                    ? 'text-orange-500'
+                    : 'text-green-500'
             }`}>
               {feedback.message}
               {feedback.type === 'subscription' && (

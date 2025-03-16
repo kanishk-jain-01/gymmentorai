@@ -24,6 +24,7 @@ model User {
   workouts              Workout[]
   accounts              Account[]
   sessions              Session[]
+  apiUsage              ApiUsage[]
   
   // Subscription fields
   stripeCustomerId      String?   @unique
@@ -88,4 +89,16 @@ model Exercise {
   workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ApiUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now()) @db.Date
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
 }
