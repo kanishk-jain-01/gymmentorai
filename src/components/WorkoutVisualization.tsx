@@ -12,7 +12,6 @@ import {
   Title, 
   Tooltip, 
   Legend,
-  ChartData,
   Filler
 } from 'chart.js';
 import axios from 'axios';
