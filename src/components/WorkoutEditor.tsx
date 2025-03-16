@@ -3,6 +3,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { Exercise, Workout, Set } from '@/types';
 import { PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
+import { formatDuration, parseDuration } from '@/lib/utils';
 
 interface WorkoutEditorProps {
   workout: Workout;
@@ -29,7 +30,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
           id: set.id,
           reps: set.reps || undefined,
           weight: set.weight || undefined,
-          duration: set.duration || undefined,
+          duration: set.duration ? formatDuration(set.duration) : '',
           distance: set.distance || undefined,
           notes: set.notes || '',
         })),
@@ -47,7 +48,19 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
     setError(null);
     
     try {
-      await axios.put(`/api/workout/${workout.id}`, data);
+      // Convert MM:SS duration format to seconds before sending to API
+      const processedData = {
+        ...data,
+        exercises: data.exercises.map((exercise: any) => ({
+          ...exercise,
+          sets: exercise.sets.map((set: any) => ({
+            ...set,
+            duration: set.duration ? parseDuration(set.duration) : undefined,
+          })),
+        })),
+      };
+      
+      await axios.put(`/api/workout/${workout.id}`, processedData);
       onWorkoutUpdated();
       onClose();
     } catch (err: any) {
@@ -89,7 +102,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
         id: '',
         reps: undefined,
         weight: undefined,
-        duration: undefined,
+        duration: '',
         distance: undefined,
         notes: '',
       }],
@@ -281,7 +294,7 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                                 id: '',
                                 reps: undefined,
                                 weight: undefined,
-                                duration: undefined,
+                                duration: '',
                                 distance: undefined,
                                 notes: '',
                               })}
@@ -328,10 +341,10 @@ export default function WorkoutEditor({ workout, onClose, onWorkoutUpdated }: Wo
                                   
                                   <div className="col-span-2">
                                     <input
-                                      type="number"
+                                      type="text"
                                       className="block w-full rounded-md border-theme-border/50 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1"
                                       placeholder="Duration"
-                                      {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration` as const, { valueAsNumber: true })}
+                                      {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration` as const)}
                                     />
                                   </div>
                                   

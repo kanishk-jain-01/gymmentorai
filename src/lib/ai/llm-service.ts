@@ -215,7 +215,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
                 {
                   "reps": optional number of reps,
                   "weight": optional weight in lbs or kg,
-                  "duration": optional duration in seconds,
+                  "duration": optional duration in seconds (convert any MM:SS format to total seconds),
                   "distance": optional distance in miles or km,
                   "notes": "optional notes for this specific set"
                 }
@@ -231,6 +231,11 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
         1. If the user specifies multiple sets with the same values (e.g., "3x10 pushups"), create 3 separate set objects with 10 reps each
         2. If the user specifies different sets (e.g., "2x8x100lb bench press, 1x10x115 lbs bench press"), group them under the same exercise with different set configurations
         3. If no specific set information is provided, create a single set with the available information
+        
+        IMPORTANT INSTRUCTIONS FOR DURATIONS:
+        1. If the user specifies a duration in MM:SS format (e.g., "3:45"), convert it to total seconds (e.g., 225)
+        2. If the user specifies a duration in just minutes (e.g., "3 minutes"), convert it to seconds (e.g., 180)
+        3. If the user specifies a duration in just seconds (e.g., "45 seconds"), use that value directly
         
         IMPORTANT INSTRUCTIONS FOR EXERCISE NAMES:
         1. Normalize all exercise names to a standard format

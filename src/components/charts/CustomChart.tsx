@@ -12,6 +12,7 @@ import {
   useChartOptions
 } from './chartUtils';
 import ChartConfig from './ChartConfig';
+import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
 
 interface CustomChartProps {
   config: ChartConfigType;
@@ -44,7 +45,8 @@ const CustomChart: React.FC<CustomChartProps> = ({
   
   // Generate chart data based on configuration
   const generateChartData = (): CustomChartData | MixedChartData | null => {
-    if (!config.exercise || workouts.length === 0) return null;
+    if (!config.exercise && config.metric !== 'workoutDuration') return null;
+    if (workouts.length === 0) return null;
     
     // Get workouts filtered by this chart's date range
     const chartFilteredWorkouts = filterWorkoutsByDateRange(
@@ -54,6 +56,68 @@ const CustomChart: React.FC<CustomChartProps> = ({
       config.customEndDate
     );
     
+    // Special case for workout duration (not tied to a specific exercise)
+    if (config.metric === 'workoutDuration') {
+      // Group workout durations by date
+      const workoutDurationsByDate: Record<string, {
+        date: string;
+        formattedDate: string;
+        duration: number;
+      }[]> = {};
+      
+      chartFilteredWorkouts.forEach(workout => {
+        if (workout.duration) {
+          const workoutDate = new Date(workout.date);
+          const dateKey = workoutDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+          const formattedDate = workoutDate.toLocaleDateString();
+          
+          if (!workoutDurationsByDate[dateKey]) {
+            workoutDurationsByDate[dateKey] = [];
+          }
+          
+          workoutDurationsByDate[dateKey].push({
+            date: workout.date,
+            formattedDate,
+            duration: workout.duration
+          });
+        }
+      });
+      
+      // Convert to array and sort by date
+      const dateKeys = Object.keys(workoutDurationsByDate).sort();
+      if (dateKeys.length === 0) return null;
+      
+      const labels = dateKeys.map(dateKey => {
+        // Use the first workout's formatted date for this date
+        return workoutDurationsByDate[dateKey][0].formattedDate;
+      });
+      
+      // Calculate average workout duration for each date
+      const averageDurations = dateKeys.map(dateKey => {
+        const durations = workoutDurationsByDate[dateKey].map(w => w.duration);
+        return durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
+      });
+      
+      // Get color for this chart
+      const colorIndex = parseInt(config.id) % CHART_COLORS.length;
+      const color = CHART_COLORS[colorIndex];
+      
+      // Return chart data for workout durations
+      return {
+        labels,
+        datasets: [
+          {
+            label: AVAILABLE_METRICS.find(m => m.value === 'workoutDuration')?.label || 'Workout Duration',
+            data: averageDurations,
+            borderColor: color.border,
+            backgroundColor: color.background,
+            borderWidth: 2,
+          },
+        ],
+      };
+    }
+    
+    // For exercise-specific metrics (including set duration)
     // Group data by date first
     const exerciseDataByDate: Record<string, {
       date: string;
@@ -266,6 +330,19 @@ const CustomChart: React.FC<CustomChartProps> = ({
     isSinglePoint
   );
   
+  // Customize chart options based on the metric
+  if (config.metric === 'duration') {
+    // Format y-axis ticks for duration in MM:SS format
+    if (chartOptions.scales?.y) {
+      chartOptions.scales.y.ticks = {
+        ...chartOptions.scales.y.ticks,
+        callback: function(value: any) {
+          return formatDuration(value);
+        }
+      };
+    }
+  }
+  
   return (
     <div className="bg-theme-card shadow sm:rounded-lg overflow-hidden">
       <div className="p-6">
@@ -323,12 +400,17 @@ const CustomChart: React.FC<CustomChartProps> = ({
                           // Get the metric label for consistent display
                           const displayMetric = AVAILABLE_METRICS.find(m => m.value === config.metric)?.label || config.metric;
                           
-                          // Check if this is a scatter dataset by checking the label pattern
-                          if (datasetLabel.includes('Sets')) {
-                            return `${displayMetric}: ${value}`;
+                          // Format set duration values as MM:SS
+                          if (config.metric === 'duration') {
+                            return `${datasetLabel}: ${formatDuration(value)}`;
                           }
                           
-                          // For line dataset (averages)
+                          // For workout duration, display in minutes
+                          if (config.metric === 'workoutDuration') {
+                            return `${datasetLabel}: ${formatWorkoutDuration(value)}`;
+                          }
+                          
+                          // For other metrics, display as is
                           return `${datasetLabel}: ${value}`;
                         },
                         title: function(tooltipItems) {
@@ -370,7 +452,34 @@ const CustomChart: React.FC<CustomChartProps> = ({
               />
             ) : (
               <Bar 
-                options={chartOptions} 
+                options={{
+                  ...chartOptions,
+                  plugins: {
+                    ...chartOptions.plugins,
+                    tooltip: {
+                      ...chartOptions.plugins?.tooltip,
+                      callbacks: {
+                        label: function(context) {
+                          const datasetLabel = context.dataset.label || '';
+                          const value = context.parsed.y;
+                          
+                          // Format set duration values as MM:SS
+                          if (config.metric === 'duration') {
+                            return `${datasetLabel}: ${formatDuration(value)}`;
+                          }
+                          
+                          // For workout duration, display in minutes
+                          if (config.metric === 'workoutDuration') {
+                            return `${datasetLabel}: ${formatWorkoutDuration(value)}`;
+                          }
+                          
+                          // For other metrics, display as is
+                          return `${datasetLabel}: ${value}`;
+                        }
+                      }
+                    }
+                  }
+                }}
                 data={chartData as ChartData<'bar', number[], string>} 
               />
             )}

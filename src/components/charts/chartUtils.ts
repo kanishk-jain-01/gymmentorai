@@ -49,7 +49,8 @@ export const AVAILABLE_METRICS = [
   { label: 'Reps', value: 'reps' },
   { label: 'Sets', value: 'sets' },
   { label: 'Volume (sets × reps × weight)', value: 'volume' },
-  { label: 'Duration (minutes)', value: 'duration' },
+  { label: 'Set Duration (MM:SS)', value: 'duration' },
+  { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
   { label: 'Distance', value: 'distance' },
 ];
 
@@ -123,7 +124,11 @@ export const useChartOptions = () => {
             color: gridColor
           },
           ticks: {
-            color: textColor
+            color: textColor,
+            // Add a placeholder callback that can be overridden
+            callback: function(value: any) {
+              return value;
+            }
           }
         },
         x: {
