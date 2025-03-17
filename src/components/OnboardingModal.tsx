@@ -41,19 +41,6 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
     }
   };
 
-  // Skip preferences but still mark onboarding as seen
-  const handleSkip = async () => {
-    if (session?.user?.email) {
-      try {
-        // Mark onboarding as seen
-        await axios.post('/api/user/onboarding');
-      } catch (error) {
-        console.error('Failed to mark onboarding as seen:', error);
-      }
-    }
-    onClose();
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-theme-card rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
@@ -61,7 +48,7 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
           <h2 className="text-2xl font-bold mb-2">Welcome to GymMentorAI</h2>
           <p className="text-theme-fg-muted">
             We intend to be the easiest tool for tracking your workout data. 
-            Feel free to explore and discover all the features we offer.
+            Press "Get Started" to start your 7 day free trial, no credit card required.
           </p>
         </div>
 
@@ -86,12 +73,6 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
         )}
 
         <div className="flex justify-end space-x-3">
-          <button
-            onClick={handleSkip}
-            className="px-4 py-2 text-theme-fg-muted hover:text-theme-fg rounded-md focus:outline-none"
-          >
-            Skip
-          </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
