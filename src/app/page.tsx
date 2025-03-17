@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 export default function Home() {
   
@@ -50,10 +50,6 @@ export default function Home() {
               <a href="https://instagram.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaInstagram className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Instagram</span>
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaLinkedin className="h-6 w-6" aria-hidden="true" />
-                <span className="sr-only">LinkedIn</span>
               </a>
             </div>
           </div>
