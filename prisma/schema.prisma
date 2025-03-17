@@ -92,9 +92,9 @@ model Exercise {
 model Set {
   id          String   @id @default(cuid())
   reps        Int?
-  weight      Float?   // in kg or lbs
-  duration    Int?     // in seconds (stored as seconds, displayed as MM:SS)
-  distance    Float?   // in km or miles
+  weight      Float?   // in lbs
+  duration    Int?     // in seconds 
+  distance    Float?   // in meters
   notes       String?
   exerciseId  String
   exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
