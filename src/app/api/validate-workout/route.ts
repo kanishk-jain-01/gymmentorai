@@ -2,17 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { checkApiUsageLimit, incrementApiUsage } from '@/lib/api-usage';
-import OpenAI from 'openai';
+import { validateWorkoutText } from '@/lib/ai';
 import { z } from 'zod';
 
 // Schema for input validation
 const inputSchema = z.object({
   text: z.string().min(1, 'Text is required'),
-});
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: NextRequest) {
@@ -46,32 +41,22 @@ export async function POST(req: NextRequest) {
     
     const { text } = result.data;
     
-    // Use OpenAI to check if the text is workout-related
-    const response = await openai.chat.completions.create({
-      model: process.env.OPENAI_MODEL || 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a fitness expert assistant. Your task is to determine if the provided text is describing a workout or exercise activity. Respond with a JSON object with a single boolean field "isWorkoutRelated".'
-        },
-        {
-          role: 'user',
-          content: text
-        }
-      ],
-      response_format: { type: 'json_object' },
-    });
-    
-    // Increment API usage count
-    await incrementApiUsage(userId);
-    
-    // Parse the response
-    const content = response.choices[0]?.message?.content || '{"isWorkoutRelated": false}';
-    const parsedContent = JSON.parse(content);
-    
-    return NextResponse.json({
-      isWorkoutRelated: parsedContent.isWorkoutRelated
-    });
+    try {
+      // Use our AI module to validate the workout text
+      const isWorkoutRelated = await validateWorkoutText(text);
+      
+      // Increment API usage count
+      await incrementApiUsage(userId);
+      
+      return NextResponse.json({
+        isWorkoutRelated
+      });
+    } catch (error) {
+      return NextResponse.json({ 
+        error: 'Failed to validate workout text',
+        details: error instanceof Error ? error.message : String(error)
+      }, { status: 500 });
+    }
   } catch (error) {
     return NextResponse.json({ 
       error: 'Internal server error',

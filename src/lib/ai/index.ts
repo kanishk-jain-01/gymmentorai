@@ -15,4 +15,9 @@ export {
 // Export workout parser
 export { 
   parseWorkoutText
-} from './workout-parser'; 
+} from './workout-parser';
+
+// Export workout validator
+export {
+  validateWorkoutText
+} from './workout-validator'; 
