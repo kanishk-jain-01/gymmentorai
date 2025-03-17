@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WorkoutEditor from './WorkoutEditor';
+import WorkoutEditor from './WorkoutEditor/index';
 import { Exercise, Workout, Set } from '@/types';
 import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
 import { formatWeight, formatDistance } from '@/lib/utils/unit-conversions';
