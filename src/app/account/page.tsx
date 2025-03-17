@@ -8,6 +8,7 @@ import SubscriptionStatus from '@/components/SubscriptionStatus';
 import axios from 'axios';
 import TrialSetup from '@/components/TrialSetup';
 import { SubscriptionStatus as SubscriptionStatusType } from '@/types';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 // Component to handle search params
 function AccountContent() {
@@ -31,6 +32,10 @@ function AccountContent() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatusType | null>(null);
   const [subscribedToEmails, setSubscribedToEmails] = useState(true);
   const [emailPrefLoading, setEmailPrefLoading] = useState(false);
+  
+  // Unit preferences
+  const { preferences, updatePreferences, isLoading: unitPrefsLoading } = useUnitPreferences();
+  const [unitPrefsUpdating, setUnitPrefsUpdating] = useState(false);
   
   // Store URL parameters in state and clear URL
   useEffect(() => {
@@ -158,6 +163,29 @@ function AccountContent() {
     }
   };
   
+  const handleUnitPreferenceChange = async (key: 'weightUnit' | 'distanceUnit', value: any) => {
+    try {
+      setUnitPrefsUpdating(true);
+      await updatePreferences({ [key]: value });
+      setSuccessMessage('Unit preferences updated successfully');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to update unit preferences:', error);
+      setDeleteError('Failed to update unit preferences. Please try again.');
+      
+      // Clear error message after 3 seconds
+      setTimeout(() => {
+        setDeleteError(null);
+      }, 3000);
+    } finally {
+      setUnitPrefsUpdating(false);
+    }
+  };
+  
   if (authStatus === 'loading') {
     return (
       <div className="flex justify-center items-center h-64">
@@ -227,6 +255,13 @@ function AccountContent() {
         </div>
       )}
       
+      {/* Success Message */}
+      {successMessage && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg animate-fadeIn">
+          <p>{successMessage}</p>
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 gap-8">
         <div>
           <h2 className="text-xl font-semibold text-theme-fg mb-4">User Information</h2>
@@ -260,6 +295,114 @@ function AccountContent() {
         <div>
           <h2 className="text-xl font-semibold text-theme-fg mb-4">Subscription</h2>
           <SubscriptionStatus />
+        </div>
+        
+        {/* Unit Preferences Section */}
+        <div>
+          <h2 className="text-xl font-semibold text-theme-fg mb-4">Unit Preferences</h2>
+          <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
+            <div className="px-4 py-5 sm:p-6">
+              {unitPrefsLoading ? (
+                <div className="animate-pulse flex space-x-4">
+                  <div className="flex-1 space-y-6 py-1">
+                    <div className="h-4 bg-theme-accent rounded w-3/4"></div>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="h-4 bg-theme-accent rounded col-span-2"></div>
+                        <div className="h-4 bg-theme-accent rounded col-span-1"></div>
+                      </div>
+                      <div className="h-4 bg-theme-accent rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-md font-medium text-theme-fg">Weight Units</h3>
+                    <p className="mt-1 text-sm text-theme-fg opacity-70">
+                      Choose your preferred unit for displaying weight measurements.
+                    </p>
+                    <div className="mt-4">
+                      <div className="flex items-center space-x-4">
+                        <label className="inline-flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio text-indigo-600"
+                            value="lb"
+                            checked={preferences.weightUnit === 'lb'}
+                            onChange={() => handleUnitPreferenceChange('weightUnit', 'lb')}
+                            disabled={unitPrefsUpdating}
+                          />
+                          <span className="ml-2">Pounds (lb)</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio text-indigo-600"
+                            value="kg"
+                            checked={preferences.weightUnit === 'kg'}
+                            onChange={() => handleUnitPreferenceChange('weightUnit', 'kg')}
+                            disabled={unitPrefsUpdating}
+                          />
+                          <span className="ml-2">Kilograms (kg)</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-md font-medium text-theme-fg">Distance Units</h3>
+                    <p className="mt-1 text-sm text-theme-fg opacity-70">
+                      Choose your preferred unit for displaying distance measurements.
+                    </p>
+                    <div className="mt-4">
+                      <div className="flex items-center space-x-4">
+                        <label className="inline-flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio text-indigo-600"
+                            value="mi"
+                            checked={preferences.distanceUnit === 'mi'}
+                            onChange={() => handleUnitPreferenceChange('distanceUnit', 'mi')}
+                            disabled={unitPrefsUpdating}
+                          />
+                          <span className="ml-2">Miles (mi)</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio text-indigo-600"
+                            value="km"
+                            checked={preferences.distanceUnit === 'km'}
+                            onChange={() => handleUnitPreferenceChange('distanceUnit', 'km')}
+                            disabled={unitPrefsUpdating}
+                          />
+                          <span className="ml-2">Kilometers (km)</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio text-indigo-600"
+                            value="m"
+                            checked={preferences.distanceUnit === 'm'}
+                            onChange={() => handleUnitPreferenceChange('distanceUnit', 'm')}
+                            disabled={unitPrefsUpdating}
+                          />
+                          <span className="ml-2">Meters (m)</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {unitPrefsUpdating && (
+                    <div className="flex justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-indigo-500"></div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         
         <div>

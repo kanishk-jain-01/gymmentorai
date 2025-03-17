@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor';
 import { Exercise, Workout, Set } from '@/types';
 import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
+import { formatWeight, formatDistance } from '@/lib/utils/unit-conversions';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 interface WorkoutListProps {
   workouts: Workout[];
@@ -11,6 +13,7 @@ interface WorkoutListProps {
 
 export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: WorkoutListProps) {
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
+  const { preferences } = useUnitPreferences();
 
   if (isLoading) {
     return (
@@ -95,7 +98,7 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70 w-10">Set</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Reps</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Weight</th>
-                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Duration</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Duration (mm:ss)</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Distance</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-body opacity-70">Notes</th>
                             </tr>
@@ -106,13 +109,13 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
                                 <td className="px-2 py-1 whitespace-nowrap text-body font-medium">{setIndex + 1}</td>
                                 <td className="px-2 py-1 whitespace-nowrap text-body">{set.reps || '-'}</td>
                                 <td className="px-2 py-1 whitespace-nowrap text-body">
-                                  {set.weight ? `${set.weight} lbs` : '-'}
+                                  {set.weight ? formatWeight(set.weight, preferences.weightUnit) : '-'}
                                 </td>
                                 <td className="px-2 py-1 whitespace-nowrap text-body">
                                   {set.duration ? formatDuration(set.duration) : '-'}
                                 </td>
                                 <td className="px-2 py-1 whitespace-nowrap text-body">
-                                  {set.distance ? `${set.distance} mi` : '-'}
+                                  {set.distance ? formatDistance(set.distance, preferences.distanceUnit) : '-'}
                                 </td>
                                 <td className="px-2 py-1 whitespace-nowrap text-body italic">
                                   {set.notes || '-'}
