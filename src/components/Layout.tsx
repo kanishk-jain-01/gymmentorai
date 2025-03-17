@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signIn} from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaDumbbell, FaTiktok } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaDumbbell, FaTiktok } from 'react-icons/fa';
 import { useState } from 'react';
 
 interface LayoutProps {
@@ -178,10 +178,6 @@ export default function Layout({ children }: LayoutProps) {
               <a href="https://instagram.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                 <FaInstagram className="h-5 w-5" aria-hidden="true" />
                 <span className="sr-only">Instagram</span>
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaLinkedin className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">LinkedIn</span>
               </a>
             </div>
           </div>
