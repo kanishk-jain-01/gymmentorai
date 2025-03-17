@@ -219,7 +219,7 @@ function AccountContent() {
               </h3>
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
-                  You canceled the subscription process. If you have any questions or need help, please contact us at us at kanishk@gymmentorai.com!
+                  You canceled the subscription process. If you have any questions or need help, please contact us at us at support@gymmentorai.com!
                 </p>
               </div>
             </div>
