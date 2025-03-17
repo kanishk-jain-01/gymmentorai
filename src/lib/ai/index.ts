@@ -20,4 +20,10 @@ export {
 // Export workout validator
 export {
   validateWorkoutText
-} from './workout-validator'; 
+} from './workout-validator';
+
+// Export LLM usage tracking
+export {
+  checkLlmUsageLimit,
+  incrementLlmUsage
+} from './llm-usage'; 

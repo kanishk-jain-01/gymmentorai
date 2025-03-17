@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { checkApiUsageLimit, incrementApiUsage } from '@/lib/api-usage';
-import { validateWorkoutText } from '@/lib/ai';
+import { validateWorkoutText, checkLlmUsageLimit, incrementLlmUsage } from '@/lib/ai';
 import { z } from 'zod';
 
 // Schema for input validation
@@ -21,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Check API usage limit
-    const { limitExceeded, currentCount, limit } = await checkApiUsageLimit(userId);
+    const { limitExceeded, currentCount, limit } = await checkLlmUsageLimit(userId);
     if (limitExceeded) {
       return NextResponse.json({ 
         error: 'API limit exceeded',
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest) {
       const isWorkoutRelated = await validateWorkoutText(text);
       
       // Increment API usage count
-      await incrementApiUsage(userId);
+      await incrementLlmUsage(userId);
       
       return NextResponse.json({
         isWorkoutRelated

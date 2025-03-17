@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { verifyUnsubscribeToken } from '@/lib/email-utils';
+import { verifyUnsubscribeToken } from '@/lib/utils';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 // Schema for validating request query parameters
