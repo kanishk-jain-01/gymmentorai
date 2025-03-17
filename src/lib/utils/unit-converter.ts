@@ -53,7 +53,7 @@ export function metersToKm(meters: number): number {
  * @returns Distance in miles
  */
 export function metersToMiles(meters: number): number {
-  return meters / 1609.34;
+  return meters * 0.000621371;
 }
 
 /**
@@ -93,4 +93,42 @@ export function secondsToMMSS(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Format weight based on unit preference
+ * @param weight Weight in pounds (lb)
+ * @param unit Target unit ('lb' or 'kg')
+ * @returns Formatted weight string with unit
+ */
+export function formatWeight(weight?: number | null, unit: 'lb' | 'kg' = 'lb'): string {
+  if (weight === undefined || weight === null) return '-';
+  
+  if (unit === 'kg') {
+    const weightInKg = lbsToKg(weight);
+    return `${weightInKg.toFixed(1)} kg`;
+  }
+  
+  return `${weight.toFixed(1)} lbs`;
+}
+
+/**
+ * Format distance based on unit preference
+ * @param distance Distance in meters
+ * @param unit Target unit ('mi', 'km', or 'm')
+ * @returns Formatted distance string with unit
+ */
+export function formatDistance(distance?: number | null, unit: 'mi' | 'km' | 'm' = 'm'): string {
+  if (distance === undefined || distance === null) return '-';
+  
+  switch (unit) {
+    case 'mi':
+      const distanceInMiles = metersToMiles(distance);
+      return `${distanceInMiles.toFixed(2)} mi`;
+    case 'km':
+      const distanceInKm = metersToKm(distance);
+      return `${distanceInKm.toFixed(2)} km`;
+    default:
+      return `${Math.round(distance)} m`;
+  }
 } 

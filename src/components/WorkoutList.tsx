@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor/index';
 import { Exercise, Workout, Set } from '@/types';
-import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
-import { formatWeight, formatDistance } from '@/lib/utils/unit-conversions';
+import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance } from '@/lib/utils';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 interface WorkoutListProps {
