@@ -25,6 +25,8 @@ model User {
   accounts              Account[]
   sessions              Session[]
   apiUsage              ApiUsage[]
+  subscribedToEmails    Boolean   @default(true)
+  hasSeenOnboarding     Boolean   @default(false)
   
   // Subscription fields
   stripeCustomerId      String?   @unique
