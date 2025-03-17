@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import OnboardingModal from '@/components/OnboardingModal';
+import { UnitPreferencesProvider } from '@/contexts/UnitPreferencesContext';
 
 // Wrapper component that checks for authentication
 function AuthenticatedOnboarding({ children }: { children: ReactNode }) {
@@ -66,13 +67,15 @@ export default function Providers({ children }: { children: ReactNode }) {
       storageKey="gymmentor-theme"
     >
       <SessionProvider>
-        {mounted ? (
-          <AuthenticatedOnboarding>
-            {children}
-          </AuthenticatedOnboarding>
-        ) : (
-          <div style={{ visibility: 'hidden' }}>{children}</div>
-        )}
+        <UnitPreferencesProvider>
+          {mounted ? (
+            <AuthenticatedOnboarding>
+              {children}
+            </AuthenticatedOnboarding>
+          ) : (
+            <div style={{ visibility: 'hidden' }}>{children}</div>
+          )}
+        </UnitPreferencesProvider>
       </SessionProvider>
     </ThemeProvider>
   );

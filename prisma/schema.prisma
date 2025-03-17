@@ -27,6 +27,8 @@ model User {
   apiUsage              ApiUsage[]
   subscribedToEmails    Boolean   @default(true)
   hasSeenOnboarding     Boolean   @default(false)
+  weightUnit            String    @default("lb")  // Options: "lb" or "kg"
+  distanceUnit          String    @default("mi")  // Options: "mi", "km", or "m"
   
   // Subscription fields
   stripeCustomerId      String?   @unique
