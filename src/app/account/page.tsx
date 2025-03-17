@@ -29,6 +29,8 @@ function AccountContent() {
   const [deleteError, setDeleteError] = useState<React.ReactNode>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatusType | null>(null);
+  const [subscribedToEmails, setSubscribedToEmails] = useState(true);
+  const [emailPrefLoading, setEmailPrefLoading] = useState(false);
   
   // Store URL parameters in state and clear URL
   useEffect(() => {
@@ -48,21 +50,30 @@ function AccountContent() {
     }
   }, [authStatus, router]);
 
-  // Fetch subscription status
   useEffect(() => {
-    const fetchSubscriptionStatus = async () => {
-      try {
-        const response = await axios.get('/api/subscription');
-        setSubscriptionStatus(response.data.status);
-      } catch (err) {
-        console.error('Failed to load subscription status', err);
-      }
-    };
-
-    if (authStatus === 'authenticated') {
+    if (session?.user?.email) {
       fetchSubscriptionStatus();
+      fetchEmailPreferences();
     }
-  }, [authStatus]);
+  }, [session]);
+
+  const fetchSubscriptionStatus = async () => {
+    try {
+      const response = await axios.get('/api/subscription');
+      setSubscriptionStatus(response.data.status);
+    } catch (err) {
+      console.error('Failed to load subscription status', err);
+    }
+  };
+
+  const fetchEmailPreferences = async () => {
+    try {
+      const response = await axios.get('/api/user/email-preferences');
+      setSubscribedToEmails(response.data.subscribedToEmails);
+    } catch (error) {
+      console.error('Failed to fetch email preferences:', error);
+    }
+  };
   
   // Handle account deletion
   const handleDeleteAccount = async () => {
@@ -116,6 +127,34 @@ function AccountContent() {
       }
     } catch (err) {
       console.error('Failed to create portal session', err);
+    }
+  };
+  
+  const handleEmailPreferenceChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.checked;
+    setEmailPrefLoading(true);
+    
+    try {
+      await axios.post('/api/user/email-preferences', {
+        subscribedToEmails: newValue
+      });
+      setSubscribedToEmails(newValue);
+      setSuccessMessage('Email preferences updated successfully');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to update email preferences:', error);
+      setDeleteError('Failed to update email preferences. Please try again.');
+      
+      // Clear error message after 3 seconds
+      setTimeout(() => {
+        setDeleteError(null);
+      }, 3000);
+    } finally {
+      setEmailPrefLoading(false);
     }
   };
   
@@ -300,6 +339,35 @@ function AccountContent() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Email Preferences Section */}
+      <div className="bg-theme-card shadow rounded-lg p-6">
+        <h2 className="text-lg font-medium mb-4">Email Preferences</h2>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-theme-fg">Promotional emails</p>
+            <p className="text-sm text-theme-fg-muted">
+              Receive updates about new features and promotions
+            </p>
+          </div>
+          <div className="flex items-center">
+            {emailPrefLoading ? (
+              <div className="animate-pulse h-5 w-10 bg-theme-hover rounded"></div>
+            ) : (
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={subscribedToEmails}
+                  onChange={handleEmailPreferenceChange}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+              </label>
+            )}
           </div>
         </div>
       </div>

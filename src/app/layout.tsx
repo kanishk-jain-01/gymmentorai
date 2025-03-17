@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GymMentorAI - AI-Powered Workout Tracking",
-  description: "Track your workouts with AI assistance",
+  title: "GymMentorAI - Your AI Workout Companion",
+  description: "Track your workouts, analyze your progress, and get personalized recommendations with GymMentorAI.",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32 16x16', type: 'image/x-icon' },
