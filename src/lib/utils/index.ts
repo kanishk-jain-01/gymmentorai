@@ -2,6 +2,9 @@
  * Utility functions for the application
  */
 
+// Export unit conversion utilities
+export * from './unit-converter';
+
 /**
  * Ensures a value is converted to a number or undefined if invalid
  * @param value Any value to convert to a number
