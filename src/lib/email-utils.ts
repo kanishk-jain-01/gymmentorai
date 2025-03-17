@@ -5,7 +5,7 @@ import crypto from 'crypto';
  * @param email The user's email
  * @returns A secure token
  */
-function generateUnsubscribeToken(email: string): string {
+export function generateUnsubscribeToken(email: string): string {
   // Use a secret key from environment variables
   const secret = process.env.EMAIL_SECRET || 'default-secret-change-me';
   
@@ -23,7 +23,7 @@ function generateUnsubscribeToken(email: string): string {
  * @param token The token to verify
  * @returns Whether the token is valid
  */
-function verifyUnsubscribeToken(email: string, token: string): boolean {
+export function verifyUnsubscribeToken(email: string, token: string): boolean {
   const expectedToken = generateUnsubscribeToken(email);
   return crypto.timingSafeEqual(
     Buffer.from(token),
@@ -36,9 +36,11 @@ function verifyUnsubscribeToken(email: string, token: string): boolean {
  * @param email The user's email
  * @returns The full unsubscribe URL
  */
-function generateUnsubscribeUrl(email: string): string {
+export function generateUnsubscribeUrl(email: string): string {
   const token = generateUnsubscribeToken(email);
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  
+  // Use EMAIL_BASE_URL if provided, otherwise fall back to NEXTAUTH_URL or localhost
+  const baseUrl = process.env.EMAIL_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
   
   // Create the URL with email and token as query parameters
   const url = new URL(`${baseUrl}/api/user/unsubscribe`);
@@ -46,11 +48,4 @@ function generateUnsubscribeUrl(email: string): string {
   url.searchParams.append('token', token);
   
   return url.toString();
-}
-
-// Export functions for CommonJS compatibility
-module.exports = {
-  generateUnsubscribeToken,
-  verifyUnsubscribeToken,
-  generateUnsubscribeUrl
-}; 
+} 
