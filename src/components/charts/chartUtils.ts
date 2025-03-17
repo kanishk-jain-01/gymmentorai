@@ -45,11 +45,11 @@ export const CHART_TYPES = [
 
 // Available metrics for y-axis
 export const AVAILABLE_METRICS = [
-  { label: 'Weight (lbs)', value: 'weight' },
-  { label: 'Reps', value: 'reps' },
-  { label: 'Sets', value: 'sets' },
+  { label: 'Weight', value: 'weight' },
+  { label: 'Number of Reps', value: 'reps' },
+  { label: 'Number of Sets', value: 'sets' },
   { label: 'Volume (sets × reps × weight)', value: 'volume' },
-  { label: 'Set Duration (MM:SS)', value: 'duration' },
+  { label: 'Set Duration (mm:ss)', value: 'duration' },
   { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
   { label: 'Distance', value: 'distance' },
 ];
