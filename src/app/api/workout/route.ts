@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { parseWorkoutText } from '@/lib/ai';
+import { parseWorkoutText, checkLlmUsageLimit, incrementLlmUsage } from '@/lib/ai';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { ensureNumericType } from '@/lib/utils';
 import { canAddWorkouts } from '@/lib/stripe/stripe-server';
 import { UserWithSubscription } from '@/types';
-import { checkApiUsageLimit, incrementApiUsage } from '@/lib/api-usage';
 
 // Schema for workout input validation
 const workoutInputSchema = z.object({
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Check API usage limit
-    const { limitExceeded, currentCount, limit } = await checkApiUsageLimit(userId);
+    const { limitExceeded, currentCount, limit } = await checkLlmUsageLimit(userId);
     if (limitExceeded) {
       return NextResponse.json({ 
         error: 'API limit exceeded',
@@ -68,7 +67,7 @@ export async function POST(req: NextRequest) {
       const parsedWorkout = await parseWorkoutText(text);
       
       // Increment API usage count
-      await incrementApiUsage(userId);
+      await incrementLlmUsage(userId);
       
       // Create workout in database with current date/time
       const workoutData = {

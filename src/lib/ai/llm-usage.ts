@@ -1,11 +1,11 @@
 import { prisma } from '@/lib/prisma';
 
 /**
- * Checks if a user has exceeded their daily API request limit
+ * Checks if a user has exceeded their daily LLM API request limit
  * @param userId The user's ID
  * @returns An object indicating if the limit is exceeded and the current count
  */
-export async function checkApiUsageLimit(userId: string): Promise<{ 
+export async function checkLlmUsageLimit(userId: string): Promise<{ 
   limitExceeded: boolean; 
   currentCount: number;
   limit: number;
@@ -35,11 +35,11 @@ export async function checkApiUsageLimit(userId: string): Promise<{
 }
 
 /**
- * Increments a user's API usage count for the current day
+ * Increments a user's LLM API usage count for the current day
  * @param userId The user's ID
  * @returns The updated usage record
  */
-export async function incrementApiUsage(userId: string) {
+export async function incrementLlmUsage(userId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
