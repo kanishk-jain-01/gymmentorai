@@ -114,11 +114,11 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
         }}
       >
         {/* Soft subtle gradients for depth */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/5 to-transparent rounded-2xl pointer-events-none -z-10"></div>
+        <div className="absolute inset-0 bg-highlight rounded-2xl pointer-events-none -z-10"></div>
         
         {/* Header with thinner border and refined spacing */}
         <div className="px-8 py-6 border-b border-theme-border/30 flex justify-between items-center">
-          <h3 className="text-xl font-medium text-theme-fg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Edit Workout</h3>
+          <h3 className="text-xl font-medium text-theme-fg text-gradient-primary">Edit Workout</h3>
           <button
             onClick={onClose}
             className="text-theme-fg/70 hover:text-theme-fg transition-colors duration-200 hover:bg-theme-bg/50 rounded-full p-2"
@@ -133,7 +133,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-8 py-7 space-y-8">
             {error && (
-              <div className="bg-red-50/80 border border-red-200/70 text-red-600 px-4 py-3.5 rounded-xl flex items-center space-x-2.5 animate-fadeIn">
+              <div className="bg-error border border-error text-error px-4 py-3.5 rounded-xl flex items-center space-x-2.5 animate-fadeIn">
                 <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
@@ -145,11 +145,11 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
             
             <div className="pt-3">
               <div className="flex justify-between items-center mb-5">
-                <h4 className="text-lg font-medium text-theme-fg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Exercises</h4>
+                <h4 className="text-lg font-medium text-theme-fg text-gradient-primary">Exercises</h4>
                 <button
                   type="button"
                   onClick={addExercise}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-primary hover:bg-gradient-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

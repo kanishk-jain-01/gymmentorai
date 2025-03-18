@@ -6,6 +6,21 @@
   --card-bg: #ffffff;
   --border-color: #e2e8f0;
   --accent-color: #e0e7ff;
+  
+  /* New enhanced color palette */
+  --primary-from: #6366f1;  /* indigo-500 */
+  --primary-to: #a855f7;    /* purple-500 */
+  --primary-hover-from: #4f46e5; /* indigo-600 */
+  --primary-hover-to: #9333ea;   /* purple-600 */
+  --primary-text: #4f46e5;       /* indigo-600 */
+  
+  --subtle-bg: rgba(248, 250, 252, 0.8);  /* slate-50 with opacity */
+  --subtle-border: rgba(226, 232, 240, 0.7); /* slate-200 with opacity */
+  --subtle-highlight: rgba(224, 231, 255, 0.2); /* indigo-100 with opacity */
+  
+  --error-text: #ef4444;    /* red-500 */
+  --error-bg: rgba(254, 242, 242, 0.8);  /* red-50 with opacity */
+  --error-border: rgba(254, 226, 226, 0.7); /* red-100 with opacity */
 }
 
 .dark {
@@ -14,6 +29,21 @@
   --card-bg: #1F2937;
   --border-color: #334155;
   --accent-color: #3b4f7d;
+  
+  /* Dark mode enhanced colors */
+  --primary-from: #6366f1;  /* Keep same for consistency */
+  --primary-to: #a855f7;    
+  --primary-hover-from: #4f46e5;
+  --primary-hover-to: #9333ea;
+  --primary-text: #818cf8;  /* indigo-400 */
+  
+  --subtle-bg: rgba(30, 41, 59, 0.5);   /* slate-800 with opacity */
+  --subtle-border: rgba(51, 65, 85, 0.6); /* slate-700 with opacity */
+  --subtle-highlight: rgba(55, 65, 81, 0.3); /* slate-700 with opacity */
+  
+  --error-text: #f87171;    /* red-400 */
+  --error-bg: rgba(127, 29, 29, 0.2);  /* red-900 with opacity */
+  --error-border: rgba(153, 27, 27, 0.3); /* red-800 with opacity */
 }
 
 /* Ensure your theme variables are applied */
@@ -32,6 +62,42 @@
   }
   .bg-theme-accent {
     background-color: var(--accent-color);
+  }
+  
+  /* New utility classes */
+  .bg-gradient-primary {
+    background-image: linear-gradient(to right, var(--primary-from), var(--primary-to));
+  }
+  .bg-gradient-primary-hover {
+    background-image: linear-gradient(to right, var(--primary-hover-from), var(--primary-hover-to));
+  }
+  .text-gradient-primary {
+    background-image: linear-gradient(to right, var(--primary-from), var(--primary-to));
+    background-clip: text;
+    color: transparent;
+  }
+  .text-primary {
+    color: var(--primary-text);
+  }
+  
+  .bg-subtle {
+    background-color: var(--subtle-bg);
+  }
+  .border-subtle {
+    border-color: var(--subtle-border);
+  }
+  .bg-highlight {
+    background-color: var(--subtle-highlight);
+  }
+  
+  .text-error {
+    color: var(--error-text);
+  }
+  .bg-error {
+    background-color: var(--error-bg);
+  }
+  .border-error {
+    border-color: var(--error-border);
   }
 }
 
