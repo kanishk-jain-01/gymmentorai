@@ -148,7 +148,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </nav>
 
       <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-6">
           {children}
         </main>
 
