@@ -104,45 +104,45 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
   };
   
   return (
-    <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border">
+    <div className="bg-theme-card shadow sm:rounded-lg border border-theme-border hover:border-subtle transition-colors duration-200">
       <div className="px-4 py-5 sm:p-6">
         <div className="mt-2 max-w-xl text-sm text-theme-fg opacity-80">
           <p>
-            Describe your workout in natural language. Our AI will understand and organize it for you.
+            Describe your workout in natural language. 
           </p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
-          <div className="w-full">
+          <div className="w-full mt-1.5 relative">
             <textarea
               id="workoutText"
               rows={5}
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-theme-border rounded-md bg-theme-card text-theme-fg"
+              className="block w-full rounded-xl border border-subtle shadow-sm focus:border-primary-from focus:ring focus:ring-primary-from/20 bg-subtle text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 py-2.5 px-3.5"
               placeholder="Example: Today I did 3 sets of bench press at 185lbs for 8 reps, followed by 3 sets of squats at 225lbs for 5 reps. I finished with a 20 minute run on the treadmill."
               {...register('workoutText', { 
                 required: 'Please enter your workout details'
               })}
             />
             {errors.workoutText && (
-              <p className="mt-2 text-sm text-red-500">{errors.workoutText.message}</p>
+              <p className="mt-2 text-sm text-error">{errors.workoutText.message}</p>
             )}
           </div>
           
           {feedback && (
-            <div className={`mt-2 text-sm ${
+            <div className={`mt-2 text-sm p-2 rounded ${
               feedback.type === 'error' 
-                ? 'text-red-500' 
+                ? 'text-error bg-error border border-error' 
                 : feedback.type === 'subscription'
-                  ? 'text-yellow-500'
+                  ? 'text-yellow-500 bg-yellow-50/80 dark:bg-yellow-900/20 border border-yellow-200/70 dark:border-yellow-800/30'
                   : feedback.type === 'limit'
-                    ? 'text-orange-500'
-                    : 'text-green-500'
+                    ? 'text-orange-500 bg-orange-50/80 dark:bg-orange-900/20 border border-orange-200/70 dark:border-orange-800/30'
+                    : 'text-green-500 bg-green-50/80 dark:bg-green-900/20 border border-green-200/70 dark:border-green-800/30'
             }`}>
               {feedback.message}
               {feedback.type === 'subscription' && (
                 <div className="mt-2">
                   <Link 
                     href="/account" 
-                    className="text-indigo-500 hover:text-indigo-700 font-medium"
+                    className="text-primary font-medium hover:text-gradient-primary transition-all duration-200"
                   >
                     Subscribe now →
                   </Link>
@@ -155,7 +155,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
             <button
               type="submit"
               disabled={isLoading || isValidating}
-              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-primary hover:bg-gradient-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-from transition-all duration-200 ${
                 (isLoading || isValidating) ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
