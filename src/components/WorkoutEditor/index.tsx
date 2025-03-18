@@ -29,17 +29,23 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
           // Convert weight and distance based on user preferences
           let weight = set.weight;
           if (weight && preferences.weightUnit === 'kg') {
-            // Convert stored pounds to kg for display
-            weight = lbsToKg(weight);
+            // Convert stored pounds to kg for display, rounded to 1 decimal
+            weight = Number(lbsToKg(weight).toFixed(1));
+          } else if (weight) {
+            // For lb, also round to 1 decimal for consistency
+            weight = Number(weight.toFixed(1));
           }
           
           let distance = set.distance;
           if (distance) {
-            // Convert stored meters to user's preferred unit
+            // Convert stored meters to user's preferred unit with appropriate rounding
             if (preferences.distanceUnit === 'mi') {
-              distance = metersToMiles(distance);
+              distance = Number(metersToMiles(distance).toFixed(2));
             } else if (preferences.distanceUnit === 'km') {
-              distance = metersToKm(distance);
+              distance = Number(metersToKm(distance).toFixed(2));
+            } else {
+              // For meters, round to whole numbers
+              distance = Math.round(distance);
             }
           }
           
@@ -66,34 +72,68 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
     setError(null);
     
     try {
+      // Track original workout data to preserve precision
+      const originalWorkout = workout;
+      
       // Process the data before sending to API
       const processedData = {
         ...data,
-        exercises: data.exercises.map((exercise: any) => ({
+        exercises: data.exercises.map((exercise: any, exerciseIndex: number) => ({
           ...exercise,
-          sets: exercise.sets.map((set: any) => {
-            // Handle unit conversions
+          sets: exercise.sets.map((set: any, setIndex: number) => {
+            // Get original set if it exists (for unchanged values)
+            const originalSet = originalWorkout.exercises[exerciseIndex]?.sets[setIndex];
+            
+            // Check if values have been modified by comparing with rounded original values
+            const originalWeight = originalSet?.weight;
+            const originalWeightFormatted = originalWeight && preferences.weightUnit === 'kg' 
+              ? Number(lbsToKg(originalWeight).toFixed(1))
+              : originalWeight ? Number(originalWeight.toFixed(1)) : undefined;
+            
+            const originalDistance = originalSet?.distance;
+            const originalDistanceFormatted = originalDistance && preferences.distanceUnit === 'mi'
+              ? Number(metersToMiles(originalDistance).toFixed(2))
+              : originalDistance && preferences.distanceUnit === 'km'
+              ? Number(metersToKm(originalDistance).toFixed(2))
+              : originalDistance ? Math.round(originalDistance) : undefined;
+            
+            // Compare the current form values with the formatted original values
+            const weightChanged = set.weight !== originalWeightFormatted;
+            const distanceChanged = set.distance !== originalDistanceFormatted;
+            
+            // Handle unit conversions only if the values have changed
             let processedWeight = set.weight;
-            if (processedWeight && preferences.weightUnit === 'kg') {
+            if (processedWeight && preferences.weightUnit === 'kg' && weightChanged) {
               // Convert kg back to lb for storage
               processedWeight = kgToLbs(processedWeight);
+            } else if (!weightChanged && originalSet) {
+              // Use the original value if not changed
+              processedWeight = originalSet.weight;
             }
             
             let processedDistance = set.distance;
-            if (processedDistance) {
+            if (processedDistance && distanceChanged) {
               // Convert from user's unit back to meters for storage
               if (preferences.distanceUnit === 'mi') {
                 processedDistance = milesToMeters(processedDistance);
               } else if (preferences.distanceUnit === 'km') {
                 processedDistance = kmToMeters(processedDistance);
               }
+            } else if (!distanceChanged && originalSet) {
+              // Use the original value if not changed
+              processedDistance = originalSet.distance;
             }
+            
+            // Parse duration
+            const durationValue = set.duration ? parseDuration(set.duration) : undefined;
+            const durationChanged = durationValue !== originalSet?.duration;
+            const processDuration = durationChanged ? durationValue : originalSet?.duration;
             
             return {
               ...set,
               weight: processedWeight,
               distance: processedDistance,
-              duration: set.duration ? parseDuration(set.duration) : undefined,
+              duration: processDuration,
             };
           }),
         })),
