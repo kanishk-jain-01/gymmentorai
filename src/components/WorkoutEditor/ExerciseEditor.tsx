@@ -81,7 +81,7 @@ const ExerciseEditor: React.FC<ExerciseEditorProps> = ({ exerciseIndex, control,
               distance: undefined,
               notes: '',
             })}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full text-primary bg-indigo-50/80 hover:bg-indigo-100/80 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500/50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm"
+            className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full text-primary bg-subtle hover:bg-highlight focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500/50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm"
           >
             <PlusIcon className="h-3.5 w-3.5 mr-1" />
             Add Set
