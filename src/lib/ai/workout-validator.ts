@@ -16,7 +16,7 @@ export async function validateWorkoutText(text: string): Promise<boolean> {
     const response = await callLLM([
       {
         role: 'system',
-        content: 'You are a fitness expert assistant. Your task is to determine if the provided text is describing a workout or exercise activity. Respond with a JSON object with a single boolean field "isWorkoutRelated".'
+        content: 'You are a fitness expert assistant. Your task is to determine if the provided text is describing a workout or exercise activity that someone already did. Respond with a JSON object with a single boolean field "isWorkoutRelated".'
       },
       {
         role: 'user',
