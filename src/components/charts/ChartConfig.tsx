@@ -1,19 +1,25 @@
 import React, { useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { DATE_RANGES, CHART_TYPES, AVAILABLE_METRICS } from './chartUtils';
+import { DATE_RANGES, CHART_TYPES, AVAILABLE_METRICS, getMetricsWithUnits } from './chartUtils';
 import { ChartConfigProps, ChartConfig as ChartConfigType } from '@/types';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 const ChartConfig: React.FC<ChartConfigProps> = ({ 
   config, 
   exerciseOptions, 
   onUpdateConfig 
 }) => {
+  const { preferences } = useUnitPreferences();
+  
   // When switching to workout duration, clear the exercise selection
   useEffect(() => {
     if (config.metric === 'workoutDuration' && config.exercise) {
       onUpdateConfig('exercise', null);
     }
   }, [config.metric]);
+
+  // Get metrics with user's preferred units
+  const metricsWithUnits = getMetricsWithUnits(preferences);
 
   return (
     <>
@@ -47,7 +53,7 @@ const ChartConfig: React.FC<ChartConfigProps> = ({
             value={config.metric}
             onChange={(e) => onUpdateConfig('metric', e.target.value)}
           >
-            {AVAILABLE_METRICS.map(metric => (
+            {metricsWithUnits.map(metric => (
               <option key={metric.value} value={metric.value}>{metric.label}</option>
             ))}
           </select>
