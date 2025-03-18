@@ -147,39 +147,41 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {children}
-      </main>
+      <div className="flex flex-col min-h-[calc(100vh-4rem)]">
+        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {children}
+        </main>
 
-      <footer className="border-t py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center">
-            <p className="text-center text-sm mb-4">
-              &copy; {new Date().getFullYear()} GymMentorAI. All rights reserved.
-            </p>
-            
-            {/* Social Media Icons */}
-            <div className="flex space-x-6 mt-2">
-            <a href="https://www.tiktok.com/@gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaTiktok className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">TikTok</span>
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaFacebook className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Facebook</span>
-              </a>
-              <a href="https://twitter.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaTwitter className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a href="https://instagram.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
-                <FaInstagram className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Instagram</span>
-              </a>
+        <footer className="border-t py-6 mt-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col items-center">
+              <p className="text-center text-sm mb-4">
+                &copy; {new Date().getFullYear()} GymMentorAI. All rights reserved.
+              </p>
+              
+              {/* Social Media Icons */}
+              <div className="flex space-x-6 mt-2">
+              <a href="https://www.tiktok.com/@gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                  <FaTiktok className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">TikTok</span>
+                </a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                  <FaFacebook className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">Facebook</span>
+                </a>
+                <a href="https://twitter.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                  <FaTwitter className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">Twitter</span>
+                </a>
+                <a href="https://instagram.com/gymmentorai" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                  <FaInstagram className="h-5 w-5" aria-hidden="true" />
+                  <span className="sr-only">Instagram</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
