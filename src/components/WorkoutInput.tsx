@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import Link from 'next/link';
@@ -7,6 +7,8 @@ import { WorkoutInputProps } from '@/types';
 interface FormData {
   workoutText: string;
 }
+
+const LOCAL_STORAGE_KEY = 'workout-draft';
 
 const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,8 +22,27 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>();
+  
+  const workoutText = watch('workoutText');
+  
+  // Load draft from localStorage on component mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedDraft) {
+      setValue('workoutText', savedDraft);
+    }
+  }, [setValue]);
+  
+  // Save draft to localStorage whenever workoutText changes
+  useEffect(() => {
+    if (workoutText) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, workoutText);
+    }
+  }, [workoutText]);
   
   const validateWorkout = async (text: string): Promise<{ 
     isValid: boolean; 
@@ -82,6 +103,10 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
         type: 'success', 
         message: 'Workout added successfully!'
       });
+      
+      // Clear the localStorage draft after successful submission
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      
       reset();
       onWorkoutAdded();
     } catch (err: any) {
