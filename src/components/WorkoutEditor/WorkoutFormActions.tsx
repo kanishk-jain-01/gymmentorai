@@ -1,20 +1,13 @@
 import React from 'react';
+import { WorkoutFormActionsProps } from '@/types';
 
-interface WorkoutFormActionsProps {
-  isLoading: boolean;
-  deleteConfirmState: boolean;
-  handleDeleteWorkout: () => void;
-  onClose: () => void;
-  setDeleteConfirmState: (state: boolean) => void;
-}
-
-const WorkoutFormActions = ({ 
+const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({ 
   isLoading, 
   deleteConfirmState, 
   handleDeleteWorkout, 
   onClose, 
   setDeleteConfirmState 
-}: WorkoutFormActionsProps) => {
+}) => {
   return (
     <div className="px-8 py-5 bg-theme-bg/50 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 rounded-b-xl border-t border-theme-border/30">
       <button

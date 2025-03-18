@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import axios from 'axios';
-import { Workout } from '@/types';
+import { Workout, WorkoutEditorProps } from '@/types';
 import { formatDuration, parseDuration } from '@/lib/utils';
 import WorkoutFormHeader from './WorkoutFormHeader';
 import WorkoutFormActions from './WorkoutFormActions';
 import ExerciseEditor from './ExerciseEditor';
 
-interface WorkoutEditorProps {
-  workout: Workout;
-  onClose: () => void;
-  onWorkoutUpdated: () => void;
-}
-
-const WorkoutEditor = ({ workout, onClose, onWorkoutUpdated }: WorkoutEditorProps) => {
+const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorkoutUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(false);
