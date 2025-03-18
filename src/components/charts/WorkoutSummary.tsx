@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { Workout } from '@/types';
+import { Workout, WorkoutSummaryProps } from '@/types';
 import { DATE_RANGES, filterWorkoutsByDateRange } from './chartUtils';
 import { formatWorkoutDuration } from '@/lib/utils';
-
-interface WorkoutSummaryProps {
-  workouts: Workout[];
-  exerciseOptions: string[];
-}
 
 const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptions }) => {
   const [summaryDateRange, setSummaryDateRange] = useState<number>(90); // Date range for summary stats

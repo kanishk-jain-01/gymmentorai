@@ -1,13 +1,17 @@
 import { ChartData } from 'chart.js';
-import { Workout } from '@/types';
 import { 
+  Workout, 
   ChartConfig, 
   CustomChartData, 
+  MixedChartData, 
+  ExerciseDataByDate, 
+  WorkoutDurationsByDate 
+} from '@/types';
+import { 
   AVAILABLE_METRICS, 
   CHART_COLORS,
   filterWorkoutsByDateRange
 } from '../chartUtils';
-import { MixedChartData, ExerciseDataByDate, WorkoutDurationsByDate } from './types';
 
 // Generate chart data based on configuration
 export const generateChartData = (

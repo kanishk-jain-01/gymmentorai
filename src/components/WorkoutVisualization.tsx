@@ -18,7 +18,7 @@ import {
 } from 'chart.js';
 import axios from 'axios';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { Workout } from '@/types';
+import { Workout, ChartConfig } from '@/types';
 
 // Import our custom components
 import { 
@@ -26,9 +26,6 @@ import {
   WorkoutFrequencyChart, 
   WorkoutSummary
 } from '@/components/charts';
-
-// Import the ChartConfig interface directly from chartUtils
-import { ChartConfig } from '@/components/charts/chartUtils';
 
 // Register ChartJS components
 ChartJS.register(

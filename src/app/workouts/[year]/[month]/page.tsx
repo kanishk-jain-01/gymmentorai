@@ -7,14 +7,7 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WorkoutList from '@/components/WorkoutList';
 import axios from 'axios';
-import { Workout } from '@/types';
-
-interface MonthPageProps {
-  params: Promise<{
-    year: string;
-    month: string;
-  }>;
-}
+import { Workout, MonthPageProps } from '@/types';
 
 export default function MonthPage({ params }: MonthPageProps) {
   // Unwrap params using React.use()

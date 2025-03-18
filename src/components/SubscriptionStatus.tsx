@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { SubscriptionStatus as SubscriptionStatusType, SubscriptionPlan } from '@/types';
+import { SubscriptionStatus as SubscriptionStatusType, SubscriptionPlan, SubscriptionStatusProps } from '@/types';
 
-interface SubscriptionStatusProps {
-  onSubscriptionChange?: (status: SubscriptionStatusType) => void;
-}
-
-export default function SubscriptionStatus({ onSubscriptionChange }: SubscriptionStatusProps) {
+const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onSubscriptionChange }) => {
   const [status, setStatus] = useState<SubscriptionStatusType | null>(null);
   const [plans, setPlans] = useState<(SubscriptionPlan & { formattedPrice: string })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -228,4 +224,6 @@ export default function SubscriptionStatus({ onSubscriptionChange }: Subscriptio
       </div>
     </div>
   );
-} 
+};
+
+export default SubscriptionStatus; 

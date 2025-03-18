@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { ChartData } from 'chart.js';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { Workout } from '@/types';
+import { Workout, WorkoutFrequencyChartProps } from '@/types';
 import { 
   DATE_RANGES, 
   filterWorkoutsByDateRange,
   useChartOptions
 } from './chartUtils';
-
-interface WorkoutFrequencyChartProps {
-  workouts: Workout[];
-}
 
 const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts }) => {
   const [frequencyDateRange, setFrequencyDateRange] = useState<number>(90); // Date range for frequency chart
