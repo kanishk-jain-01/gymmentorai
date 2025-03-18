@@ -46,7 +46,7 @@ function AuthenticatedOnboarding({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      {!isLoading && showOnboarding && <OnboardingModal onClose={handleCloseOnboarding} />}
+      {!isLoading && showOnboarding && <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} />}
     </>
   );
 }
