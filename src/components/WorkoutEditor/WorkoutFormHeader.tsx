@@ -1,11 +1,7 @@
 import React from 'react';
+import { WorkoutFormHeaderProps } from '@/types';
 
-interface WorkoutFormHeaderProps {
-  register: any;
-  errors: any;
-}
-
-const WorkoutFormHeader = ({ register, errors }: WorkoutFormHeaderProps) => {
+const WorkoutFormHeader: React.FC<WorkoutFormHeaderProps> = ({ register, errors }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="group">

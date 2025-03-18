@@ -1,14 +1,8 @@
 import React from 'react';
 import { MinusIcon } from '@heroicons/react/24/outline';
+import { SetEditorProps } from '@/types';
 
-interface SetEditorProps {
-  exerciseIndex: number;
-  setIndex: number;
-  register: any;
-  removeSet: (index: number) => void;
-}
-
-const SetEditor = ({ exerciseIndex, setIndex, register, removeSet }: SetEditorProps) => {
+const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register, removeSet }) => {
   return (
     <div 
       className="grid grid-cols-12 gap-2 items-center bg-theme-bg/40 p-3 rounded-lg border border-theme-border/20 group/set"
