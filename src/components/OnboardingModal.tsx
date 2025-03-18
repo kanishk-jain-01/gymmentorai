@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
-
-interface OnboardingModalProps {
-  onClose: () => void;
-}
+import { OnboardingModalProps } from '@/types';
 
 export default function OnboardingModal({ onClose }: OnboardingModalProps) {
   const { data: session } = useSession();

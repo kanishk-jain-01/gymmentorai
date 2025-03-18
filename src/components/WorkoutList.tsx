@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor/index';
-import { Exercise, Workout, Set } from '@/types';
+import { Exercise, Workout, Set, WorkoutListProps } from '../types';
 import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance } from '@/lib/utils';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
-interface WorkoutListProps {
-  workouts: Workout[];
-  isLoading: boolean;
-  onWorkoutUpdated: () => void;
-}
-
-export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: WorkoutListProps) {
+const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkoutUpdated }) => {
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const { preferences } = useUnitPreferences();
 
@@ -149,4 +143,6 @@ export default function WorkoutList({ workouts, isLoading, onWorkoutUpdated }: W
       )}
     </>
   );
-} 
+}
+
+export default WorkoutList; 

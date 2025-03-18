@@ -1,12 +1,7 @@
 import React, { useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { ChartConfig as ChartConfigType, DATE_RANGES, CHART_TYPES, AVAILABLE_METRICS } from './chartUtils';
-
-interface ChartConfigProps {
-  config: ChartConfigType;
-  exerciseOptions: string[];
-  onUpdateConfig: (field: keyof ChartConfigType, value: any) => void;
-}
+import { DATE_RANGES, CHART_TYPES, AVAILABLE_METRICS } from './chartUtils';
+import { ChartConfigProps, ChartConfig as ChartConfigType } from '@/types';
 
 const ChartConfig: React.FC<ChartConfigProps> = ({ 
   config, 

@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import Link from 'next/link';
-
-interface WorkoutInputProps {
-  onWorkoutAdded: () => void;
-}
+import { WorkoutInputProps } from '@/types';
 
 interface FormData {
   workoutText: string;
 }
 
-export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
+const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ 
     type: 'success' | 'error' | 'subscription' | 'limit'; 
@@ -169,4 +166,6 @@ export default function WorkoutInput({ onWorkoutAdded }: WorkoutInputProps) {
       </div>
     </div>
   );
-} 
+}
+
+export default WorkoutInput; 

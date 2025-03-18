@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import ChartConfig from '../ChartConfig';
 import ChartRenderer from './ChartRenderer';
 import { generateChartData } from './generateChartData';
-import { CustomChartProps } from './types';
+import { CustomChartProps } from '@/types';
 
 const CustomChart: React.FC<CustomChartProps> = ({
   config,

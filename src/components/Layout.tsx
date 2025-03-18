@@ -5,12 +5,9 @@ import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
 import { FaFacebook, FaTwitter, FaInstagram, FaDumbbell, FaTiktok } from 'react-icons/fa';
 import { useState } from 'react';
+import { LayoutProps } from '@/types';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const loading = status === 'loading';
@@ -185,4 +182,6 @@ export default function Layout({ children }: LayoutProps) {
       </footer>
     </div>
   );
-} 
+}
+
+export default Layout; 

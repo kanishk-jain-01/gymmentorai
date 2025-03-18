@@ -7,14 +7,8 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import TimeCard from '@/components/TimeCard';
 import axios from 'axios';
-import { Workout } from '@/types';
+import { Workout, YearPageProps } from '@/types';
 import { organizeWorkoutsByMonth } from '@/lib/utils';
-
-interface YearPageProps {
-  params: Promise<{
-    year: string;
-  }>;
-}
 
 export default function YearPage({ params }: YearPageProps) {
   // Unwrap params using React.use()

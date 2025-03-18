@@ -1,17 +1,11 @@
 import React from 'react';
 import { Bar, Chart } from 'react-chartjs-2';
 import { ChartData } from 'chart.js';
-import { ChartConfig, AVAILABLE_METRICS } from '../chartUtils';
-import { MixedChartData } from './types';
+import { AVAILABLE_METRICS } from '../chartUtils';
 import { useChartOptions } from '../chartUtils';
 import { createTooltipCallbacks } from './tooltipCallbacks';
 import { formatDuration } from '@/lib/utils';
-
-interface ChartRendererProps {
-  config: ChartConfig;
-  chartData: ChartData<any, any[], any> | MixedChartData;
-  height?: number;
-}
+import { ChartRendererProps, ChartConfig, MixedChartData } from '@/types';
 
 const ChartRenderer: React.FC<ChartRendererProps> = ({ 
   config, 

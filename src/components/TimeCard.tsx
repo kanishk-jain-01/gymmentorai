@@ -1,11 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-
-interface TimeCardProps {
-  title: string;
-  count: number;
-  href: string;
-}
+import { TimeCardProps } from '@/types';
 
 export default function TimeCard({ title, count, href }: TimeCardProps) {
   return (
