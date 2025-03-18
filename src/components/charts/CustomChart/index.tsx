@@ -4,6 +4,8 @@ import ChartConfig from '../ChartConfig';
 import ChartRenderer from './ChartRenderer';
 import { generateChartData } from './generateChartData';
 import { CustomChartProps } from '@/types';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+import { formatWeight } from '@/lib/utils';
 
 const CustomChart: React.FC<CustomChartProps> = ({
   config,
@@ -13,10 +15,12 @@ const CustomChart: React.FC<CustomChartProps> = ({
   onUpdateConfig,
   onRemoveChart
 }) => {
+  const { preferences } = useUnitPreferences();
+  
   // Generate chart data and handle errors
   let chartData;
   try {
-    chartData = generateChartData(config, workouts);
+    chartData = generateChartData(config, workouts, preferences);
   } catch (error) {
     console.error('Error generating chart data:', error);
     chartData = null;
@@ -51,7 +55,7 @@ const CustomChart: React.FC<CustomChartProps> = ({
         {config.exercise && personalRecords[config.exercise] && config.metric === 'weight' && (
           <div className="mb-4 p-3 bg-theme-accent bg-indigo-50 rounded-md">
             <p className="text-sm font-medium text-theme-fg">
-              Personal Record: {personalRecords[config.exercise].weight} lbs on {new Date(personalRecords[config.exercise].date).toLocaleDateString()}
+              Personal Record: {formatWeight(personalRecords[config.exercise].weight, preferences.weightUnit)} on {new Date(personalRecords[config.exercise].date).toLocaleDateString()}
             </p>
           </div>
         )}

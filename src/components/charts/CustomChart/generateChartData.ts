@@ -12,11 +12,27 @@ import {
   CHART_COLORS,
   filterWorkoutsByDateRange
 } from '../chartUtils';
+import { lbsToKg, metersToKm, metersToMiles } from '@/lib/utils';
+
+// Helper function to convert weight based on user preferences
+const convertWeight = (weight: number | undefined, unit: 'lb' | 'kg'): number | undefined => {
+  if (weight === undefined) return undefined;
+  return unit === 'kg' ? lbsToKg(weight) : weight;
+};
+
+// Helper function to convert distance based on user preferences
+const convertDistance = (distance: number | undefined, unit: 'mi' | 'km' | 'm'): number | undefined => {
+  if (distance === undefined) return undefined;
+  if (unit === 'km') return metersToKm(distance);
+  if (unit === 'mi') return metersToMiles(distance);
+  return distance; // Already in meters
+};
 
 // Generate chart data based on configuration
 export const generateChartData = (
   config: ChartConfig,
-  workouts: Workout[]
+  workouts: Workout[],
+  preferences: { weightUnit: 'lb' | 'kg', distanceUnit: 'mi' | 'km' | 'm' }
 ): CustomChartData | MixedChartData | null => {
   if (!config.exercise && config.metric !== 'workoutDuration') return null;
   if (workouts.length === 0) return null;
@@ -31,17 +47,18 @@ export const generateChartData = (
   
   // Special case for workout duration (not tied to a specific exercise)
   if (config.metric === 'workoutDuration') {
-    return generateWorkoutDurationData(config, chartFilteredWorkouts);
+    return generateWorkoutDurationData(config, chartFilteredWorkouts, preferences);
   }
   
   // For exercise-specific metrics (including set duration)
-  return generateExerciseMetricData(config, chartFilteredWorkouts);
+  return generateExerciseMetricData(config, chartFilteredWorkouts, preferences);
 };
 
 // Generate chart data for workout duration metric
 const generateWorkoutDurationData = (
   config: ChartConfig,
-  workouts: Workout[]
+  workouts: Workout[],
+  preferences: { weightUnit: 'lb' | 'kg', distanceUnit: 'mi' | 'km' | 'm' }
 ): CustomChartData | null => {
   // Group workout durations by date
   const workoutDurationsByDate: WorkoutDurationsByDate = {};
@@ -101,7 +118,8 @@ const generateWorkoutDurationData = (
 // Generate chart data for exercise-specific metrics
 const generateExerciseMetricData = (
   config: ChartConfig,
-  workouts: Workout[]
+  workouts: Workout[],
+  preferences: { weightUnit: 'lb' | 'kg', distanceUnit: 'mi' | 'km' | 'm' }
 ): CustomChartData | MixedChartData | null => {
   // Group data by date first
   const exerciseDataByDate: ExerciseDataByDate = {};
@@ -125,19 +143,23 @@ const generateExerciseMetricData = (
         
         // Process each set individually
         exercise.sets.forEach((set, setIndex) => {
-          // Calculate volume if weight and reps are present
+          // Convert weight and distance to user's preferred units
+          const convertedWeight = convertWeight(set.weight, preferences.weightUnit);
+          const convertedDistance = convertDistance(set.distance, preferences.distanceUnit);
+          
+          // Calculate volume if weight and reps are present (use converted weight)
           let volume: number | undefined = undefined;
-          if (set.reps && set.weight) {
-            volume = set.reps * set.weight;
+          if (set.reps && convertedWeight) {
+            volume = set.reps * convertedWeight;
           }
           
           exerciseDataByDate[dateKey].sets.push({
             setIndex: setIndex + 1,
-            weight: set.weight,
+            weight: convertedWeight,
             reps: set.reps,
             volume,
             duration: set.duration,
-            distance: set.distance
+            distance: convertedDistance
           });
         });
       }
@@ -202,6 +224,14 @@ const generateLineChartData = (
       } : null;
     }).filter(point => point !== null);
     
+    // Create raw data with set indices for tooltips
+    const rawData = dateEntries[0].sets
+      .map((set, index) => ({
+        setIndex: set.setIndex,
+        value: set[config.metric]
+      }))
+      .filter(item => item.value !== undefined && item.value !== null);
+    
     return {
       labels: [dateEntries[0].formattedDate], // Single date label
       datasets: [
@@ -213,7 +243,9 @@ const generateLineChartData = (
           borderColor: color.border,
           pointRadius: 5,
           pointHoverRadius: 7,
-        }
+          // Use type assertion to avoid TypeScript error with custom property
+          rawData: rawData
+        } as any
       ],
     };
   }
@@ -226,6 +258,16 @@ const generateLineChartData = (
     entry.sets
       .map(set => set[config.metric])
       .filter(val => val !== undefined && val !== null) as number[]
+  );
+  
+  // Store raw data with set indices for tooltip access
+  const rawDataByDate = dateEntries.map(entry => 
+    entry.sets
+      .filter(set => set[config.metric] !== undefined && set[config.metric] !== null)
+      .map(set => ({
+        setIndex: set.setIndex,
+        value: set[config.metric]
+      }))
   );
   
   // Create datasets: one line for averages and multiple scatter datasets (one per date)
@@ -254,14 +296,16 @@ const generateLineChartData = (
       
       datasets.push({
         type: 'scatter' as const,
-        label: `${labels[dateIndex]} Sets`,
+        label: labels[dateIndex],
         data: scatterData,
         backgroundColor: color.background,
         borderColor: color.border,
         pointRadius: 5,
         pointHoverRadius: 7,
-        showLine: false
-      });
+        showLine: false,
+        // Use type assertion to avoid TypeScript error with custom property
+        rawData: rawDataByDate[dateIndex]
+      } as any);
     }
   });
   
@@ -289,6 +333,16 @@ const generateBarChartData = (
       : 0;
   });
   
+  // Create raw data for tooltips with set indices
+  const rawDataByDate = dateEntries.map(entry => 
+    entry.sets
+      .filter(set => set[config.metric] !== undefined && set[config.metric] !== null)
+      .map(set => ({
+        setIndex: set.setIndex,
+        value: set[config.metric]
+      }))
+  );
+  
   return {
     labels: dateEntries.map(entry => entry.formattedDate),
     datasets: [
@@ -298,7 +352,9 @@ const generateBarChartData = (
         borderColor: color.border,
         backgroundColor: color.background,
         borderWidth: 2,
-      },
+        // Use type assertion to avoid TypeScript error with custom property
+        rawData: rawDataByDate
+      } as any,
     ],
   };
 }; 

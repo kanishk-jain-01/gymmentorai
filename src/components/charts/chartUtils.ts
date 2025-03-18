@@ -2,6 +2,13 @@ import { ChartData, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { Workout } from '@/types';
 import { CustomChartData, ChartConfig } from '@/types';
 import { useTheme } from 'next-themes';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+
+// Define the UnitPreferences type that matches the context
+type UnitPreferences = {
+  weightUnit: 'lb' | 'kg';
+  distanceUnit: 'mi' | 'km' | 'm';
+};
 
 // Date range options
 export const DATE_RANGES = [
@@ -19,7 +26,7 @@ export const CHART_TYPES = [
   { label: 'Bar', value: 'bar' },
 ];
 
-// Available metrics for y-axis
+// Available metrics for y-axis (static version for type references)
 export const AVAILABLE_METRICS = [
   { label: 'Weight', value: 'weight' },
   { label: 'Number of Reps', value: 'reps' },
@@ -29,6 +36,23 @@ export const AVAILABLE_METRICS = [
   { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
   { label: 'Distance', value: 'distance' },
 ];
+
+// Function to get metrics with appropriate unit labels based on user preferences
+export const getMetricsWithUnits = (preferences: UnitPreferences) => [
+  { label: `Weight (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'weight' },
+  { label: 'Number of Reps', value: 'reps' },
+  { label: 'Number of Sets', value: 'sets' },
+  { label: `Volume (sets × reps × weight) (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'volume' },
+  { label: 'Set Duration (mm:ss)', value: 'duration' },
+  { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
+  { label: `Distance (${preferences.distanceUnit})`, value: 'distance' },
+];
+
+// Get metric label with units
+export const getMetricLabelWithUnits = (metric: string, preferences: UnitPreferences): string => {
+  const metrics = getMetricsWithUnits(preferences);
+  return metrics.find(m => m.value === metric)?.label || metric;
+};
 
 // Chart colors
 export const CHART_COLORS = [
