@@ -1,8 +1,11 @@
 import React from 'react';
 import { MinusIcon } from '@heroicons/react/24/outline';
 import { SetEditorProps } from '@/types';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register, removeSet }) => {
+  const { preferences } = useUnitPreferences();
+  
   return (
     <div 
       className="grid grid-cols-12 gap-3 items-center bg-subtle p-3.5 rounded-xl border border-subtle group/set hover:shadow-sm transition-all duration-200"
@@ -25,7 +28,7 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
           type="number"
           step="0.1"
           className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
-          placeholder="Weight"
+          placeholder={`Weight (${preferences.weightUnit})`}
           {...register(`exercises.${exerciseIndex}.sets.${setIndex}.weight` as const, { valueAsNumber: true })}
         />
       </div>
@@ -44,7 +47,7 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
           type="number"
           step="0.1"
           className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
-          placeholder="Distance"
+          placeholder={`Distance (${preferences.distanceUnit})`}
           {...register(`exercises.${exerciseIndex}.sets.${setIndex}.distance` as const, { valueAsNumber: true })}
         />
       </div>

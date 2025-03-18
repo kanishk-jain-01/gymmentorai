@@ -6,11 +6,14 @@ import { formatDuration, parseDuration } from '@/lib/utils';
 import WorkoutFormHeader from './WorkoutFormHeader';
 import WorkoutFormActions from './WorkoutFormActions';
 import ExerciseEditor from './ExerciseEditor';
+import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+import { lbsToKg, kgToLbs, metersToMiles, metersToKm, milesToMeters, kmToMeters } from '@/lib/utils/unit-converter';
 
 const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorkoutUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(false);
+  const { preferences } = useUnitPreferences();
   
   const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
@@ -22,14 +25,33 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
         id: exercise.id,
         name: exercise.name,
         notes: exercise.notes || '',
-        sets: exercise.sets.map(set => ({
-          id: set.id,
-          reps: set.reps || undefined,
-          weight: set.weight || undefined,
-          duration: set.duration ? formatDuration(set.duration) : '',
-          distance: set.distance || undefined,
-          notes: set.notes || '',
-        })),
+        sets: exercise.sets.map(set => {
+          // Convert weight and distance based on user preferences
+          let weight = set.weight;
+          if (weight && preferences.weightUnit === 'kg') {
+            // Convert stored pounds to kg for display
+            weight = lbsToKg(weight);
+          }
+          
+          let distance = set.distance;
+          if (distance) {
+            // Convert stored meters to user's preferred unit
+            if (preferences.distanceUnit === 'mi') {
+              distance = metersToMiles(distance);
+            } else if (preferences.distanceUnit === 'km') {
+              distance = metersToKm(distance);
+            }
+          }
+          
+          return {
+            id: set.id,
+            reps: set.reps || undefined,
+            weight: weight || undefined,
+            duration: set.duration ? formatDuration(set.duration) : '',
+            distance: distance || undefined,
+            notes: set.notes || '',
+          };
+        }),
       })),
     },
   });
@@ -44,15 +66,36 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
     setError(null);
     
     try {
-      // Convert MM:SS duration format to seconds before sending to API
+      // Process the data before sending to API
       const processedData = {
         ...data,
         exercises: data.exercises.map((exercise: any) => ({
           ...exercise,
-          sets: exercise.sets.map((set: any) => ({
-            ...set,
-            duration: set.duration ? parseDuration(set.duration) : undefined,
-          })),
+          sets: exercise.sets.map((set: any) => {
+            // Handle unit conversions
+            let processedWeight = set.weight;
+            if (processedWeight && preferences.weightUnit === 'kg') {
+              // Convert kg back to lb for storage
+              processedWeight = kgToLbs(processedWeight);
+            }
+            
+            let processedDistance = set.distance;
+            if (processedDistance) {
+              // Convert from user's unit back to meters for storage
+              if (preferences.distanceUnit === 'mi') {
+                processedDistance = milesToMeters(processedDistance);
+              } else if (preferences.distanceUnit === 'km') {
+                processedDistance = kmToMeters(processedDistance);
+              }
+            }
+            
+            return {
+              ...set,
+              weight: processedWeight,
+              distance: processedDistance,
+              duration: set.duration ? parseDuration(set.duration) : undefined,
+            };
+          }),
         })),
       };
       
