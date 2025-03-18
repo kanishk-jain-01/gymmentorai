@@ -16,7 +16,7 @@ const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
   setDeleteConfirmState
 }) => {
   return (
-    <div className="border-t border-theme-border/30 px-8 py-5 bg-theme-bg/50 rounded-b-2xl flex flex-wrap items-center justify-between gap-y-3">
+    <div className="border-t border-theme-border/30 px-8 py-5 bg-subtle rounded-b-2xl flex flex-wrap items-center justify-between gap-y-3">
       <div className="flex items-center space-x-3">
         {deleteConfirmState ? (
           <button
@@ -42,7 +42,7 @@ const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
             type="button"
             onClick={() => setDeleteConfirmState(true)}
             disabled={isLoading}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full text-red-500 border border-red-200 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500/40 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full text-error border border-error hover:bg-error/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500/40 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
           >
             <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -64,7 +64,7 @@ const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
       <button
         type="submit"
         disabled={isLoading}
-        className="inline-flex items-center px-5 py-2 text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
+        className="inline-flex items-center px-5 py-2 text-sm font-medium rounded-full shadow-sm text-white bg-gradient-primary hover:bg-gradient-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
       >
         {isLoading ? (
           <>
