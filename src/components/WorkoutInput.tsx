@@ -52,31 +52,31 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
   }> => {
     try {
       const response = await axios.post('/api/validate-workout', { text });
-      return { 
-        isValid: response.data.isWorkoutRelated
+      const data = response.data;
+      
+      // Successful validation
+      if (data.status === 'success') {
+        return { isValid: data.isWorkoutRelated };
+      }
+      
+      // All error cases handled with a consistent pattern
+      const errorTypes: Record<string, { apiLimitExceeded?: boolean, subscriptionRequired?: boolean }> = {
+        'subscription_required': { subscriptionRequired: true },
+        'api_limit_exceeded': { apiLimitExceeded: true }
+      };
+      
+      // Return appropriate error with original message from backend
+      return {
+        isValid: false,
+        ...errorTypes[data.reason] || {},
+        message: data.message
       };
     } catch (error: any) {
       console.error('Validation error:', error);
-      
-      // Check if this is an API limit exceeded error
-      if (error.response?.data?.code === 'API_LIMIT_EXCEEDED') {
-        return { 
-          isValid: false, 
-          apiLimitExceeded: true,
-          message: error.response?.data?.message
-        };
-      }
-      
-      // Check if this is a subscription required error
-      if (error.response?.data?.code === 'SUBSCRIPTION_REQUIRED') {
-        return { 
-          isValid: false, 
-          subscriptionRequired: true,
-          message: error.response?.data?.message
-        };
-      }
-      
-      return { isValid: false };
+      return { 
+        isValid: false,
+        message: 'Failed to validate workout. Please try again.'
+      };
     }
   };
   
@@ -87,56 +87,38 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
     try {
       // First validate if the input is workout-related
       setIsValidating(true);
-      const validationResult = await validateWorkout(data.workoutText);
+      const result = await validateWorkout(data.workoutText);
       setIsValidating(false);
       
-      // Check if subscription is required (more fundamental check)
-      if (validationResult.subscriptionRequired) {
-        setFeedback({ 
-          type: 'subscription', 
-          message: validationResult.message || 'Subscription required'
+      // Handle all error conditions from validation
+      if (!result.isValid) {
+        // Set the appropriate feedback type based on the validation result
+        const feedbackType = result.subscriptionRequired ? 'subscription' :
+                            result.apiLimitExceeded ? 'limit' : 'error';
+        
+        setFeedback({
+          type: feedbackType,
+          message: result.message || (
+            feedbackType === 'error' ? 
+              'Please enter a valid workout description. Random text or non-workout content is not allowed.' :
+              `${feedbackType === 'subscription' ? 'Subscription' : 'API limit'} required`
+          )
         });
-        // Form data is preserved when subscription is required
-        return;
-      }
-      
-      // Check if API limit is exceeded
-      if (validationResult.apiLimitExceeded) {
-        setFeedback({ 
-          type: 'limit', 
-          message: validationResult.message || 'API limit exceeded'
-        });
-        // Form data is preserved when API limit is exceeded
-        return;
-      }
-      
-      if (!validationResult.isValid) {
-        setFeedback({ 
-          type: 'error', 
-          message: 'Please enter a valid workout description. Random text or non-workout content is not allowed.' 
-        });
-        // Form data is preserved when validation fails
         return;
       }
       
       // If valid, proceed with saving the workout
       const response = await axios.post('/api/workout', { text: data.workoutText });
-      setFeedback({ 
-        type: 'success', 
-        message: 'Workout added successfully!'
-      });
       
-      // Clear the localStorage draft after successful submission
+      // Handle successful submission
+      setFeedback({ type: 'success', message: 'Workout added successfully!' });
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      
-      // Only reset the form when submission is successful
       reset();
       onWorkoutAdded();
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
       setFeedback({ type: 'error', message: errorMessage });
       console.error(err);
-      // Don't reset the form or clear localStorage when there's an error
     } finally {
       setIsLoading(false);
       setIsValidating(false);
