@@ -180,6 +180,7 @@ export interface ExerciseDataByDate {
       duration?: number;
       distance?: number;
     }[];
+    dailyVolumeTotal?: number;
   };
 }
 

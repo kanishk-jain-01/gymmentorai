@@ -7,8 +7,14 @@ export const generateBarChartData = (
   metricLabel: string,
   color: { border: string, background: string }
 ): CustomChartData => {
-  // Calculate average values for each day
-  const averageValues = dateEntries.map(entry => {
+  // Calculate values for each day
+  const values = dateEntries.map(entry => {
+    // For volume, use the daily total instead of averaging set values
+    if (config.metric === 'volume' && entry.dailyVolumeTotal !== undefined) {
+      return entry.dailyVolumeTotal;
+    }
+    
+    // For other metrics, calculate the average
     const validValues = entry.sets
       .map(set => set[config.metric])
       .filter(val => val !== undefined && val !== null) as number[];
@@ -18,22 +24,40 @@ export const generateBarChartData = (
       : 0;
   });
   
-  // Create raw data for tooltips with set indices
-  const rawDataByDate = dateEntries.map(entry => 
-    entry.sets
-      .filter(set => set[config.metric] !== undefined && set[config.metric] !== null)
-      .map(set => ({
-        setIndex: set.setIndex,
-        value: set[config.metric]
-      }))
-  );
+  // Create raw data for tooltips
+  const rawDataByDate = dateEntries.map(entry => {
+    if (config.metric === 'volume') {
+      // For volume, include the total and each set's contribution
+      const setData = entry.sets
+        .filter(set => set.volume !== undefined && set.volume !== null)
+        .map(set => ({
+          setIndex: set.setIndex,
+          value: set.volume as number
+        }));
+      
+      return {
+        total: entry.dailyVolumeTotal,
+        sets: setData
+      };
+    } else {
+      // For other metrics, just include individual set data
+      return entry.sets
+        .filter(set => set[config.metric] !== undefined && set[config.metric] !== null)
+        .map(set => ({
+          setIndex: set.setIndex,
+          value: set[config.metric]
+        }));
+    }
+  });
+  
+  const label = config.metric === 'volume' ? `${metricLabel} (Total)` : `${metricLabel} (Average)`;
   
   return {
     labels: dateEntries.map(entry => entry.formattedDate),
     datasets: [
       {
-        label: `${metricLabel} (Average)`,
-        data: averageValues,
+        label,
+        data: values,
         borderColor: color.border,
         backgroundColor: color.background,
         borderWidth: 2,

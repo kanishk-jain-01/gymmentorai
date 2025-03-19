@@ -12,11 +12,15 @@ const ChartConfig: React.FC<ChartConfigProps> = ({
   const { preferences } = useUnitPreferences();
   
   // When switching to workout duration, clear the exercise selection
+  // When switching from workout duration to another metric, set a default exercise if available
   useEffect(() => {
     if (config.metric === 'workoutDuration' && config.exercise) {
       onUpdateConfig('exercise', null);
+    } else if (config.metric !== 'workoutDuration' && !config.exercise && exerciseOptions.length > 0) {
+      // If switching from workoutDuration to another metric, set the first available exercise
+      onUpdateConfig('exercise', exerciseOptions[0]);
     }
-  }, [config.metric]);
+  }, [config.metric, exerciseOptions]);
 
   // Get metrics with user's preferred units
   const metricsWithUnits = getMetricsWithUnits(preferences);
