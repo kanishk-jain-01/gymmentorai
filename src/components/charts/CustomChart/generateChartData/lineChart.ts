@@ -8,8 +8,14 @@ export const generateLineChartData = (
   color: { border: string, background: string },
   isSingleDate: boolean
 ): MixedChartData => {
-  // Calculate average values for each day for the line
-  const averageValues = dateEntries.map(entry => {
+  // Calculate values for each day for the line
+  const values = dateEntries.map(entry => {
+    // For volume, use the daily total instead of averaging set values
+    if (config.metric === 'volume' && entry.dailyVolumeTotal !== undefined) {
+      return entry.dailyVolumeTotal;
+    }
+    
+    // For other metrics, calculate the average
     const validValues = entry.sets
       .map(set => set[config.metric])
       .filter(val => val !== undefined && val !== null) as number[];
@@ -18,6 +24,49 @@ export const generateLineChartData = (
       ? validValues.reduce((sum, val) => sum + val, 0) / validValues.length
       : 0;
   });
+  
+  // For Volume metric, only use line chart (no scatter points)
+  if (config.metric === 'volume') {
+    // For volume, we'll store the total and each set's contribution for tooltips
+    const rawDataByDate = dateEntries.map(entry => {
+      const setData = entry.sets
+        .filter(set => set.volume !== undefined && set.volume !== null)
+        .map(set => ({
+          setIndex: set.setIndex,
+          value: set.volume as number
+        }));
+      
+      return {
+        total: entry.dailyVolumeTotal,
+        sets: setData
+      };
+    });
+    
+    // Main dataset array with the filled line chart
+    const datasets: any[] = [
+      {
+        type: 'line' as const,
+        label: `${metricLabel} (Total)`,
+        data: values,
+        borderColor: color.border,
+        backgroundColor: color.background,
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        // Store raw data for tooltips
+        rawData: rawDataByDate
+      } as any
+    ];
+    
+    const labels = dateEntries.map(entry => entry.formattedDate);
+    
+    return {
+      labels,
+      datasets
+    };
+  }
   
   // For a single date with multiple sets, use a scatter chart
   if (isSingleDate) {
@@ -81,7 +130,7 @@ export const generateLineChartData = (
     {
       type: 'line' as const,
       label: `${metricLabel} (Average)`,
-      data: averageValues,
+      data: values,
       borderColor: color.border,
       backgroundColor: 'transparent',
       borderWidth: 2,
@@ -91,29 +140,31 @@ export const generateLineChartData = (
     }
   ];
   
-  // Add scatter datasets - one for each date
-  valuesByDate.forEach((values, dateIndex) => {
-    if (values.length > 0) {
-      // Create a scatter dataset that places all points at the same x position (dateIndex)
-      const scatterData = values.map(value => ({
-        x: labels[dateIndex],
-        y: value
-      }));
-      
-      datasets.push({
-        type: 'scatter' as const,
-        label: labels[dateIndex],
-        data: scatterData,
-        backgroundColor: color.background,
-        borderColor: color.border,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        showLine: false,
-        // Use type assertion to avoid TypeScript error with custom property
-        rawData: rawDataByDate[dateIndex]
-      } as any);
-    }
-  });
+  // Add scatter datasets - one for each date (except for volume metric)
+  if (config.metric !== 'volume') {
+    valuesByDate.forEach((values, dateIndex) => {
+      if (values.length > 0) {
+        // Create a scatter dataset that places all points at the same x position (dateIndex)
+        const scatterData = values.map(value => ({
+          x: labels[dateIndex],
+          y: value
+        }));
+        
+        datasets.push({
+          type: 'scatter' as const,
+          label: labels[dateIndex],
+          data: scatterData,
+          backgroundColor: color.background,
+          borderColor: color.border,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          showLine: false,
+          // Use type assertion to avoid TypeScript error with custom property
+          rawData: rawDataByDate[dateIndex]
+        } as any);
+      }
+    });
+  }
   
   return {
     labels,

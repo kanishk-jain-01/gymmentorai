@@ -17,7 +17,6 @@ export const generateExerciseMetricData = (
   // Find all instances of the selected exercise and their sets
   workouts.forEach(workout => {
     // Get date in a simple format without creating a new Date object
-    // Since workout.date is already a string, use it directly with formatDate
     const formattedDate = formatDate(workout.date);
     // Create a consistent date key for grouping
     const dateParts = workout.date.toString().split('T')[0].split('-');
@@ -30,7 +29,9 @@ export const generateExerciseMetricData = (
           exerciseDataByDate[dateKey] = {
             date: workout.date,
             formattedDate,
-            sets: []
+            sets: [],
+            // Add aggregate volume calculation
+            dailyVolumeTotal: 0
           };
         }
         
@@ -40,17 +41,22 @@ export const generateExerciseMetricData = (
           const convertedWeight = convertWeight(set.weight, preferences.weightUnit);
           const convertedDistance = convertDistance(set.distance, preferences.distanceUnit);
           
-          // Calculate volume if weight and reps are present (use converted weight)
-          let volume: number | undefined = undefined;
+          // Calculate individual set volume if weight and reps are present
+          let setVolume: number | undefined = undefined;
           if (set.reps && convertedWeight) {
-            volume = set.reps * convertedWeight;
+            setVolume = set.reps * convertedWeight;
+            
+            // Add to daily volume total for this exercise
+            if (config.metric === 'volume') {
+              exerciseDataByDate[dateKey].dailyVolumeTotal = (exerciseDataByDate[dateKey].dailyVolumeTotal || 0) + setVolume;
+            }
           }
           
           exerciseDataByDate[dateKey].sets.push({
             setIndex: setIndex + 1,
             weight: convertedWeight,
             reps: set.reps,
-            volume,
+            volume: setVolume,
             duration: set.duration,
             distance: convertedDistance
           });
