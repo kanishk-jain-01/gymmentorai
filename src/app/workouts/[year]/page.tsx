@@ -11,8 +11,8 @@ import { Workout, YearPageProps } from '@/types';
 import { organizeWorkoutsByMonth } from '@/lib/utils';
 
 export default function YearPage({ params }: YearPageProps) {
-  // Unwrap params using React.use()
-  const { year } = React.use(params);
+  // Access params directly
+  const { year } = params;
   const { data: session, status } = useSession();
   const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
