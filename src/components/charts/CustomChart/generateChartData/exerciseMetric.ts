@@ -52,13 +52,30 @@ export const generateExerciseMetricData = (
             }
           }
           
+          // Calculate pace if both duration and distance are present
+          let pace: number | undefined = undefined;
+          if (set.duration && set.distance && set.distance > 0) {
+            // Pace is duration in minutes divided by distance in preferred unit
+            const durationInMinutes = set.duration / 60;
+            
+            if (preferences.distanceUnit === 'mi') {
+              // Distance is already converted to miles for the chart
+              pace = durationInMinutes / convertedDistance!;
+            } else {
+              // For km - distance might be in m, so ensure it's in km
+              const distanceInKm = preferences.distanceUnit === 'm' ? convertedDistance! / 1000 : convertedDistance!;
+              pace = durationInMinutes / distanceInKm;
+            }
+          }
+          
           exerciseDataByDate[dateKey].sets.push({
             setIndex: setIndex + 1,
             weight: convertedWeight,
             reps: set.reps,
             volume: setVolume,
             duration: set.duration,
-            distance: convertedDistance
+            distance: convertedDistance,
+            pace: pace
           });
         });
       }

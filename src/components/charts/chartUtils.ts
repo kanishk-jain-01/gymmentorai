@@ -30,6 +30,7 @@ export const AVAILABLE_METRICS = [
   { label: 'Total Workout Time (minutes)', value: 'workoutDuration' },
   { label: 'Set Time (mm:ss)', value: 'duration' },
   { label: 'Distance', value: 'distance' },
+  { label: 'Pace', value: 'pace' },
 ];
 
 // Function to get metrics with appropriate unit labels based on user preferences
@@ -39,6 +40,7 @@ export const getMetricsWithUnits = (preferences: UnitPreferences) => [
   { label: 'Total Workout Time (minutes)', value: 'workoutDuration' },
   { label: 'Set Time (mm:ss)', value: 'duration' },
   { label: `Distance (${preferences.distanceUnit})`, value: 'distance' },
+  { label: `Pace (min/${preferences.distanceUnit === 'mi' ? 'mi' : 'km'})`, value: 'pace' },
 ];
 
 // Get metric label with units
