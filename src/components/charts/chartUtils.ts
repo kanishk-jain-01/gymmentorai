@@ -39,7 +39,7 @@ export const getMetricsWithUnits = (preferences: UnitPreferences) => [
   { label: `Weight (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'weight' },
   { label: 'Number of Reps', value: 'reps' },
   { label: 'Number of Sets', value: 'sets' },
-  { label: `Volume (sets × reps × weight) (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'volume' },
+  { label: `Volume (sets × reps × weight)`, value: 'volume' },
   { label: 'Set Duration (mm:ss)', value: 'duration' },
   { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
   { label: `Distance (${preferences.distanceUnit})`, value: 'distance' },
