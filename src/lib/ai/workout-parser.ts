@@ -295,16 +295,7 @@ export async function parseWorkoutText(text: string): Promise<ParsedWorkout> {
     // Ensure numeric values are properly converted and sets are properly structured
     return {
       name: parsedResponse.name,
-      date: (() => {
-        // Create a full ISO timestamp at midnight to keep the date part but satisfy Prisma
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        
-        // Return a full ISO timestamp with time set to midnight
-        return new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-      })(),
+      date: new Date(),
       duration: ensureNumericType(parsedResponse.duration),
       notes: parsedResponse.notes,
       exercises: Array.isArray(parsedResponse.exercises) 
