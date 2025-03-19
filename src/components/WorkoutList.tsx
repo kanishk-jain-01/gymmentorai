@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor/index';
 import { Exercise, Workout, Set, WorkoutListProps } from '../types';
-import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance, formatDate } from '@/lib/utils';
+import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance, formatDate, formatPace } from '@/lib/utils';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkoutUpdated }) => {
@@ -93,6 +93,7 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkou
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-primary opacity-70">Weight</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-primary opacity-70">Duration (mm:ss)</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-primary opacity-70">Distance</th>
+                              <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-primary opacity-70">Pace</th>
                               <th scope="col" className="px-2 py-1 text-left text-xs font-medium text-primary opacity-70">Notes</th>
                             </tr>
                           </thead>
@@ -109,6 +110,10 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkou
                                 </td>
                                 <td className="px-2 py-1 whitespace-nowrap text-theme-fg">
                                   {set.distance ? formatDistance(set.distance, preferences.distanceUnit) : '-'}
+                                </td>
+                                <td className="px-2 py-1 whitespace-nowrap text-theme-fg">
+                                  {(set.duration && set.distance) ? 
+                                    `${formatPace(set.duration, set.distance, preferences.distanceUnit === 'mi' ? 'mi' : 'km')}/${preferences.distanceUnit === 'mi' ? 'mi' : 'km'}` : '-'}
                                 </td>
                                 <td className="px-2 py-1 whitespace-nowrap text-theme-fg italic">
                                   {set.notes || '-'}

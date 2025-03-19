@@ -2,6 +2,8 @@
  * Utility functions for the application
  */
 
+import { metersToKm, metersToMiles } from './unit-converter';
+
 // Export unit conversion utilities
 export * from './unit-converter';
 
@@ -144,4 +146,36 @@ export function formatDate(date: Date | string): string {
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
   }
+}
+
+/**
+ * Formats pace (minutes per distance unit) based on duration and distance
+ * @param duration Duration in seconds
+ * @param distance Distance in meters
+ * @param unit Target unit ('mi' or 'km')
+ * @returns Formatted pace string in MM:SS format per unit
+ */
+export function formatPace(duration?: number, distance?: number, unit: 'mi' | 'km' = 'km'): string {
+  if (!duration || !distance || distance === 0) return '-';
+  
+  // Convert duration from seconds to minutes
+  const durationInMinutes = duration / 60;
+  
+  // Calculate pace based on the unit
+  let paceInMinutesPerUnit;
+  if (unit === 'mi') {
+    // Convert meters to miles then calculate pace
+    const distanceInMiles = metersToMiles(distance);
+    paceInMinutesPerUnit = durationInMinutes / distanceInMiles;
+  } else {
+    // Convert meters to km then calculate pace
+    const distanceInKm = metersToKm(distance);
+    paceInMinutesPerUnit = durationInMinutes / distanceInKm;
+  }
+  
+  // Convert pace to MM:SS format
+  const paceMinutes = Math.floor(paceInMinutesPerUnit);
+  const paceSeconds = Math.round((paceInMinutesPerUnit - paceMinutes) * 60);
+  
+  return `${paceMinutes.toString().padStart(2, '0')}:${paceSeconds.toString().padStart(2, '0')}`;
 }
