@@ -26,8 +26,8 @@ export const CHART_TYPES = [
 // Available metrics for y-axis (static version for type references)
 export const AVAILABLE_METRICS = [
   { label: 'Weight', value: 'weight' },
-  { label: 'Number of Reps', value: 'reps' },
-  { label: 'Number of Sets', value: 'sets' },
+  { label: 'Total Number of Reps', value: 'reps' },
+  { label: 'Total Number of Sets', value: 'sets' },
   { label: 'Volume (sets × reps × weight)', value: 'volume' },
   { label: 'Set Duration (mm:ss)', value: 'duration' },
   { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
@@ -37,8 +37,8 @@ export const AVAILABLE_METRICS = [
 // Function to get metrics with appropriate unit labels based on user preferences
 export const getMetricsWithUnits = (preferences: UnitPreferences) => [
   { label: `Weight (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'weight' },
-  { label: 'Number of Reps', value: 'reps' },
-  { label: 'Number of Sets', value: 'sets' },
+  { label: 'Total Number of Reps', value: 'reps' },
+  { label: 'Total Number of Sets', value: 'sets' },
   { label: `Volume (sets × reps × weight)`, value: 'volume' },
   { label: 'Set Duration (mm:ss)', value: 'duration' },
   { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
