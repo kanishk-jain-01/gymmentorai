@@ -1,8 +1,5 @@
-import { ChartData, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { Workout } from '@/types';
-import { CustomChartData, ChartConfig } from '@/types';
 import { useTheme } from 'next-themes';
-import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 // Define the UnitPreferences type that matches the context
 type UnitPreferences = {

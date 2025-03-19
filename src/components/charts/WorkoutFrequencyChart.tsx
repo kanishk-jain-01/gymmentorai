@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { ChartData } from 'chart.js';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { Workout, WorkoutFrequencyChartProps } from '@/types';
+import { WorkoutFrequencyChartProps } from '@/types';
 import { 
   DATE_RANGES, 
   filterWorkoutsByDateRange,
