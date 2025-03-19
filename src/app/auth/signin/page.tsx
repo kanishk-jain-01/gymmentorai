@@ -48,19 +48,16 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-theme-bg">
-      <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+    <div className="h-screen overflow-hidden flex items-center justify-center bg-theme-bg">
+      <div className="fixed inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
         <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-primary opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
       </div>
       
       <div className="max-w-md w-full space-y-10 p-8 bg-theme-card bg-opacity-80 backdrop-blur-sm rounded-2xl shadow-xl border border-subtle mx-4">
         <div>
           <h2 className="text-center text-3xl font-bold text-gradient-primary">
-            Sign-In
+            Sign-In to Access Your Workout Notebook
           </h2>
-          <p className="mt-3 text-center text-theme-fg opacity-80">
-            Track your workouts with the power of AI
-          </p>
         </div>
         
         {error && (
@@ -85,7 +82,7 @@ export default function SignIn() {
         </div>
       </div>
       
-      <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+      <div className="fixed inset-x-0 bottom-0 -z-10 transform-gpu overflow-hidden blur-3xl">
         <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-primary opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"></div>
       </div>
     </div>
