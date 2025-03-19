@@ -3,6 +3,7 @@ import { AVAILABLE_METRICS, CHART_COLORS } from '../../chartUtils';
 import { convertWeight, convertDistance } from './converters';
 import { generateLineChartData } from './lineChart';
 import { generateBarChartData } from './barChart';
+import { formatDate } from '@/lib/utils';
 
 // Generate chart data for exercise-specific metrics
 export const generateExerciseMetricData = (
@@ -15,9 +16,12 @@ export const generateExerciseMetricData = (
   
   // Find all instances of the selected exercise and their sets
   workouts.forEach(workout => {
-    const workoutDate = new Date(workout.date);
-    const dateKey = workoutDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-    const formattedDate = workoutDate.toLocaleDateString();
+    // Get date in a simple format without creating a new Date object
+    // Since workout.date is already a string, use it directly with formatDate
+    const formattedDate = formatDate(workout.date);
+    // Create a consistent date key for grouping
+    const dateParts = workout.date.toString().split('T')[0].split('-');
+    const dateKey = dateParts.length === 3 ? dateParts.join('-') : workout.date; // Ensure YYYY-MM-DD format
     
     workout.exercises.forEach(exercise => {
       if (exercise.name === config.exercise) {

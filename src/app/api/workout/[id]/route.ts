@@ -83,8 +83,8 @@ export async function PUT(
           // It's already a full ISO string, just parse it directly
           workoutDate = new Date(date);
         } else {
-          // It's just a date without time, append noon UTC
-          workoutDate = new Date(`${date}T12:00:00Z`);
+          // It's just a date without time, append midnight UTC
+          workoutDate = new Date(`${date}T00:00:00Z`);
         }
       } catch (e) {
         // If date parsing fails, continue with undefined date

@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe/stripe-server';
 import { hasActiveSubscription } from '@/lib/stripe/stripe-server';
+import { formatDate } from '@/lib/utils';
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -37,7 +38,7 @@ export async function DELETE(req: NextRequest) {
       // If subscription is active but set to cancel, inform user they need to wait
       if (user.cancelAtPeriodEnd) {
         const formattedDate = user.stripeCurrentPeriodEnd 
-          ? new Date(user.stripeCurrentPeriodEnd).toLocaleDateString() 
+          ? formatDate(user.stripeCurrentPeriodEnd) 
           : 'the end of your billing period';
           
         return NextResponse.json({ 

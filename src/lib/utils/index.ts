@@ -122,4 +122,26 @@ export function organizeWorkoutsByMonth(workouts: any[], year: string) {
   });
   
   return workoutsByMonth;
-} 
+}
+
+/**
+ * Formats a date in simple MM/DD/YYYY format
+ * @param date Date object or ISO date string in format YYYY-MM-DDThh:mm:ss.sssZ
+ * @returns Formatted date string (MM/DD/YYYY)
+ */
+export function formatDate(date: Date | string): string {
+  if (typeof date === 'string') {
+    // Handle string input as before
+    // Extract date part before the "T"
+    const datePart = date.split('T')[0];
+    // Split into year, month, day
+    const [year, month, day] = datePart.split('-').map(Number);
+    return `${month}/${day}/${year}`;
+  } else {
+    // Handle Date object
+    const month = date.getMonth() + 1; // getMonth() is zero-based
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  }
+}

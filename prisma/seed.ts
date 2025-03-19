@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
+import { formatDate } from '../src/lib/utils';
 
 const prisma = new PrismaClient();
 
@@ -46,7 +47,7 @@ async function main() {
         duration: Math.floor(Math.random() * 90) + 30, // 30-120 minutes
         notes: Math.random() > 0.7 ? `Felt ${['great', 'good', 'tired', 'energetic'][Math.floor(Math.random() * 4)]} today` : null,
         userId,
-        rawInput: `Workout ${i + 1} on ${workoutDate.toLocaleDateString()}`,
+        rawInput: `Workout ${i + 1} on ${formatDate(workoutDate)}`,
       },
     });
     
@@ -100,7 +101,7 @@ async function main() {
       }
     }
     
-    console.log(`Created workout ${i + 1} with ID: ${workout.id} on ${workoutDate.toLocaleDateString()}`);
+    console.log(`Created workout ${i + 1} with ID: ${workout.id} on ${formatDate(workoutDate)}`);
   }
   
   console.log('Seed completed successfully!');

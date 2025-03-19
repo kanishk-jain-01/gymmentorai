@@ -1,5 +1,6 @@
 import React from 'react';
 import { SubscriptionStatus } from '@/types';
+import { formatDate } from '@/lib/utils';
 
 interface DataPrivacySectionProps {
   subscriptionStatus: SubscriptionStatus | null;
@@ -66,7 +67,7 @@ const DataPrivacySection: React.FC<DataPrivacySectionProps> = ({
                     )}
                     {subscriptionStatus?.isSubscribed && subscriptionStatus.cancelAtPeriodEnd && subscriptionStatus.periodEnd && (
                       <span className="block mt-1">
-                        Note: You must wait until your subscription expires on {new Date(subscriptionStatus.periodEnd).toLocaleDateString()} before deleting your account.
+                        Note: You must wait until your subscription expires on {formatDate(subscriptionStatus.periodEnd)} before deleting your account.
                       </span>
                     )}
                   </p>

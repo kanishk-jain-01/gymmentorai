@@ -1,5 +1,6 @@
 import { Workout, ChartConfig, CustomChartData, WorkoutDurationsByDate } from '@/types';
 import { AVAILABLE_METRICS, CHART_COLORS } from '../../chartUtils';
+import { formatDate } from '@/lib/utils';
 
 // Generate chart data for workout duration metric
 export const generateWorkoutDurationData = (
@@ -12,9 +13,12 @@ export const generateWorkoutDurationData = (
   
   workouts.forEach(workout => {
     if (workout.duration) {
-      const workoutDate = new Date(workout.date);
-      const dateKey = workoutDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-      const formattedDate = workoutDate.toLocaleDateString();
+      // Get date in a simple format without creating a new Date object
+      // Since workout.date is already a string, use it directly
+      const formattedDate = formatDate(workout.date);
+      // Create a consistent date key for grouping
+      const dateParts = workout.date.toString().split('T')[0].split('-');
+      const dateKey = dateParts.length === 3 ? dateParts.join('-') : workout.date; // Ensure YYYY-MM-DD format
       
       if (!workoutDurationsByDate[dateKey]) {
         workoutDurationsByDate[dateKey] = [];
