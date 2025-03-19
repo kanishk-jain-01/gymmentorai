@@ -85,11 +85,8 @@ export const createTooltipCallbacks = (config: ChartConfig, preferences: { weigh
     },
     
     title: function(tooltipItems: any[]) {
-      // Get the first tooltip item
-      const item = tooltipItems[0];
-      
-      // Return the date from the label
-      return item.label;
+      // Return empty string to hide the date
+      return '';
     }
   };
 }; 
