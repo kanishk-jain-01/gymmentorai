@@ -27,8 +27,8 @@ export const CHART_TYPES = [
 export const AVAILABLE_METRICS = [
   { label: 'Weight', value: 'weight' },
   { label: 'Volume (reps × weight)', value: 'volume' },
-  { label: 'Set Duration (mm:ss)', value: 'duration' },
-  { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
+  { label: 'Total Workout Time (minutes)', value: 'workoutDuration' },
+  { label: 'Set Time (mm:ss)', value: 'duration' },
   { label: 'Distance', value: 'distance' },
 ];
 
@@ -36,8 +36,8 @@ export const AVAILABLE_METRICS = [
 export const getMetricsWithUnits = (preferences: UnitPreferences) => [
   { label: `Weight (${preferences.weightUnit === 'lb' ? 'lbs' : 'kg'})`, value: 'weight' },
   { label: `Volume (reps × weight)`, value: 'volume' },
-  { label: 'Set Duration (mm:ss)', value: 'duration' },
-  { label: 'Workout Duration (minutes)', value: 'workoutDuration' },
+  { label: 'Total Workout Time (minutes)', value: 'workoutDuration' },
+  { label: 'Set Time (mm:ss)', value: 'duration' },
   { label: `Distance (${preferences.distanceUnit})`, value: 'distance' },
 ];
 
