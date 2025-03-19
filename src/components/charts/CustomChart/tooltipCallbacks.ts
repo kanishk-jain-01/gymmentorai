@@ -1,5 +1,5 @@
 import { ChartConfig } from '@/types';
-import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
+import { formatDuration, formatWorkoutDuration, formatPace } from '@/lib/utils';
 
 export const createTooltipCallbacks = (config: ChartConfig, preferences: { weightUnit: 'lb' | 'kg', distanceUnit: 'mi' | 'km' | 'm' }) => {
   // Format a value based on metric type - without applying unit conversions again
@@ -21,6 +21,12 @@ export const createTooltipCallbacks = (config: ChartConfig, preferences: { weigh
     if (metric === 'volume') {
       // Format volume without units, just the number
       return value.toFixed(1);
+    }
+    if (metric === 'pace') {
+      // Format pace as minutes:seconds
+      const paceMinutes = Math.floor(value);
+      const paceSeconds = Math.round((value - paceMinutes) * 60);
+      return `${paceMinutes.toString().padStart(2, '0')}:${paceSeconds.toString().padStart(2, '0')} min/${preferences.distanceUnit === 'mi' ? 'mi' : 'km'}`;
     }
     return value.toString();
   };

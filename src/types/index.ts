@@ -179,6 +179,7 @@ export interface ExerciseDataByDate {
       volume?: number;
       duration?: number;
       distance?: number;
+      pace?: number;
     }[];
     dailyVolumeTotal?: number;
   };

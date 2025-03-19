@@ -63,6 +63,16 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           return value.toFixed(1);
         }
       };
+    } else if (config.metric === 'pace') {
+      // Format y-axis ticks for pace in MM:SS format
+      chartOptions.scales.y.ticks = {
+        ...chartOptions.scales.y.ticks,
+        callback: function(value: any) {
+          const minutes = Math.floor(value);
+          const seconds = Math.round((value - minutes) * 60);
+          return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+      };
     }
   }
   
