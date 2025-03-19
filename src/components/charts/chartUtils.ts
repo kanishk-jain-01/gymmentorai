@@ -122,10 +122,6 @@ export const useChartOptions = () => {
           },
           ticks: {
             color: textColor,
-            // Add a placeholder callback that can be overridden
-            callback: function(value: any) {
-              return value;
-            }
           }
         },
         x: {
@@ -139,27 +135,6 @@ export const useChartOptions = () => {
           },
           ticks: {
             color: textColor
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: {
-            color: textColor
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context: any) {
-              let label = context.dataset.label || '';
-              if (label) {
-                label += ': ';
-              }
-              if (context.parsed.y !== null) {
-                label += context.parsed.y;
-              }
-              return label;
-            }
           }
         }
       }
