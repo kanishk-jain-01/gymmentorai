@@ -19,7 +19,11 @@ export async function POST(req: NextRequest) {
     const userId = session?.user ? (session.user as any)?.id : null;
     
     if (!userId) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json({ 
+        status: 'error',
+        reason: 'authentication',
+        message: 'Authentication required' 
+      }, { status: 401 });
     }
     
     // Check if the user can add workouts based on subscription status
@@ -28,26 +32,30 @@ export async function POST(req: NextRequest) {
     }) as unknown as UserWithSubscription;
     
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ 
+        status: 'error',
+        reason: 'user_not_found',
+        message: 'User not found' 
+      }, { status: 404 });
     }
     
     // Check if the user can add workouts before proceeding with LLM validation
     if (!canAddWorkouts(user.trialEndsAt, user.stripeCurrentPeriodEnd)) {
       return NextResponse.json({ 
-        error: 'Subscription required',
-        message: 'Your trial period has ended. Please subscribe to continue adding workouts.',
-        code: 'SUBSCRIPTION_REQUIRED'
-      }, { status: 403 });
+        status: 'error',
+        reason: 'subscription_required',
+        message: 'Your trial period has ended. Please subscribe to continue adding workouts.'
+      }, { status: 200 }); // Use 200 to avoid error handling in client
     }
     
     // Check API usage limit
     const { limitExceeded, currentCount, limit } = await checkLlmUsageLimit(userId);
     if (limitExceeded) {
       return NextResponse.json({ 
-        error: 'API limit exceeded',
-        message: `You have reached your daily API request limit. Please try again tomorrow.`,
-        code: 'API_LIMIT_EXCEEDED'
-      }, { status: 429 });
+        status: 'error',
+        reason: 'api_limit_exceeded',
+        message: `You have reached your daily API request limit. Please try again tomorrow.`
+      }, { status: 200 }); // Use 200 to avoid error handling in client
     }
     
     // Parse request body
@@ -56,7 +64,11 @@ export async function POST(req: NextRequest) {
     // Validate input
     const result = inputSchema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json({ error: result.error.errors }, { status: 400 });
+      return NextResponse.json({ 
+        status: 'error',
+        reason: 'validation_failed',
+        message: 'Invalid input data'
+      }, { status: 200 });
     }
     
     const { text } = result.data;
@@ -69,18 +81,21 @@ export async function POST(req: NextRequest) {
       await incrementLlmUsage(userId);
       
       return NextResponse.json({
+        status: 'success',
         isWorkoutRelated
       });
     } catch (error) {
       return NextResponse.json({ 
-        error: 'Failed to validate workout text',
-        details: error instanceof Error ? error.message : String(error)
-      }, { status: 500 });
+        status: 'error',
+        reason: 'validation_failed',
+        message: 'Failed to validate workout text'
+      }, { status: 200 });
     }
   } catch (error) {
     return NextResponse.json({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : String(error)
+      status: 'error',
+      reason: 'server_error',
+      message: 'Internal server error'
     }, { status: 500 });
   }
 } 
