@@ -86,6 +86,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
           type: 'limit', 
           message: validationResult.message || 'You have reached your daily API request limit. Please try again tomorrow or edit a logged workout'
         });
+        // Form data is preserved when API limit is exceeded
         return;
       }
       
@@ -94,6 +95,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
           type: 'error', 
           message: 'Please enter a valid workout description. Random text or non-workout content is not allowed.' 
         });
+        // Form data is preserved when validation fails
         return;
       }
       
@@ -107,6 +109,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
       // Clear the localStorage draft after successful submission
       localStorage.removeItem(LOCAL_STORAGE_KEY);
       
+      // Only reset the form when submission is successful
       reset();
       onWorkoutAdded();
     } catch (err: any) {
@@ -122,6 +125,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
         setFeedback({ type: 'error', message: errorMessage });
       }
       console.error(err);
+      // Don't reset the form or clear localStorage when there's an error
     } finally {
       setIsLoading(false);
       setIsValidating(false);
