@@ -21,6 +21,20 @@ const CustomChart: React.FC<CustomChartProps> = ({
   let chartData;
   try {
     chartData = generateChartData(config, workouts, preferences);
+    
+    // Additional validation to ensure chart data is valid
+    if (chartData) {
+      // Check if there are enough data points to render line chart
+      const hasValidData = chartData.datasets && 
+                         chartData.datasets.length > 0 && 
+                         chartData.datasets[0].data && 
+                         chartData.datasets[0].data.length > 0;
+      
+      // If no valid data, set chartData to null so we show "No data" message
+      if (!hasValidData) {
+        chartData = null;
+      }
+    }
   } catch (error) {
     console.error('Error generating chart data:', error);
     chartData = null;
