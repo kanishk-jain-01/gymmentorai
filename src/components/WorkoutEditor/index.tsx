@@ -18,7 +18,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
   const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       name: workout.name || '',
-      date: workout.date,
+      date: workout.date ? workout.date.split('T')[0] : '',
       duration: workout.duration || undefined,
       notes: workout.notes || '',
       exercises: workout.exercises.map(exercise => ({
