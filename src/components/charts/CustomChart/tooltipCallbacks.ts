@@ -1,5 +1,4 @@
 import { ChartConfig } from '@/types';
-import { getMetricLabelWithUnits } from '../chartUtils';
 import { formatDuration, formatWorkoutDuration } from '@/lib/utils';
 
 export const createTooltipCallbacks = (config: ChartConfig, preferences: { weightUnit: 'lb' | 'kg', distanceUnit: 'mi' | 'km' | 'm' }) => {
