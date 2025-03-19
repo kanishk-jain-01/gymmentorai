@@ -47,6 +47,7 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
   const validateWorkout = async (text: string): Promise<{ 
     isValid: boolean; 
     apiLimitExceeded?: boolean;
+    subscriptionRequired?: boolean;
     message?: string;
   }> => {
     try {
@@ -62,7 +63,16 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
         return { 
           isValid: false, 
           apiLimitExceeded: true,
-          message: error.response?.data?.message || 'You have reached your daily API request limit.'
+          message: error.response?.data?.message
+        };
+      }
+      
+      // Check if this is a subscription required error
+      if (error.response?.data?.code === 'SUBSCRIPTION_REQUIRED') {
+        return { 
+          isValid: false, 
+          subscriptionRequired: true,
+          message: error.response?.data?.message
         };
       }
       
@@ -80,11 +90,21 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
       const validationResult = await validateWorkout(data.workoutText);
       setIsValidating(false);
       
+      // Check if subscription is required (more fundamental check)
+      if (validationResult.subscriptionRequired) {
+        setFeedback({ 
+          type: 'subscription', 
+          message: validationResult.message || 'Subscription required'
+        });
+        // Form data is preserved when subscription is required
+        return;
+      }
+      
       // Check if API limit is exceeded
       if (validationResult.apiLimitExceeded) {
         setFeedback({ 
           type: 'limit', 
-          message: validationResult.message || 'You have reached your daily API request limit. Please try again tomorrow or edit a logged workout'
+          message: validationResult.message || 'API limit exceeded'
         });
         // Form data is preserved when API limit is exceeded
         return;
@@ -113,17 +133,8 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
       reset();
       onWorkoutAdded();
     } catch (err: any) {
-      // Check if this is a subscription required error
-      if (err.response?.data?.code === 'SUBSCRIPTION_REQUIRED') {
-        setFeedback({ 
-          type: 'subscription', 
-          message: err.response?.data?.message || 'Your trial has ended. Please subscribe to continue adding workouts.' 
-        });
-      } 
-      else {
-        const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
-        setFeedback({ type: 'error', message: errorMessage });
-      }
+      const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
+      setFeedback({ type: 'error', message: errorMessage });
       console.error(err);
       // Don't reset the form or clear localStorage when there's an error
     } finally {
