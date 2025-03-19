@@ -42,6 +42,12 @@ export const generateLineChartData = (
       };
     });
     
+    const labels = dateEntries.map(entry => entry.formattedDate);
+    
+    // Adjust line settings based on number of data points
+    // For single point or just a few points, don't use tension/curve
+    const useTension = values.length > 2;
+    
     // Main dataset array with the filled line chart
     const datasets: any[] = [
       {
@@ -51,16 +57,16 @@ export const generateLineChartData = (
         borderColor: color.border,
         backgroundColor: color.background,
         borderWidth: 2,
-        tension: 0.3,
+        tension: useTension ? 0.3 : 0, // Use 0 tension (straight lines) for few points
         fill: true,
         pointRadius: 3,
         pointHoverRadius: 5,
+        // Handle possible missing points by not drawing line segments there
+        spanGaps: true,
         // Store raw data for tooltips
         rawData: rawDataByDate
       } as any
     ];
-    
-    const labels = dateEntries.map(entry => entry.formattedDate);
     
     return {
       labels,
@@ -134,8 +140,10 @@ export const generateLineChartData = (
       borderColor: color.border,
       backgroundColor: 'transparent',
       borderWidth: 2,
-      tension: 0,
+      // Adjust tension based on number of data points
+      tension: values.length > 2 ? 0.1 : 0,
       fill: false,
+      spanGaps: true,
       pointRadius: 0, // Hide points on the line
     }
   ];
