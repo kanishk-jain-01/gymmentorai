@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { SubscriptionStatus as SubscriptionStatusType, SubscriptionPlan, SubscriptionStatusProps } from '@/types';
+import { formatDate } from '@/lib/utils';
 
 const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onSubscriptionChange }) => {
   const [status, setStatus] = useState<SubscriptionStatusType | null>(null);
@@ -124,11 +125,9 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onSubscriptionC
                     </h4>
                     <p className="text-sm text-theme-fg opacity-70">
                       {status.plan} plan
-                      {status.periodEnd && status.cancelAtPeriodEnd 
-                        ? ` (ends on ${new Date(status.periodEnd).toLocaleDateString()})` 
-                        : status.periodEnd 
-                          ? ` (renews on ${new Date(status.periodEnd).toLocaleDateString()})` 
-                          : ''}
+                      {status.periodEnd && (status.cancelAtPeriodEnd
+                        ? ` (ends on ${formatDate(status.periodEnd)})`
+                        : ` (renews on ${formatDate(status.periodEnd)})`)}
                     </p>
                   </div>
                 </div>

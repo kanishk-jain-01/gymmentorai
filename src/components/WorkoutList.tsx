@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import WorkoutEditor from './WorkoutEditor/index';
 import { Exercise, Workout, Set, WorkoutListProps } from '../types';
-import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance } from '@/lib/utils';
+import { formatDuration, formatWorkoutDuration, formatWeight, formatDistance, formatDate } from '@/lib/utils';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 
 const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkoutUpdated }) => {
@@ -56,7 +56,7 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkou
                     Edit
                   </button>
                   <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-subtle border border-subtle text-primary">
-                    {new Date(workout.date).toLocaleDateString()}
+                    {formatDate(workout.date)}
                   </p>
                 </div>
               </div>
