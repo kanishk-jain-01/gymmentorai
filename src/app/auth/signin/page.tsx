@@ -56,7 +56,7 @@ export default function SignIn() {
       <div className="max-w-md w-full space-y-10 p-8 bg-theme-card bg-opacity-80 backdrop-blur-sm rounded-2xl shadow-xl border border-subtle mx-4">
         <div>
           <h2 className="text-center text-3xl font-bold text-gradient-primary">
-            Sign-In to Access Your Workout Notebook
+            Sign-In to Access Your AI Workout Notebook
           </h2>
         </div>
         
