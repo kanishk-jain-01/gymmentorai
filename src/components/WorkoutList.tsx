@@ -84,7 +84,7 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkou
                       )}
                       
                       {/* Display sets */}
-                      <div className="mt-2">
+                      <div className="mt-2 overflow-x-auto">
                         <table className="min-w-full divide-y divide-theme-border/30 text-xs">
                           <thead>
                             <tr>
