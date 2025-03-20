@@ -16,8 +16,8 @@ const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
   setDeleteConfirmState
 }) => {
   return (
-    <div className="border-t border-theme-border/30 px-8 py-5 bg-subtle rounded-b-2xl flex flex-wrap items-center justify-between gap-y-3">
-      <div className="flex items-center space-x-3">
+    <div className="border-t border-theme-border/30 px-8 py-5 bg-subtle rounded-b-2xl flex flex-col sm:flex-row items-center justify-between gap-y-4">
+      <div className="flex items-center space-x-3 w-full sm:w-auto justify-center sm:justify-start">
         {deleteConfirmState ? (
           <button
             type="button"
@@ -64,7 +64,7 @@ const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
       <button
         type="submit"
         disabled={isLoading}
-        className="inline-flex items-center px-5 py-2 text-sm font-medium rounded-full shadow-sm text-white bg-gradient-primary hover:bg-gradient-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
+        className="inline-flex items-center px-5 py-2 text-sm font-medium rounded-full shadow-sm text-white bg-gradient-primary hover:bg-gradient-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/50 transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none w-full sm:w-auto justify-center"
       >
         {isLoading ? (
           <>
