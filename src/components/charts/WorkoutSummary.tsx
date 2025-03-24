@@ -14,20 +14,6 @@ const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptio
   const [summaryCustomStartDate, setSummaryCustomStartDate] = useState<string>(''); // Custom start date for summary
   const [summaryCustomEndDate, setSummaryCustomEndDate] = useState<string>(''); // Custom end date for summary
   
-  // Initialize custom date ranges
-  React.useEffect(() => {
-    // Set default custom date ranges (last 90 days)
-    const today = new Date();
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(today.getDate() - 90);
-    
-    const todayStr = today.toISOString().split('T')[0];
-    const ninetyDaysAgoStr = ninetyDaysAgo.toISOString().split('T')[0];
-    
-    setSummaryCustomStartDate(ninetyDaysAgoStr);
-    setSummaryCustomEndDate(todayStr);
-  }, []);
-  
   // Get filtered workouts for summary
   const getFilteredWorkoutsForSummary = (): Workout[] => {
     return filterWorkoutsByDateRange(
