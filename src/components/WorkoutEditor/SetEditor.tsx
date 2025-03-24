@@ -1,7 +1,13 @@
 import React from 'react';
 import { MinusIcon } from '@heroicons/react/24/outline';
-import { SetEditorProps } from '@/types';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+
+interface SetEditorProps {
+  exerciseIndex: number;
+  setIndex: number;
+  register: any;
+  removeSet: (index: number) => void;
+}
 
 const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register, removeSet }) => {
   const { preferences } = useUnitPreferences();

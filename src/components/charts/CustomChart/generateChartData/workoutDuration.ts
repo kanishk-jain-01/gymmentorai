@@ -1,6 +1,14 @@
-import { Workout, ChartConfig, CustomChartData, WorkoutDurationsByDate } from '@/types';
+import { Workout, ChartConfig, CustomChartData } from '@/types';
 import { AVAILABLE_METRICS, CHART_COLORS } from '../../chartUtils';
 import { formatDate } from '@/lib/utils';
+
+interface WorkoutDurationsByDate {
+  [dateKey: string]: {
+    date: string;
+    formattedDate: string;
+    duration: number;
+  }[];
+}
 
 // Generate chart data for workout duration metric
 export const generateWorkoutDurationData = (

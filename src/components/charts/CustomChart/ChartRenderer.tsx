@@ -5,8 +5,14 @@ import { AVAILABLE_METRICS, getMetricLabelWithUnits } from '../chartUtils';
 import { useChartOptions } from '../chartUtils';
 import { createTooltipCallbacks } from './tooltipCallbacks';
 import { formatDuration, formatWeight, formatDistance } from '@/lib/utils';
-import { ChartRendererProps, ChartConfig, MixedChartData } from '@/types';
+import { ChartConfig, MixedChartData } from '@/types';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+
+interface ChartRendererProps {
+  config: ChartConfig;
+  chartData: ChartData<any, any[], any> | MixedChartData;
+  height?: number;
+}
 
 const ChartRenderer: React.FC<ChartRendererProps> = ({ 
   config, 
