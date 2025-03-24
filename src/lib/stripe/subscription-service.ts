@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { stripe, PLANS, TRIAL_DAYS, hasTrialEnded, hasActiveSubscription } from './stripe-server';
-import { SubscriptionStatus, UserWithSubscription, SubscriptionPlan } from '@/types';
+import { SubscriptionStatus, SubscriptionPlan } from '@/types';
 import { getTrialDaysRemaining, canAddWorkouts } from './stripe-server';
 
 /**

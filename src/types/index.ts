@@ -2,7 +2,7 @@ import { Session } from 'next-auth';
 import { ChartData, ChartDataset, ScatterDataPoint } from 'chart.js';
 
 /*******************************************************************************
- * DATABASE TYPES
+ * WORKOUT TYPES
  ******************************************************************************/
 
 /**
