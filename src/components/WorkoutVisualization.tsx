@@ -49,6 +49,14 @@ ChartJS.register(
 ChartJS.defaults.elements.line.tension = 0; // Disable tension/bezier curves globally
 ChartJS.defaults.elements.point.hitRadius = 10; // Increase hit radius for better interaction
 
+// Additional protection against curve interpolation errors
+ChartJS.defaults.elements.line.cubicInterpolationMode = 'monotone';
+ChartJS.defaults.datasets.line = {
+  ...ChartJS.defaults.datasets.line,
+  tension: 0,
+  cubicInterpolationMode: 'monotone'
+};
+
 export default function WorkoutVisualization() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [isLoading, setIsLoading] = useState(true);
