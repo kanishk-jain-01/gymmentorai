@@ -1,5 +1,9 @@
 import React from 'react';
-import { WorkoutFormHeaderProps } from '@/types';
+
+interface WorkoutFormHeaderProps {
+  register: any;
+  errors: any;
+}
 
 const WorkoutFormHeader: React.FC<WorkoutFormHeaderProps> = ({ register, errors }) => {
   return (

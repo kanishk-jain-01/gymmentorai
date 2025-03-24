@@ -2,20 +2,8 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import GoogleProvider from "next-auth/providers/google";
-import { Session } from "next-auth";
 import { NextAuthOptions } from "next-auth";
-import { setupTrialPeriod } from "@/lib/stripe/subscription-service";
-import { UserWithSubscription } from "@/types";
-
-// Extend the Session type to include user.id
-interface ExtendedSession extends Session {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    id?: string;
-  };
-}
+import { ExtendedSession } from '@/types';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),

@@ -7,11 +7,18 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WorkoutList from '@/components/WorkoutList';
 import axios from 'axios';
-import { Workout, MonthPageProps } from '@/types';
+import { Workout } from '@/types';
+
+interface MonthPageProps {
+  params: {
+    year: string;
+    month: string;
+  };
+}
 
 export default function MonthPage({ params }: MonthPageProps) {
   // Unwrap params using React.use()
-  const { year, month } = React.use(params);
+  const { year, month } = params;
   const { data: session, status } = useSession();
   const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);

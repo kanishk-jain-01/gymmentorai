@@ -3,9 +3,18 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import ChartConfig from '../ChartConfig';
 import ChartRenderer from './ChartRenderer';
 import { generateChartData } from './generateChartData';
-import { CustomChartProps } from '@/types';
+import { Workout } from '@/types';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 import { formatWeight, formatDate } from '@/lib/utils';
+
+interface CustomChartProps {
+  config: ChartConfig;
+  workouts: Workout[];
+  exerciseOptions: string[];
+  personalRecords: Record<string, { weight: number, date: string }>;
+  onUpdateConfig: (id: string, field: keyof ChartConfig, value: any) => void;
+  onRemoveChart: (id: string) => void;
+}
 
 const CustomChart: React.FC<CustomChartProps> = ({
   config,

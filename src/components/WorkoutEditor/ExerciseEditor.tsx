@@ -2,7 +2,14 @@ import React from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import SetEditor from './SetEditor';
-import { ExerciseEditorProps } from '@/types';
+
+interface ExerciseEditorProps {
+  exerciseIndex: number;
+  control: any;
+  register: any;
+  errors: any;
+  removeExercise: (index: number) => void;
+}
 
 const ExerciseEditor: React.FC<ExerciseEditorProps> = ({ exerciseIndex, control, register, errors, removeExercise }) => {
   const { fields: setFields, append: appendSet, remove: removeSet } = useFieldArray({

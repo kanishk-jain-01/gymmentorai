@@ -5,7 +5,11 @@ import ThemeToggle from './ThemeToggle';
 import ProfileDropdown from './ProfileDropdown';
 import { FaFacebook, FaTwitter, FaInstagram, FaDumbbell, FaTiktok } from 'react-icons/fa';
 import { useState } from 'react';
-import { LayoutProps, ExtendedSession } from '@/types';
+import { ExtendedSession } from '@/types';
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const pathname = usePathname();

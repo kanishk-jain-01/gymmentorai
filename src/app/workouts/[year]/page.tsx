@@ -7,8 +7,14 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import TimeCard from '@/components/TimeCard';
 import axios from 'axios';
-import { Workout, YearPageProps } from '@/types';
 import { organizeWorkoutsByMonth } from '@/lib/utils';
+import { Workout } from '@/types';
+
+interface YearPageProps {
+  params: {
+    year: string;
+  };
+}
 
 export default function YearPage({ params }: YearPageProps) {
   // Access params directly

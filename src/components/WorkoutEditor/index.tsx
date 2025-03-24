@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import axios from 'axios';
-import { Workout, WorkoutEditorProps } from '@/types';
+import { Workout } from '@/types';
 import { formatDuration, parseDuration } from '@/lib/utils';
 import WorkoutFormHeader from './WorkoutFormHeader';
 import WorkoutFormActions from './WorkoutFormActions';
 import ExerciseEditor from './ExerciseEditor';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
 import { lbsToKg, kgToLbs, metersToMiles, metersToKm, milesToMeters, kmToMeters } from '@/lib/utils/unit-converter';
+
+interface WorkoutEditorProps {
+  workout: Workout;
+  onClose: () => void;
+  onWorkoutUpdated: () => void;
+}
 
 const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorkoutUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);

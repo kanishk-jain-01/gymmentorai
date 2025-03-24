@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { DATE_RANGES, CHART_TYPES, getMetricsWithUnits } from './chartUtils';
-import { ChartConfigProps} from '@/types';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
+import type { ChartConfig } from '@/types';
+
+interface ChartConfigProps {
+  config: ChartConfig;
+  exerciseOptions: string[];
+  onUpdateConfig: (field: keyof ChartConfig, value: any) => void;
+}
 
 const ChartConfig: React.FC<ChartConfigProps> = ({ 
   config, 

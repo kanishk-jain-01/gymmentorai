@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import Link from 'next/link';
-import { WorkoutInputProps } from '@/types';
 
 interface FormData {
   workoutText: string;
+}
+
+interface WorkoutInputProps {
+  onWorkoutAdded: () => void;
 }
 
 const LOCAL_STORAGE_KEY = 'workout-draft';

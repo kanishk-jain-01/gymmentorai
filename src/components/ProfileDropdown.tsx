@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ProfileDropdownProps } from '@/types';
+import { UserWithSubscription } from '@/types';
+
+interface ProfileDropdownProps {
+  user: UserWithSubscription;
+}
 
 export default function ProfileDropdown({ user }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
