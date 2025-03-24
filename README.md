@@ -5,7 +5,6 @@ GymMentor is a fitness tracking application that helps users log and analyze the
 ## Features
 
 - **Workout Logging**: Easily log your workouts with natural language input
-- **Workout Analysis**: Get AI-powered insights about your fitness progress
 - **Workout Visualization**: View charts and graphs of your workout data
 - **User Authentication**: Secure login with Google OAuth
 
@@ -125,7 +124,8 @@ The following environment variables are required:
 - `NEXTAUTH_URL`: URL of your application (http://localhost:3000 for local development)
 - `GOOGLE_CLIENT_ID`: Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET`: Google OAuth client secret
-- LLM API configuration (see .env.example for options)
+- LLM API configuration 
+- Stripe Configuration
 
 ## Deployment
 
