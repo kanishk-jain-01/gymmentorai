@@ -28,6 +28,10 @@ export const createTooltipCallbacks = (config: ChartConfig, preferences: { weigh
       const paceSeconds = Math.round((value - paceMinutes) * 60);
       return `${paceMinutes.toString().padStart(2, '0')}:${paceSeconds.toString().padStart(2, '0')} min/${preferences.distanceUnit === 'mi' ? 'mi' : 'km'}`;
     }
+    if (metric === 'reps') {
+      // Format reps as an integer
+      return Math.round(value).toString();
+    }
     return value.toString();
   };
   
