@@ -24,7 +24,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
   const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       name: workout.name || '',
-      date: workout.date ? workout.date.split('T')[0] : '',
+      date: workout.date || '',
       duration: workout.duration || undefined,
       notes: workout.notes || '',
       exercises: workout.exercises.map(exercise => ({
@@ -230,7 +230,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorko
               </div>
             )}
             
-            <WorkoutFormHeader register={register} errors={errors} />
+            <WorkoutFormHeader register={register} errors={errors} control={control} />
             
             <div className="pt-3">
               <div className="flex justify-between items-center mb-5">
