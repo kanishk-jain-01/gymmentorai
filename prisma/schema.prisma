@@ -14,16 +14,28 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  workouts      Workout[]
-  accounts      Account[]
-  sessions      Session[]
+  id                    String    @id @default(cuid())
+  name                  String?
+  email                 String?   @unique
+  emailVerified         DateTime?
+  image                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  workouts              Workout[]
+  accounts              Account[]
+  sessions              Session[]
+  apiUsage              ApiUsage[]
+  hasSeenOnboarding     Boolean   @default(false)
+  weightUnit            String    @default("lb")  // Options: "lb" or "kg"
+  distanceUnit          String    @default("mi")  // Options: "mi", "km", or "m"
+  
+  // Subscription fields
+  stripeCustomerId      String?   @unique
+  stripeSubscriptionId  String?
+  stripePriceId         String?
+  stripeCurrentPeriodEnd DateTime?
+  trialEndsAt           DateTime?
+  cancelAtPeriodEnd     Boolean   @default(false)
 }
 
 model Account {
@@ -70,14 +82,35 @@ model Workout {
 model Exercise {
   id          String   @id @default(cuid())
   name        String
-  sets        Int?
-  reps        Int?
-  weight      Float?   // in kg or lbs
-  duration    Int?     // in seconds
-  distance    Float?   // in km or miles
   notes       String?
   workoutId   String
   workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  sets        Set[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Set {
+  id          String   @id @default(cuid())
+  reps        Int?
+  weight      Float?   // in lbs
+  duration    Int?     // in seconds 
+  distance    Float?   // in meters
+  notes       String?
+  exerciseId  String
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ApiUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now()) @db.Date
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
 }

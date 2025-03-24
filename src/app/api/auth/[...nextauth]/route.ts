@@ -2,19 +2,10 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import GoogleProvider from "next-auth/providers/google";
-import { Session } from "next-auth";
+import { NextAuthOptions } from "next-auth";
+import { ExtendedSession } from '@/types';
 
-// Extend the Session type to include user.id
-interface ExtendedSession extends Session {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    id?: string;
-  };
-}
-
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -23,23 +14,69 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "database",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
-    error: "/auth/error",
+    error: "/auth/signin", // Redirect to sign-in page with error
     verifyRequest: "/auth/verify-request",
   },
   callbacks: {
-    async session({ session, token }) {
-      if (session.user) {
-        // Use type assertion to add id to the user object
-        (session.user as any).id = token.sub;
+    async session({ session, user }) {
+      // When using database sessions, we need to get the ID from the user parameter
+      if (session.user && user) {
+        (session.user as any).id = user.id;
       }
-      return session;
+      return session as ExtendedSession;
     },
+    async signIn({ user, account, profile }) {
+      // Always allow sign-in first
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // If the URL starts with the base URL, allow it
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      
+      // If the URL is a relative URL, prepend the base URL
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      
+      // Otherwise, return to the base URL
+      return baseUrl;
+    }
   },
-});
+  events: {
+    // Set up trial period after the user is created
+    async createUser({ user }) {
+      try {
+        if (user.id) {
+          // Calculate trial end date directly
+          const trialEndDate = new Date();
+          const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
+          trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DAYS);
+          
+          // Use raw query to update the user to avoid TypeScript errors
+          await prisma.$executeRaw`
+            UPDATE "User" 
+            SET "trialEndsAt" = ${trialEndDate} 
+            WHERE id = ${user.id}
+          `;
+          
+          console.log(`Trial period set up for user ${user.id} until ${trialEndDate}`);
+        }
+      } catch (error) {
+        console.error('Error setting up trial period:', error);
+      }
+    }
+  },
+  debug: false, // Set to false to disable debug messages
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST }; 
