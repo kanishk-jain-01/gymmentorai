@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { useUnitPreferences } from '@/contexts/UnitPreferencesContext';
@@ -13,7 +13,6 @@ interface OnboardingModalProps {
 export default function OnboardingModal({ onClose }: OnboardingModalProps) {
   const { data: session } = useSession();
   const { updatePreferences } = useUnitPreferences();
-  const [subscribedToEmails, setSubscribedToEmails] = useState(true);
   const [weightUnit, setWeightUnit] = useState<'lb' | 'kg'>('lb');
   const [distanceUnit, setDistanceUnit] = useState<'mi' | 'km' | 'm'>('mi');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,11 +28,6 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
     setError(null);
     
     try {
-      // Update email preferences
-      await axios.post('/api/user/email-preferences', {
-        subscribedToEmails
-      });
-      
       // Update unit preferences
       await updatePreferences({
         weightUnit,
@@ -133,21 +127,6 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div>
-            <h3 className="font-medium mb-4 text-primary text-lg">Email Updates</h3>
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={subscribedToEmails}
-                onChange={(e) => setSubscribedToEmails(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-primary rounded focus:ring-indigo-500"
-              />
-              <span>
-                Keep me updated with new features
-              </span>
-            </label>
           </div>
         </div>
 

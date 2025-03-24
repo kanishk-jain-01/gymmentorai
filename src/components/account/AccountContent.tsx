@@ -9,7 +9,6 @@ import UserInfoSection from './UserInfoSection';
 import SubscriptionWrapper from './SubscriptionWrapper';
 import UnitPreferencesSection from './UnitPreferencesSection';
 import DataPrivacySection from './DataPrivacySection';
-import EmailPreferencesSection from './EmailPreferencesSection';
 import AccountLoading from './AccountLoading';
 
 const AccountContent: React.FC = () => {
@@ -31,8 +30,6 @@ const AccountContent: React.FC = () => {
   const [deleteError, setDeleteError] = useState<React.ReactNode>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatusType | null>(null);
-  const [subscribedToEmails, setSubscribedToEmails] = useState(true);
-  const [emailPrefLoading, setEmailPrefLoading] = useState(false);
   
   // Unit preferences
   const { preferences, updatePreferences, isLoading: unitPrefsLoading } = useUnitPreferences();
@@ -59,7 +56,6 @@ const AccountContent: React.FC = () => {
   useEffect(() => {
     if (session?.user?.email) {
       fetchSubscriptionStatus();
-      fetchEmailPreferences();
     }
   }, [session]);
 
@@ -69,15 +65,6 @@ const AccountContent: React.FC = () => {
       setSubscriptionStatus(response.data.status);
     } catch (err) {
       console.error('Failed to load subscription status', err);
-    }
-  };
-
-  const fetchEmailPreferences = async () => {
-    try {
-      const response = await axios.get('/api/user/email-preferences');
-      setSubscribedToEmails(response.data.subscribedToEmails);
-    } catch (error) {
-      console.error('Failed to fetch email preferences:', error);
     }
   };
   
@@ -133,34 +120,6 @@ const AccountContent: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to create portal session', err);
-    }
-  };
-  
-  const handleEmailPreferenceChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.checked;
-    setEmailPrefLoading(true);
-    
-    try {
-      await axios.post('/api/user/email-preferences', {
-        subscribedToEmails: newValue
-      });
-      setSubscribedToEmails(newValue);
-      setSuccessMessage('Email preferences updated successfully');
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 3000);
-    } catch (error) {
-      console.error('Failed to update email preferences:', error);
-      setDeleteError('Failed to update email preferences. Please try again.');
-      
-      // Clear error message after 3 seconds
-      setTimeout(() => {
-        setDeleteError(null);
-      }, 3000);
-    } finally {
-      setEmailPrefLoading(false);
     }
   };
   
@@ -236,12 +195,6 @@ const AccountContent: React.FC = () => {
           onToggleDeleteConfirm={setShowDeleteConfirm}
         />
       </div>
-      
-      <EmailPreferencesSection 
-        subscribedToEmails={subscribedToEmails}
-        emailPrefLoading={emailPrefLoading}
-        onEmailPreferenceChange={handleEmailPreferenceChange}
-      />
     </div>
   );
 };
