@@ -46,7 +46,7 @@ export const generateLineChartData = (
     
     // Adjust line settings based on number of data points
     // For single point or just a few points, don't use tension/curve
-    const useTension = values.length > 2;
+    const useTension = false; // Always use straight lines instead of curved
     
     // Main dataset array with the filled line chart
     const datasets: any[] = [
@@ -57,7 +57,7 @@ export const generateLineChartData = (
         borderColor: color.border,
         backgroundColor: color.background,
         borderWidth: 2,
-        tension: useTension ? 0.3 : 0, // Use 0 tension (straight lines) for few points
+        tension: 0, // Force straight lines to avoid control point errors
         fill: true,
         pointRadius: 3,
         pointHoverRadius: 5,
@@ -140,8 +140,8 @@ export const generateLineChartData = (
       borderColor: color.border,
       backgroundColor: 'transparent',
       borderWidth: 2,
-      // Adjust tension based on number of data points
-      tension: values.length > 2 ? 0.1 : 0,
+      // Set tension to 0 to avoid curve interpolation errors
+      tension: 0,
       fill: false,
       spanGaps: true,
       pointRadius: 0, // Hide points on the line
