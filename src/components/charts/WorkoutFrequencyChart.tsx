@@ -19,20 +19,6 @@ const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts 
   const [frequencyCustomEndDate, setFrequencyCustomEndDate] = useState<string>(''); // Custom end date for frequency
   const { getChartOptions } = useChartOptions();
   
-  // Initialize custom date ranges
-  React.useEffect(() => {
-    // Set default custom date ranges (last 90 days)
-    const today = new Date();
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(today.getDate() - 90);
-    
-    const todayStr = today.toISOString().split('T')[0];
-    const ninetyDaysAgoStr = ninetyDaysAgo.toISOString().split('T')[0];
-    
-    setFrequencyCustomStartDate(ninetyDaysAgoStr);
-    setFrequencyCustomEndDate(todayStr);
-  }, []);
-  
   // Generate workout frequency data
   const generateFrequencyData = (): ChartData<'bar', number[], string> | null => {
     if (workouts.length === 0) return null;
