@@ -19,6 +19,7 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
   return (
     <div 
       className="bg-subtle p-3.5 rounded-xl border border-subtle group/set hover:shadow-sm transition-all duration-200"
+      data-set-index={setIndex} // Add data attribute for debugging
     >
       {/* Mobile Layout (default) - Stack vertically */}
       <div className="md:hidden">
@@ -39,55 +40,69 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
         
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-xs text-theme-fg/60 mb-1">Reps</label>
+            <label className="block text-xs text-theme-fg/60 mb-1" htmlFor={`mobile-reps-${exerciseIndex}-${setIndex}`}>Reps</label>
             <input
+              id={`mobile-reps-${exerciseIndex}-${setIndex}`}
               type="number"
               className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
               placeholder="Reps"
-              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.reps` as const, { valueAsNumber: true })}
+              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.reps`, { 
+                valueAsNumber: true,
+                setValueAs: v => v === "" ? undefined : parseInt(v, 10) || undefined
+              })}
             />
           </div>
           
           <div>
-            <label className="block text-xs text-theme-fg/60 mb-1">Weight</label>
+            <label className="block text-xs text-theme-fg/60 mb-1" htmlFor={`mobile-weight-${exerciseIndex}-${setIndex}`}>Weight</label>
             <input
+              id={`mobile-weight-${exerciseIndex}-${setIndex}`}
               type="number"
               step={weightStep}
               className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
               placeholder={preferences.weightUnit}
-              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.weight` as const, { valueAsNumber: true })}
+              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.weight`, { 
+                valueAsNumber: true,
+                setValueAs: v => v === "" ? undefined : parseFloat(v) || undefined
+              })}
             />
           </div>
           
           <div>
-            <label className="block text-xs text-theme-fg/60 mb-1">Duration</label>
+            <label className="block text-xs text-theme-fg/60 mb-1" htmlFor={`mobile-duration-${exerciseIndex}-${setIndex}`}>Duration</label>
             <input
+              id={`mobile-duration-${exerciseIndex}-${setIndex}`}
               type="text"
               className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
               placeholder="MM:SS"
-              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration` as const)}
+              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration`)}
             />
           </div>
           
           <div>
-            <label className="block text-xs text-theme-fg/60 mb-1">Distance</label>
+            <label className="block text-xs text-theme-fg/60 mb-1" htmlFor={`mobile-distance-${exerciseIndex}-${setIndex}`}>Distance</label>
             <input
+              id={`mobile-distance-${exerciseIndex}-${setIndex}`}
               type="number"
               step={distanceStep}
               className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
               placeholder={preferences.distanceUnit}
-              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.distance` as const, { valueAsNumber: true })}
+              {...register(`exercises.${exerciseIndex}.sets.${setIndex}.distance`, { 
+                valueAsNumber: true,
+                setValueAs: v => v === "" ? undefined : parseFloat(v) || undefined
+              })}
             />
           </div>
         </div>
         
         <div className="mt-2">
-          <label className="block text-xs text-theme-fg/60 mb-1">Notes</label>
+          <label className="block text-xs text-theme-fg/60 mb-1" htmlFor={`mobile-notes-${exerciseIndex}-${setIndex}`}>Notes</label>
           <input
+            id={`mobile-notes-${exerciseIndex}-${setIndex}`}
             type="text"
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder="Notes"
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.notes` as const)}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.notes`)}
           />
         </div>
       </div>
@@ -103,7 +118,10 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
             type="number"
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder="Reps"
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.reps` as const, { valueAsNumber: true })}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.reps`, { 
+              valueAsNumber: true,
+              setValueAs: v => v === "" ? undefined : parseInt(v, 10) || undefined
+            })}
           />
         </div>
         
@@ -113,7 +131,10 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
             step={weightStep}
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder={`Weight (${preferences.weightUnit})`}
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.weight` as const, { valueAsNumber: true })}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.weight`, { 
+              valueAsNumber: true,
+              setValueAs: v => v === "" ? undefined : parseFloat(v) || undefined
+            })}
           />
         </div>
         
@@ -122,7 +143,7 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
             type="text"
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder="MM:SS"
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration` as const)}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.duration`)}
           />
         </div>
         
@@ -132,7 +153,10 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
             step={distanceStep}
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder={`Distance (${preferences.distanceUnit})`}
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.distance` as const, { valueAsNumber: true })}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.distance`, { 
+              valueAsNumber: true,
+              setValueAs: v => v === "" ? undefined : parseFloat(v) || undefined
+            })}
           />
         </div>
         
@@ -141,7 +165,7 @@ const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register
             type="text"
             className="block w-full rounded-lg border border-subtle shadow-sm focus:border-primary focus:ring focus:ring-indigo-500/20 bg-theme-card text-theme-fg transition-all duration-200 placeholder:text-theme-fg/50 text-sm py-1.5 px-2"
             placeholder="Notes"
-            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.notes` as const)}
+            {...register(`exercises.${exerciseIndex}.sets.${setIndex}.notes`)}
           />
         </div>
         
