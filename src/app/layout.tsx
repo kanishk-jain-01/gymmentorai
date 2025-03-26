@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "GymMentorAI - Your AI Workout Companion",
-  description: "Track your workouts, analyze your progress, and get personalized recommendations with GymMentorAI.",
+  description: "Track your workouts and analyze your progress with GymMentorAI.",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32 16x16', type: 'image/x-icon' },
