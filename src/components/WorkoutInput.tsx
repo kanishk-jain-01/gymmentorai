@@ -111,7 +111,7 @@ const WorkoutInput = ({ onWorkoutAdded }: WorkoutInputProps) => {
       }
       
       // If valid, proceed with saving the workout
-      const response = await axios.post('/api/workout', { text: data.workoutText });
+      await axios.post('/api/workout', { text: data.workoutText });
       
       // Handle successful submission
       setFeedback({ type: 'success', message: 'Workout added successfully!' });
