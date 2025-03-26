@@ -11,7 +11,7 @@ interface ExerciseEditorProps {
   removeExercise: (index: number) => void;
 }
 
-const ExerciseEditor: React.FC<ExerciseEditorProps> = ({ exerciseIndex, control, register, errors, removeExercise }) => {
+const ExerciseEditor = ({ exerciseIndex, control, register, errors, removeExercise }: ExerciseEditorProps) => {
   const { fields: setFields, append: appendSet, remove: removeSet } = useFieldArray({
     control: control,
     name: `exercises.${exerciseIndex}.sets`,

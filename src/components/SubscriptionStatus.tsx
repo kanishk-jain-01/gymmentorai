@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SubscriptionStatus as SubscriptionStatusType, SubscriptionPlan, SubscriptionStatusProps } from '@/types';
 import { formatDate } from '@/lib/utils';
 
-const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ onSubscriptionChange }) => {
+const SubscriptionStatus = ({ onSubscriptionChange }: SubscriptionStatusProps) => {
   const [status, setStatus] = useState<SubscriptionStatusType | null>(null);
   const [plans, setPlans] = useState<(SubscriptionPlan & { formattedPrice: string })[]>([]);
   const [isLoading, setIsLoading] = useState(true);

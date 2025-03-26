@@ -15,7 +15,7 @@ interface WorkoutEditorProps {
   onWorkoutUpdated: () => void;
 }
 
-const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workout, onClose, onWorkoutUpdated }) => {
+const WorkoutEditor = ({ workout, onClose, onWorkoutUpdated }: WorkoutEditorProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(false);

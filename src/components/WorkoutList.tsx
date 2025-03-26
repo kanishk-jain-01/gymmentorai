@@ -10,7 +10,7 @@ interface WorkoutListProps {
   onWorkoutUpdated: () => void;
 }
 
-const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, isLoading, onWorkoutUpdated }) => {
+const WorkoutList = ({ workouts, isLoading, onWorkoutUpdated }: WorkoutListProps) => {
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const { preferences } = useUnitPreferences();
 

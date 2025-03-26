@@ -11,7 +11,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = ({ children }: LayoutProps) => {
   const pathname = usePathname();
   const { data: session, status } = useSession() as { data: ExtendedSession | null, status: string };
   const loading = status === 'loading';

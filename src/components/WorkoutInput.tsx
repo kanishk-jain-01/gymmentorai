@@ -13,7 +13,7 @@ interface WorkoutInputProps {
 
 const LOCAL_STORAGE_KEY = 'workout-draft';
 
-const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
+const WorkoutInput = ({ onWorkoutAdded }: WorkoutInputProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ 
     type: 'success' | 'error' | 'subscription' | 'limit'; 

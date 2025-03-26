@@ -12,7 +12,7 @@ interface DataPrivacySectionProps {
   onToggleDeleteConfirm: (show: boolean) => void;
 }
 
-const DataPrivacySection: React.FC<DataPrivacySectionProps> = ({
+const DataPrivacySection = ({
   subscriptionStatus,
   showDeleteConfirm,
   isLoading,
@@ -20,7 +20,7 @@ const DataPrivacySection: React.FC<DataPrivacySectionProps> = ({
   onDeleteAccount,
   onManageSubscription,
   onToggleDeleteConfirm
-}) => {
+}: DataPrivacySectionProps) => {
   return (
     <div>
       <h2 className="text-xl font-semibold text-theme-fg mb-4">Data & Privacy</h2>

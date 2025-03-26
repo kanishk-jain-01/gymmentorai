@@ -7,7 +7,7 @@ interface WorkoutFormHeaderProps {
   control: any;
 }
 
-const WorkoutFormHeader: React.FC<WorkoutFormHeaderProps> = ({ register, errors, control }) => {
+const WorkoutFormHeader = ({ register, errors, control }: WorkoutFormHeaderProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="group">

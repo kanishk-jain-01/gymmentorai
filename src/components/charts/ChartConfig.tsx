@@ -10,11 +10,11 @@ interface ChartConfigProps {
   onUpdateConfig: (field: keyof ChartConfig, value: any) => void;
 }
 
-const ChartConfig: React.FC<ChartConfigProps> = ({ 
+const ChartConfig = ({ 
   config, 
   exerciseOptions, 
   onUpdateConfig 
-}) => {
+}: ChartConfigProps) => {
   const { preferences } = useUnitPreferences();
   
   // When switching to workout duration, clear the exercise selection

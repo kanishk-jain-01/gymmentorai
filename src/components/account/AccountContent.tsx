@@ -11,7 +11,7 @@ import UnitPreferencesSection from './UnitPreferencesSection';
 import DataPrivacySection from './DataPrivacySection';
 import AccountLoading from './AccountLoading';
 
-const AccountContent: React.FC = () => {
+const AccountContent = () => {
   const searchParams = useSearchParams();
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();

@@ -9,7 +9,7 @@ interface SetEditorProps {
   removeSet: (index: number) => void;
 }
 
-const SetEditor: React.FC<SetEditorProps> = ({ exerciseIndex, setIndex, register, removeSet }) => {
+const SetEditor = ({ exerciseIndex, setIndex, register, removeSet }: SetEditorProps) => {
   const { preferences } = useUnitPreferences();
   const [isMobile, setIsMobile] = useState(false);
   
