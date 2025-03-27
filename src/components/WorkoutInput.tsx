@@ -88,6 +88,7 @@ const WorkoutInput = ({ onWorkoutAdded }: WorkoutInputProps) => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setFeedback(null);
+    setShowRegenerate(false);
     
     try {
       // First validate if the input is workout-related
@@ -121,9 +122,9 @@ const WorkoutInput = ({ onWorkoutAdded }: WorkoutInputProps) => {
       // Handle successful submission
       setFeedback({ type: 'success', message: 'Workout added successfully!' });
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      setShowRegenerate(true);
       reset();
       onWorkoutAdded();
+      setShowRegenerate(true);
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || 'Failed to add workout. Please try again.';
       setFeedback({ type: 'error', message: errorMessage });
