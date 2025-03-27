@@ -169,7 +169,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <FaTiktok className="h-5 w-5" aria-hidden="true" />
                   <span className="sr-only">TikTok</span>
                 </a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
+                <a href="https://www.facebook.com/profile.php?id=61574805656669" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-indigo-500">
                   <FaFacebook className="h-5 w-5" aria-hidden="true" />
                   <span className="sr-only">Facebook</span>
                 </a>
