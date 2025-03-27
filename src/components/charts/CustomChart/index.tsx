@@ -16,14 +16,14 @@ interface CustomChartProps {
   onRemoveChart: (id: string) => void;
 }
 
-const CustomChart: React.FC<CustomChartProps> = ({
+const CustomChart = ({
   config,
   workouts,
   exerciseOptions,
   personalRecords,
   onUpdateConfig,
   onRemoveChart
-}) => {
+}: CustomChartProps) => {
   const { preferences } = useUnitPreferences();
   
   // Generate chart data and handle errors

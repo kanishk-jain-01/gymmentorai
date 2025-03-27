@@ -5,7 +5,7 @@ interface UserInfoSectionProps {
   session: Session | null;
 }
 
-const UserInfoSection: React.FC<UserInfoSectionProps> = ({ session }) => {
+const UserInfoSection = ({ session }: UserInfoSectionProps) => {
   if (!session) return null;
   
   return (

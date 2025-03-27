@@ -9,7 +9,7 @@ interface WorkoutSummaryProps {
   exerciseOptions: string[];
 }
 
-const WorkoutSummary: React.FC<WorkoutSummaryProps> = ({ workouts, exerciseOptions }) => {
+const WorkoutSummary = ({ workouts, exerciseOptions }: WorkoutSummaryProps) => {
   const [summaryDateRange, setSummaryDateRange] = useState<number>(90); // Date range for summary stats
   const [summaryCustomStartDate, setSummaryCustomStartDate] = useState<string>(''); // Custom start date for summary
   const [summaryCustomEndDate, setSummaryCustomEndDate] = useState<string>(''); // Custom end date for summary

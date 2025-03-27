@@ -6,11 +6,11 @@ interface NotificationBannerProps {
   successMessage: string | null;
 }
 
-const NotificationBanner: React.FC<NotificationBannerProps> = ({ 
+const NotificationBanner = ({ 
   success, 
   canceled,
   successMessage
-}) => {
+}: NotificationBannerProps) => {
   return (
     <>
       {success && (

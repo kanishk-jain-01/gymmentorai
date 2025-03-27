@@ -12,9 +12,11 @@ interface WorkoutInputProps {
 }
 
 const LOCAL_STORAGE_KEY = 'workout-draft';
+const LAST_SUBMISSION_KEY = 'last-workout-submission';
 
-const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
+const WorkoutInput = ({ onWorkoutAdded }: WorkoutInputProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showRegenerate, setShowRegenerate] = useState(false);
   const [feedback, setFeedback] = useState<{ 
     type: 'success' | 'error' | 'subscription' | 'limit'; 
     message: string;
@@ -111,11 +113,15 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
       }
       
       // If valid, proceed with saving the workout
-      const response = await axios.post('/api/workout', { text: data.workoutText });
+      await axios.post('/api/workout', { text: data.workoutText });
+      
+      // Store the successful submission before clearing
+      localStorage.setItem(LAST_SUBMISSION_KEY, data.workoutText);
       
       // Handle successful submission
       setFeedback({ type: 'success', message: 'Workout added successfully!' });
       localStorage.removeItem(LOCAL_STORAGE_KEY);
+      setShowRegenerate(true);
       reset();
       onWorkoutAdded();
     } catch (err: any) {
@@ -186,6 +192,23 @@ const WorkoutInput: React.FC<WorkoutInputProps> = ({ onWorkoutAdded }) => {
             >
               {isValidating ? 'Validating...' : isLoading ? 'Processing...' : 'Save Workout'}
             </button>
+            {showRegenerate && (
+              <button
+                type="button"
+                onClick={() => {
+                  const lastSubmission = localStorage.getItem(LAST_SUBMISSION_KEY);
+                  if (lastSubmission) {
+                    setValue('workoutText', lastSubmission);
+                    localStorage.setItem(LOCAL_STORAGE_KEY, lastSubmission);
+                    setShowRegenerate(false);
+                    setFeedback(null);
+                  }
+                }}
+                className="ml-3 inline-flex items-center px-4 py-2 border border-theme-border text-sm font-medium rounded-md text-theme-fg hover:bg-subtle focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-from transition-all duration-200"
+              >
+                Restore Last Workout
+              </button>
+            )}
           </div>
         </form>
       </div>

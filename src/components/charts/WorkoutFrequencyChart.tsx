@@ -13,7 +13,7 @@ interface WorkoutFrequencyChartProps {
   workouts: Workout[];
 }
 
-const WorkoutFrequencyChart: React.FC<WorkoutFrequencyChartProps> = ({ workouts }) => {
+const WorkoutFrequencyChart = ({ workouts }: WorkoutFrequencyChartProps) => {
   const [frequencyDateRange, setFrequencyDateRange] = useState<number>(90); // Date range for frequency chart
   const [frequencyCustomStartDate, setFrequencyCustomStartDate] = useState<string>(''); // Custom start date for frequency
   const [frequencyCustomEndDate, setFrequencyCustomEndDate] = useState<string>(''); // Custom end date for frequency

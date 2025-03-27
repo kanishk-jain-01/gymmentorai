@@ -10,12 +10,12 @@ interface UnitPreferencesSectionProps {
   onUnitPreferenceChange: (key: 'weightUnit' | 'distanceUnit', value: any) => void;
 }
 
-const UnitPreferencesSection: React.FC<UnitPreferencesSectionProps> = ({
+const UnitPreferencesSection = ({
   preferences,
   unitPrefsLoading,
   unitPrefsUpdating,
   onUnitPreferenceChange
-}) => {
+}: UnitPreferencesSectionProps) => {
   return (
     <div>
       <h2 className="text-xl font-semibold text-theme-fg mb-4">Unit Preferences</h2>

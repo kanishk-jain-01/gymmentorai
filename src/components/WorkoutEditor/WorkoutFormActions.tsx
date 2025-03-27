@@ -8,13 +8,13 @@ interface WorkoutFormActionsProps {
   setDeleteConfirmState: (state: boolean) => void;
 }
 
-const WorkoutFormActions: React.FC<WorkoutFormActionsProps> = ({
+const WorkoutFormActions = ({
   isLoading,
   deleteConfirmState,
   handleDeleteWorkout,
   onClose,
   setDeleteConfirmState
-}) => {
+}: WorkoutFormActionsProps) => {
   return (
     <div className="border-t border-theme-border/30 px-8 py-5 bg-subtle rounded-b-2xl flex flex-col sm:flex-row items-center justify-between gap-y-4">
       <div className="flex items-center space-x-3 w-full sm:w-auto justify-center sm:justify-start">

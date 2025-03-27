@@ -14,11 +14,11 @@ interface ChartRendererProps {
   height?: number;
 }
 
-const ChartRenderer: React.FC<ChartRendererProps> = ({ 
+const ChartRenderer = ({ 
   config, 
   chartData,
   height = 320 
-}) => {
+}: ChartRendererProps) => {
   const { getChartOptions } = useChartOptions();
   const { preferences } = useUnitPreferences();
   
