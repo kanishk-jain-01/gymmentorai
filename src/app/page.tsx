@@ -39,7 +39,7 @@ export default function Home() {
                 <FaTiktok className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">TikTok</span>
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-primary">
+              <a href="https://www.facebook.com/profile.php?id=61574805656669" target="_blank" rel="noopener noreferrer" className="text-theme-fg hover:text-primary">
                 <FaFacebook className="h-6 w-6" aria-hidden="true" />
                 <span className="sr-only">Facebook</span>
               </a>
